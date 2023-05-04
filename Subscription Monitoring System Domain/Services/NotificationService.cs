@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Subscription_Monitoring_System_Data.Contracts;
-using Subscription_Monitoring_System_Data.Dtos;
 using Subscription_Monitoring_System_Data.Models;
+using Subscription_Monitoring_System_Data.ViewModels;
 using Subscription_Monitoring_System_Domain.Contracts;
 using System;
 using System.Collections.Generic;
@@ -23,11 +23,11 @@ namespace Subscription_Monitoring_System_Domain.Services
             _notificationRepository = notificationRepository;
         }
 
-        public async Task<NotificationDto> Get(int id)
+        public async Task<NotificationViewModel> Get(int id)
         {
             try
             {
-                return _mapper.Map<NotificationDto>(await _notificationRepository.Get(id));
+                return _mapper.Map<NotificationViewModel>(await _notificationRepository.Get(id));
             }
             catch (Exception)
             {
@@ -35,11 +35,11 @@ namespace Subscription_Monitoring_System_Domain.Services
             }
         }
 
-        public async Task<List<NotificationDto>> GetList(List<int> ids)
+        public async Task<List<NotificationViewModel>> GetList(List<int> ids)
         {
             try
             {
-                return _mapper.Map<List<NotificationDto>>(await _notificationRepository.GetList(ids));
+                return _mapper.Map<List<NotificationViewModel>>(await _notificationRepository.GetList(ids));
             }
             catch (Exception)
             {
@@ -47,7 +47,7 @@ namespace Subscription_Monitoring_System_Domain.Services
             }
         }
 
-        public async Task Create(NotificationDto notification, List<int> userIds)
+        public async Task Create(NotificationViewModel notification, List<int> userIds)
         {
             try
             {
@@ -71,7 +71,7 @@ namespace Subscription_Monitoring_System_Domain.Services
             }
         }
 
-        public async Task HardDelete(RecordIdsDto records)
+        public async Task HardDelete(RecordIdsViewModel records)
         {
             try
             {

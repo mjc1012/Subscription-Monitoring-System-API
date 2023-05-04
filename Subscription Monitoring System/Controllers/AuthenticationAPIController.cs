@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Subscription_Monitoring_System_Data;
-using Subscription_Monitoring_System_Data.Dtos;
 using Subscription_Monitoring_System_Data.Models;
+using Subscription_Monitoring_System_Data.ViewModels;
 using Subscription_Monitoring_System_Domain.Contracts;
 using Subscription_Monitoring_System_Domain.Services;
 using System.Data;
@@ -25,7 +25,7 @@ namespace Subscription_Monitoring_System.Controllers
         }
 
         [HttpPost("authenticate")]
-        public async Task<IActionResult> Authenticate([FromBody] AuthenticationDto loginUser)
+        public async Task<IActionResult> Authenticate([FromBody] AuthenticationViewModel loginUser)
         {
             try
             {
@@ -33,29 +33,29 @@ namespace Subscription_Monitoring_System.Controllers
 
                 if (validationErrors.Any())
                 {
-                    return StatusCode(StatusCodes.Status200OK, new ResponseDto() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
                 }
 
                 string accessToken = _unitOfWork.AuthenticationService.CreateJwt(loginUser.Code);
                 string refreshToken = await _unitOfWork.AuthenticationService.CreateRefreshToken();
                 DateTime refreshTokenExpiryTime = DateTime.Now.AddDays(5);
                 await _unitOfWork.AuthenticationService.SaveTokens(loginUser, accessToken, refreshToken, refreshTokenExpiryTime);
-                TokenDto token = new()
+                TokenViewModel token = new()
                 {
                     AccessToken = accessToken,
                     RefreshToken = refreshToken
                 };
-                return StatusCode(StatusCodes.Status200OK, new ResponseDto() { Status = true, Message = AuthenticationConstants.LoggedIn, Value = token });
+                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = AuthenticationConstants.LoggedIn, Value = token });
                 
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseDto() { Status = false, Message = ex.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseViewModel() { Status = false, Message = ex.Message });
             }
         }
 
         [HttpPut("change-password")]
-        public async Task<IActionResult> ChangePassword([FromBody] UpdatePasswordDto user)
+        public async Task<IActionResult> ChangePassword([FromBody] UpdatePasswordViewModel user)
         {
             try
             {
@@ -64,24 +64,24 @@ namespace Subscription_Monitoring_System.Controllers
 
                 if (validationErrors.Any())
                 {
-                    return StatusCode(StatusCodes.Status200OK, new ResponseDto() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
                 }
-                AuthenticationDto authentication = new()
+                AuthenticationViewModel authentication = new()
                 {
                     Code = user.Code,
                     Password = user.NewPassword
                 };
                 await _unitOfWork.AuthenticationService.ChangePassword(authentication);
-                return StatusCode(StatusCodes.Status200OK, new ResponseDto() { Status = true, Message = AuthenticationConstants.PasswordChanged});
+                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = AuthenticationConstants.PasswordChanged});
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseDto() { Status = false, Message = ex.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseViewModel() { Status = false, Message = ex.Message });
             }
         }
 
         [HttpPost("refresh-token")]
-        public async Task<IActionResult> RefreshToken(TokenDto token)
+        public async Task<IActionResult> RefreshToken(TokenViewModel token)
         {
             try
             {
@@ -89,7 +89,7 @@ namespace Subscription_Monitoring_System.Controllers
 
                 if (validationErrors.Any())
                 {
-                    return StatusCode(StatusCodes.Status200OK, new ResponseDto() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
                 }
 
                 ClaimsPrincipal principal = _unitOfWork.AuthenticationService.GetPrincipalFromExpiredToken(token.AccessToken);
@@ -98,17 +98,17 @@ namespace Subscription_Monitoring_System.Controllers
                 string newAccessToken = _unitOfWork.AuthenticationService.CreateJwt(user.Code);
                 string newRefreshToken = await _unitOfWork.AuthenticationService.CreateRefreshToken();
                 await _unitOfWork.AuthenticationService.SaveTokens(user, newAccessToken, newRefreshToken);
-                TokenDto newTokens = new()
+                TokenViewModel newTokens = new()
                 {
                     AccessToken = newAccessToken,
                     RefreshToken = newRefreshToken
                 };
 
-                return StatusCode(StatusCodes.Status200OK, new ResponseDto() { Status = true, Message = "Token refreshed", Value = newTokens });
+                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = "Token refreshed", Value = newTokens });
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseDto() { Status = false, Message = ex.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseViewModel() { Status = false, Message = ex.Message });
             }
         }
 
@@ -121,7 +121,7 @@ namespace Subscription_Monitoring_System.Controllers
 
                 if (validationErrors.Any())
                 {
-                    return StatusCode(StatusCodes.Status200OK, new ResponseDto() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
                 }
 
                 User user = await _unitOfWork.UserService.GetByEmail(emailAddress);
@@ -130,20 +130,20 @@ namespace Subscription_Monitoring_System.Controllers
                 string resetPasswordToken = Convert.ToBase64String(tokenBytes);
                 DateTime resetPasswordExpiry = DateTime.Now.AddMinutes(15);
                 await _unitOfWork.AuthenticationService.SaveTokens(user, resetPasswordToken, resetPasswordExpiry);
-                _unitOfWork.EmailService.SendEmail(new EmailDto(emailAddress, "Reset Password", EmailBody.ResetEmailBody(emailAddress, resetPasswordToken)));
+                _unitOfWork.EmailService.SendEmail(new EmailViewModel(emailAddress, "Reset Password", EmailBody.ResetEmailBody(emailAddress, resetPasswordToken)));
 
-                return StatusCode(StatusCodes.Status200OK, new ResponseDto() { Status = true, Message = EmailConstants.ResetPasswordEmailed });
+                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = EmailConstants.ResetPasswordEmailed });
                 
 
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseDto() { Status = false, Message = ex.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseViewModel() { Status = false, Message = ex.Message });
             }
         }
 
         [HttpPut("reset-password")]
-        public async Task<IActionResult> ResetPasssword([FromBody] ResetPasswordDto resetPassword)
+        public async Task<IActionResult> ResetPasssword([FromBody] ResetPasswordViewModel resetPassword)
         {
             try
             {
@@ -151,22 +151,22 @@ namespace Subscription_Monitoring_System.Controllers
 
                 if (validationErrors.Any())
                 {
-                    return StatusCode(StatusCodes.Status200OK, new ResponseDto() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
                 }
 
                 User user = await _unitOfWork.UserService.GetByEmail(resetPassword.EmailAddress);
-                AuthenticationDto authentication = new()
+                AuthenticationViewModel authentication = new()
                 {
                     Code = user.Code,
                     Password = resetPassword.NewPassword
                 };
                 await _unitOfWork.AuthenticationService.ChangePassword(authentication);
-                return StatusCode(StatusCodes.Status200OK, new ResponseDto() { Status = true, Message = "Password Reset Successful" });
+                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = "Password Reset Successful" });
                 
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseDto() { Status = false, Message = ex.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseViewModel() { Status = false, Message = ex.Message });
             }
         }
     }

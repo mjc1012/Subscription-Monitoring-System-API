@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Subscription_Monitoring_System_Data.Contracts;
-using Subscription_Monitoring_System_Data.Dtos;
+using Subscription_Monitoring_System_Data.ViewModels;
 using Subscription_Monitoring_System_Domain.Contracts;
 using System;
 using System.Collections.Generic;
@@ -21,11 +21,11 @@ namespace Subscription_Monitoring_System_Domain.Services
             _serviceTypeRepository = serviceTypeRepository;
         }
 
-        public async Task<ServiceTypeDto> Get(int id)
+        public async Task<ServiceTypeViewModel> Get(int id)
         {
             try
             {
-                return _mapper.Map<ServiceTypeDto>(await _serviceTypeRepository.Get(id));
+                return _mapper.Map<ServiceTypeViewModel>(await _serviceTypeRepository.Get(id));
             }
             catch (Exception)
             {
@@ -33,11 +33,11 @@ namespace Subscription_Monitoring_System_Domain.Services
             }
         }
 
-        public async Task<ServiceTypeDto> Get(string name)
+        public async Task<ServiceTypeViewModel> Get(string name)
         {
             try
             {
-                return _mapper.Map<ServiceTypeDto>(await _serviceTypeRepository.Get(name));
+                return _mapper.Map<ServiceTypeViewModel>(await _serviceTypeRepository.Get(name));
             }
             catch (Exception)
             {
@@ -45,11 +45,11 @@ namespace Subscription_Monitoring_System_Domain.Services
             }
         }
 
-        public async Task<List<ServiceTypeDto>> GetList()
+        public async Task<List<ServiceTypeViewModel>> GetList()
         {
             try
             {
-                return _mapper.Map<List<ServiceTypeDto>>(await _serviceTypeRepository.GetList());
+                return _mapper.Map<List<ServiceTypeViewModel>>(await _serviceTypeRepository.GetList());
             }
             catch (Exception)
             {

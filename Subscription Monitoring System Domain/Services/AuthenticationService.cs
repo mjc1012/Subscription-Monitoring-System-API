@@ -2,8 +2,8 @@
 using Microsoft.IdentityModel.Tokens;
 using Subscription_Monitoring_System_Data;
 using Subscription_Monitoring_System_Data.Contracts;
-using Subscription_Monitoring_System_Data.Dtos;
 using Subscription_Monitoring_System_Data.Models;
+using Subscription_Monitoring_System_Data.ViewModels;
 using Subscription_Monitoring_System_Domain.Contracts;
 using System;
 using System.Collections.Generic;
@@ -27,7 +27,7 @@ namespace Subscription_Monitoring_System_Domain.Services
             _mapper = mapper;
         }
 
-        public async Task<bool> UserExists(AuthenticationDto user)
+        public async Task<bool> UserExists(AuthenticationViewModel user)
         {
             try
             {
@@ -39,7 +39,7 @@ namespace Subscription_Monitoring_System_Domain.Services
             }
         }
 
-        public async Task<bool> VerifyPassword(AuthenticationDto loginUser)
+        public async Task<bool> VerifyPassword(AuthenticationViewModel loginUser)
         {
             User dbUser = await _userRepository.GetActive(loginUser.Code);
             var hashBytes = Convert.FromBase64String(dbUser.Password);
@@ -131,7 +131,7 @@ namespace Subscription_Monitoring_System_Domain.Services
             }
         }
 
-        public async Task SaveTokens(AuthenticationDto user, string accessToken, string refreshToken, DateTime refreshTokenExpiryTime)
+        public async Task SaveTokens(AuthenticationViewModel user, string accessToken, string refreshToken, DateTime refreshTokenExpiryTime)
         {
             try
             {
@@ -161,7 +161,7 @@ namespace Subscription_Monitoring_System_Domain.Services
             }
         }
 
-        public async Task ChangePassword(AuthenticationDto user)
+        public async Task ChangePassword(AuthenticationViewModel user)
         {
             try
             {

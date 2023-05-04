@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Subscription_Monitoring_System_Data.Dtos;
+using Subscription_Monitoring_System_Data.ViewModels;
 using Subscription_Monitoring_System_Domain.Contracts;
 using static Subscription_Monitoring_System_Data.Constants;
 
@@ -21,31 +21,31 @@ namespace Subscription_Monitoring_System.Controllers
         {
             try
             {
-                List<ServiceDto> responseData = await _unitOfWork.ServiceService.GetActiveList();
-                return StatusCode(StatusCodes.Status200OK, new ResponseDto() { Status = true, Message = BaseConstants.retrievedData, Value = responseData });
+                List<ServiceViewModel> responseData = await _unitOfWork.ServiceService.GetActiveList();
+                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = BaseConstants.retrievedData, Value = responseData });
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseDto() { Status = false, Message = ex.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseViewModel() { Status = false, Message = ex.Message });
             }
         }
 
         [HttpPost("services")]
-        public async Task<IActionResult> GetList(ServiceFilterDto filter)
+        public async Task<IActionResult> GetList(ServiceFilterViewModel filter)
         {
             try
             {
-                ListDto responseData = await _unitOfWork.ServiceService.GetList(filter);
-                return StatusCode(StatusCodes.Status200OK, new ResponseDto() { Status = true, Message = BaseConstants.retrievedData, Value = responseData });
+                ListViewModel responseData = await _unitOfWork.ServiceService.GetList(filter);
+                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = BaseConstants.retrievedData, Value = responseData });
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseDto() { Status = false, Message = ex.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseViewModel() { Status = false, Message = ex.Message });
             }
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] ServiceDto service)
+        public async Task<IActionResult> Post([FromBody] ServiceViewModel service)
         {
             try
             {
@@ -53,23 +53,23 @@ namespace Subscription_Monitoring_System.Controllers
 
                 if (validationErrors.Any())
                 {
-                    return StatusCode(StatusCodes.Status200OK, new ResponseDto() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
                 }
                 else
                 {
-                    ServiceTypeDto serviceType = await _unitOfWork.ServiceTypeService.Get(service.ServiceTypeName);
+                    ServiceTypeViewModel serviceType = await _unitOfWork.ServiceTypeService.Get(service.ServiceTypeName);
                     await _unitOfWork.ServiceService.Create(service, serviceType);
-                    return StatusCode(StatusCodes.Status200OK, new ResponseDto() { Status = true, Message = ServiceConstants.SuccessAdd });
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = ServiceConstants.SuccessAdd });
                 }
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseDto() { Status = false, Message = ex.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseViewModel() { Status = false, Message = ex.Message });
             }
         }
 
         [HttpPut]
-        public async Task<IActionResult> Put([FromBody] ServiceDto service)
+        public async Task<IActionResult> Put([FromBody] ServiceViewModel service)
         {
             try
             {
@@ -77,18 +77,18 @@ namespace Subscription_Monitoring_System.Controllers
 
                 if (validationErrors.Any())
                 {
-                    return StatusCode(StatusCodes.Status200OK, new ResponseDto() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
                 }
                 else
                 {
-                    ServiceTypeDto serviceType = await _unitOfWork.ServiceTypeService.Get(service.ServiceTypeName);
+                    ServiceTypeViewModel serviceType = await _unitOfWork.ServiceTypeService.Get(service.ServiceTypeName);
                     await _unitOfWork.ServiceService.Update(service, serviceType);
-                    return StatusCode(StatusCodes.Status200OK, new ResponseDto() { Status = true, Message = ServiceConstants.SuccessEdit });
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = ServiceConstants.SuccessEdit });
                 }
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseDto() { Status = false, Message = ex.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseViewModel() { Status = false, Message = ex.Message });
             }
         }
 
@@ -102,17 +102,17 @@ namespace Subscription_Monitoring_System.Controllers
 
                 if (validationErrors.Any())
                 {
-                    return StatusCode(StatusCodes.Status200OK, new ResponseDto() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
                 }
                 else
                 {
                     await _unitOfWork.ServiceService.HardDelete(id);
-                    return StatusCode(StatusCodes.Status200OK, new ResponseDto() { Status = true, Message = ServiceConstants.SuccessDelete });
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = ServiceConstants.SuccessDelete });
                 }
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseDto() { Status = false, Message = ex.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseViewModel() { Status = false, Message = ex.Message });
             }
         }
 
@@ -125,22 +125,22 @@ namespace Subscription_Monitoring_System.Controllers
 
                 if (validationErrors.Any())
                 {
-                    return StatusCode(StatusCodes.Status200OK, new ResponseDto() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
                 }
                 else
                 {
                     await _unitOfWork.ServiceService.SoftDelete(id);
-                    return StatusCode(StatusCodes.Status200OK, new ResponseDto() { Status = true, Message = ServiceConstants.SuccessDelete });
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = ServiceConstants.SuccessDelete });
                 }
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseDto() { Status = false, Message = ex.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseViewModel() { Status = false, Message = ex.Message });
             }
         }
 
         [HttpPut("soft-delete-services")]
-        public async Task<IActionResult> SoftDelete([FromBody] RecordIdsDto records)
+        public async Task<IActionResult> SoftDelete([FromBody] RecordIdsViewModel records)
         {
             try
             {
@@ -148,23 +148,23 @@ namespace Subscription_Monitoring_System.Controllers
 
                 if (validationErrors.Any())
                 {
-                    return StatusCode(StatusCodes.Status200OK, new ResponseDto() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
                 }
                 else
                 {
 
                     await _unitOfWork.ServiceService.SoftDelete(records);
-                    return StatusCode(StatusCodes.Status200OK, new ResponseDto() { Status = true, Message = ServiceConstants.SuccessDelete });
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = ServiceConstants.SuccessDelete });
                 }
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseDto() { Status = false, Message = ex.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseViewModel() { Status = false, Message = ex.Message });
             }
         }
 
         [HttpPut("hard-delete-services")]
-        public async Task<IActionResult> HardDelete([FromBody] RecordIdsDto records)
+        public async Task<IActionResult> HardDelete([FromBody] RecordIdsViewModel records)
         {
             try
             {
@@ -172,18 +172,18 @@ namespace Subscription_Monitoring_System.Controllers
 
                 if (validationErrors.Any())
                 {
-                    return StatusCode(StatusCodes.Status200OK, new ResponseDto() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
                 }
                 else
                 {
 
                     await _unitOfWork.ServiceService.HardDelete(records);
-                    return StatusCode(StatusCodes.Status200OK, new ResponseDto() { Status = true, Message = ServiceConstants.SuccessDelete });
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = ServiceConstants.SuccessDelete });
                 }
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseDto() { Status = false, Message = ex.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseViewModel() { Status = false, Message = ex.Message });
             }
         }
 
@@ -197,22 +197,22 @@ namespace Subscription_Monitoring_System.Controllers
 
                 if (validationErrors.Any())
                 {
-                    return StatusCode(StatusCodes.Status200OK, new ResponseDto() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
                 }
                 else
                 {
                     await _unitOfWork.ServiceService.Restore(id);
-                    return StatusCode(StatusCodes.Status200OK, new ResponseDto() { Status = true, Message = ServiceConstants.SuccessRestore });
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = ServiceConstants.SuccessRestore });
                 }
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseDto() { Status = false, Message = ex.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseViewModel() { Status = false, Message = ex.Message });
             }
         }
 
         [HttpPut("restore-services")]
-        public async Task<IActionResult> Restore([FromBody] RecordIdsDto records)
+        public async Task<IActionResult> Restore([FromBody] RecordIdsViewModel records)
         {
             try
             {
@@ -220,18 +220,18 @@ namespace Subscription_Monitoring_System.Controllers
 
                 if (validationErrors.Any())
                 {
-                    return StatusCode(StatusCodes.Status200OK, new ResponseDto() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
                 }
                 else
                 {
 
                     await _unitOfWork.ServiceService.Restore(records);
-                    return StatusCode(StatusCodes.Status200OK, new ResponseDto() { Status = true, Message = ServiceConstants.SuccessRestore });
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = ServiceConstants.SuccessRestore });
                 }
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseDto() { Status = false, Message = ex.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseViewModel() { Status = false, Message = ex.Message });
             }
         }
     }

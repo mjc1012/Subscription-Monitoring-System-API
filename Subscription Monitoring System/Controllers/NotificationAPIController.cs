@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Subscription_Monitoring_System_Data.Dtos;
+using Subscription_Monitoring_System_Data.ViewModels;
 using Subscription_Monitoring_System_Domain.Contracts;
 using static Subscription_Monitoring_System_Data.Constants;
 
@@ -26,22 +26,22 @@ namespace Subscription_Monitoring_System.Controllers
 
                 if (validationErrors.Any())
                 {
-                    return StatusCode(StatusCodes.Status200OK, new ResponseDto() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
                 }
                 else
                 {
                     await _unitOfWork.NotificationService.HardDelete(id);
-                    return StatusCode(StatusCodes.Status200OK, new ResponseDto() { Status = true, Message = ClientConstants.SuccessDelete });
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = ClientConstants.SuccessDelete });
                 }
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseDto() { Status = false, Message = ex.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseViewModel() { Status = false, Message = ex.Message });
             }
         }
 
         [HttpPut("delete-notifications")]
-        public async Task<IActionResult> HardDelete([FromBody] RecordIdsDto records)
+        public async Task<IActionResult> HardDelete([FromBody] RecordIdsViewModel records)
         {
             try
             {
@@ -49,18 +49,18 @@ namespace Subscription_Monitoring_System.Controllers
 
                 if (validationErrors.Any())
                 {
-                    return StatusCode(StatusCodes.Status200OK, new ResponseDto() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
                 }
                 else
                 {
 
                     await _unitOfWork.NotificationService.HardDelete(records);
-                    return StatusCode(StatusCodes.Status200OK, new ResponseDto() { Status = true, Message = ClientConstants.SuccessDelete });
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = ClientConstants.SuccessDelete });
                 }
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseDto() { Status = false, Message = ex.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseViewModel() { Status = false, Message = ex.Message });
             }
         }
     }

@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Hosting;
-using Subscription_Monitoring_System_Data.Dtos;
 using Subscription_Monitoring_System_Data.Models;
+using Subscription_Monitoring_System_Data.ViewModels;
 using Subscription_Monitoring_System_Domain.Contracts;
 using System;
 using System.Collections.Generic;
@@ -47,7 +47,7 @@ namespace Subscription_Monitoring_System_Domain.Services
             }
         }
 
-        public void DeleteImage(UserDto user)
+        public void DeleteImage(UserViewModel user)
         {
             try
             {

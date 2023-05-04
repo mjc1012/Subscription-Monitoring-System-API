@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using Subscription_Monitoring_System_Data.Contracts;
-using Subscription_Monitoring_System_Data.Dtos;
 using Subscription_Monitoring_System_Data.Models;
 using Subscription_Monitoring_System_Data.Repositories;
+using Subscription_Monitoring_System_Data.ViewModels;
 using Subscription_Monitoring_System_Domain.Contracts;
 using System;
 using System.Collections.Generic;
@@ -60,12 +60,12 @@ namespace Subscription_Monitoring_System_Domain.Services
             }
         }
 
-        public async Task<List<NotificationDto>> GetList(int userId)
+        public async Task<List<NotificationViewModel>> GetList(int userId)
         {
             try
             {
                 List<UserNotification> userNotifications = await _userNotificationRepository.GetList(userId);
-                return _mapper.Map<List<NotificationDto>>(userNotifications);
+                return _mapper.Map<List<NotificationViewModel>>(userNotifications);
             }
             catch (Exception)
             {
@@ -97,7 +97,7 @@ namespace Subscription_Monitoring_System_Domain.Services
             }
         }
 
-        public async Task HardDelete(RecordIdsDto records)
+        public async Task HardDelete(RecordIdsViewModel records)
         {
             try
             {
@@ -109,7 +109,7 @@ namespace Subscription_Monitoring_System_Domain.Services
             }
         }
 
-        public async Task SoftDelete(RecordIdsDto records)
+        public async Task SoftDelete(RecordIdsViewModel records)
         {
             try
             {
@@ -133,7 +133,7 @@ namespace Subscription_Monitoring_System_Domain.Services
             }
         }
 
-        public async Task Restore(RecordIdsDto records)
+        public async Task Restore(RecordIdsViewModel records)
         {
             try
             {

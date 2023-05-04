@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Subscription_Monitoring_System_Data.Dtos;
+using Subscription_Monitoring_System_Data.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +11,6 @@ namespace Subscription_Monitoring_System_Domain.Contracts
     public interface IImageService
     {
         public string SaveImage(IFormFile imageFile);
-        public void DeleteImage(UserDto user);
+        public void DeleteImage(UserViewModel user);
     }
 }

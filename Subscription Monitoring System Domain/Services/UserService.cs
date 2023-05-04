@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using Subscription_Monitoring_System_Data.Contracts;
-using Subscription_Monitoring_System_Data.Dtos;
 using Subscription_Monitoring_System_Data.Models;
 using Subscription_Monitoring_System_Data.Repositories;
+using Subscription_Monitoring_System_Data.ViewModels;
 using Subscription_Monitoring_System_Domain.Contracts;
 using System;
 using System.Collections.Generic;
@@ -24,11 +24,11 @@ namespace Subscription_Monitoring_System_Domain.Services
             _userRepository = userRepository;
         }
 
-        public async Task<List<UserDto>> GetActiveList()
+        public async Task<List<UserViewModel>> GetActiveList()
         {
             try
             {
-                return _mapper.Map<List<UserDto>>(await _userRepository.GetActiveList());
+                return _mapper.Map<List<UserViewModel>>(await _userRepository.GetActiveList());
             }
             catch (Exception)
             {
@@ -36,11 +36,11 @@ namespace Subscription_Monitoring_System_Domain.Services
             }
         }
 
-        public async Task<UserDto> GetActive(int id)
+        public async Task<UserViewModel> GetActive(int id)
         {
             try
             {
-                return _mapper.Map<UserDto>(await _userRepository.GetActive(id));
+                return _mapper.Map<UserViewModel>(await _userRepository.GetActive(id));
             }
             catch (Exception)
             {
@@ -48,11 +48,11 @@ namespace Subscription_Monitoring_System_Domain.Services
             }
         }
 
-        public async Task<UserDto> GetInactive(int id)
+        public async Task<UserViewModel> GetInactive(int id)
         {
             try
             {
-                return _mapper.Map<UserDto>(await _userRepository.GetInactive(id));
+                return _mapper.Map<UserViewModel>(await _userRepository.GetInactive(id));
             }
             catch (Exception)
             {
@@ -60,11 +60,11 @@ namespace Subscription_Monitoring_System_Domain.Services
             }
         }
 
-        public async Task<UserDto> GetActive(string code)
+        public async Task<UserViewModel> GetActive(string code)
         {
             try
             {
-                return _mapper.Map<UserDto>(await _userRepository.GetActive(code));
+                return _mapper.Map<UserViewModel>(await _userRepository.GetActive(code));
             }
             catch (Exception)
             {
@@ -96,11 +96,11 @@ namespace Subscription_Monitoring_System_Domain.Services
             }
         }
 
-        public async Task<ListDto> GetList(UserFilterDto filter)
+        public async Task<ListViewModel> GetList(UserFilterViewModel filter)
         {
             try
             {
-                List<UserDto> users = _mapper.Map<List<UserDto>>(await _userRepository.GetList(filter));
+                List<UserViewModel> users = _mapper.Map<List<UserViewModel>>(await _userRepository.GetList(filter));
 
                 int totalCount = users.Count;
                 int totalPages = (int)Math.Ceiling((double)totalCount / BaseConstants.PageSize);
@@ -112,7 +112,7 @@ namespace Subscription_Monitoring_System_Domain.Services
 
                 users = users.Skip(BaseConstants.PageSize * (filter.Page - 1)).Take(BaseConstants.PageSize).ToList();
 
-                return new ListDto { Pagination = pagination, Data = users };
+                return new ListViewModel { Pagination = pagination, Data = users };
             }
             catch (Exception)
             {
@@ -121,11 +121,11 @@ namespace Subscription_Monitoring_System_Domain.Services
 
         }
 
-        public async Task<List<UserDto>> GetList(List<int> ids)
+        public async Task<List<UserViewModel>> GetList(List<int> ids)
         {
             try
             {
-                return _mapper.Map<List<UserDto>>(await _userRepository.GetList(ids));
+                return _mapper.Map<List<UserViewModel>>(await _userRepository.GetList(ids));
             }
             catch (Exception)
             {
@@ -133,7 +133,7 @@ namespace Subscription_Monitoring_System_Domain.Services
             }
         }
 
-        public async Task Create(UserDto user, DepartmentDto department)
+        public async Task Create(UserViewModel user, DepartmentViewModel department)
         {
             try
             {
@@ -147,7 +147,7 @@ namespace Subscription_Monitoring_System_Domain.Services
             }
         }
 
-        public async Task Update(UserDto user, DepartmentDto department)
+        public async Task Update(UserViewModel user, DepartmentViewModel department)
         {
             try
             {
@@ -185,7 +185,7 @@ namespace Subscription_Monitoring_System_Domain.Services
             }
         }
 
-        public async Task HardDelete(RecordIdsDto records)
+        public async Task HardDelete(RecordIdsViewModel records)
         {
             try
             {
@@ -197,7 +197,7 @@ namespace Subscription_Monitoring_System_Domain.Services
             }
         }
 
-        public async Task SoftDelete(RecordIdsDto records)
+        public async Task SoftDelete(RecordIdsViewModel records)
         {
             try
             {
@@ -221,7 +221,7 @@ namespace Subscription_Monitoring_System_Domain.Services
             }
         }
 
-        public async Task Restore(RecordIdsDto records)
+        public async Task Restore(RecordIdsViewModel records)
         {
             try
             {
@@ -233,7 +233,7 @@ namespace Subscription_Monitoring_System_Domain.Services
             }
         }
 
-        public async Task<bool> UserExists(UserDto user)
+        public async Task<bool> UserExists(UserViewModel user)
         {
             try
             {

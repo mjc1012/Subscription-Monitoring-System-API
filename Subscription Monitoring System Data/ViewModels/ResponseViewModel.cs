@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Subscription_Monitoring_System_Data.Dtos
+namespace Subscription_Monitoring_System_Data.ViewModels
 {
-    public class ResponseDto
+    public class ResponseViewModel
     {
         public bool Status { get; set; }
         public string Message { get; set; } = string.Empty;

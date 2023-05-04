@@ -4,14 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Subscription_Monitoring_System_Data.Dtos
+namespace Subscription_Monitoring_System_Data.ViewModels
 {
-    public class EmailDto
+    public class EmailViewModel
     {
         public string To { get; set; }
         public string Subject { get; set; }
         public string Content { get; set; }
-        public EmailDto(string to, string subject, string content)
+        public EmailViewModel(string to, string subject, string content)
         {
             To = to;
             Subject = subject;

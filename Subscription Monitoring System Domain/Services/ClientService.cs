@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Subscription_Monitoring_System_Data.Contracts;
-using Subscription_Monitoring_System_Data.Dtos;
 using Subscription_Monitoring_System_Data.Models;
+using Subscription_Monitoring_System_Data.ViewModels;
 using Subscription_Monitoring_System_Domain.Contracts;
 using System;
 using System.Collections.Generic;
@@ -25,11 +25,11 @@ namespace Subscription_Monitoring_System_Domain.Services
             _mapper = mapper;
         }
 
-        public async Task<List<ClientDto>> GetActiveList()
+        public async Task<List<ClientViewModel>> GetActiveList()
         {
             try
             {
-                return _mapper.Map<List<ClientDto>>(await _clientRepository.GetActiveList());
+                return _mapper.Map<List<ClientViewModel>>(await _clientRepository.GetActiveList());
             }
             catch (Exception)
             {
@@ -37,11 +37,11 @@ namespace Subscription_Monitoring_System_Domain.Services
             }
         }
 
-        public async Task<ClientDto> GetActive(int id)
+        public async Task<ClientViewModel> GetActive(int id)
         {
             try
             {
-                return _mapper.Map<ClientDto>(await _clientRepository.GetActive(id));
+                return _mapper.Map<ClientViewModel>(await _clientRepository.GetActive(id));
             }
             catch (Exception)
             {
@@ -49,11 +49,11 @@ namespace Subscription_Monitoring_System_Domain.Services
             }
         }
 
-        public async Task<ClientDto> GetInactive(int id)
+        public async Task<ClientViewModel> GetInactive(int id)
         {
             try
             {
-                return _mapper.Map<ClientDto>(await _clientRepository.GetInactive(id));
+                return _mapper.Map<ClientViewModel>(await _clientRepository.GetInactive(id));
             }
             catch (Exception)
             {
@@ -61,11 +61,11 @@ namespace Subscription_Monitoring_System_Domain.Services
             }
         }
 
-        public async Task<ClientDto> GetActive(string name)
+        public async Task<ClientViewModel> GetActive(string name)
         {
             try
             {
-                return _mapper.Map<ClientDto>(await _clientRepository.GetActive(name));
+                return _mapper.Map<ClientViewModel>(await _clientRepository.GetActive(name));
             }
             catch (Exception)
             {
@@ -73,11 +73,11 @@ namespace Subscription_Monitoring_System_Domain.Services
             }
         }
 
-        public async Task<ListDto> GetList(ClientFilterDto filter)
+        public async Task<ListViewModel> GetList(ClientFilterViewModel filter)
         {
             try
             {
-                List<ClientDto> clients = _mapper.Map<List<ClientDto>>(await _clientRepository.GetList(filter));
+                List<ClientViewModel> clients = _mapper.Map<List<ClientViewModel>>(await _clientRepository.GetList(filter));
 
                 int totalCount = clients.Count;
                 int totalPages = (int)Math.Ceiling((double)totalCount / BaseConstants.PageSize);
@@ -89,7 +89,7 @@ namespace Subscription_Monitoring_System_Domain.Services
 
                 clients = clients.Skip(BaseConstants.PageSize * (filter.Page - 1)).Take(BaseConstants.PageSize).ToList();
 
-                return new ListDto { Pagination = pagination, Data = clients };
+                return new ListViewModel { Pagination = pagination, Data = clients };
             }
             catch (Exception)
             {
@@ -98,11 +98,11 @@ namespace Subscription_Monitoring_System_Domain.Services
 
         }
 
-        public async Task<List<ClientDto>> GetList(List<int> ids)
+        public async Task<List<ClientViewModel>> GetList(List<int> ids)
         {
             try
             {
-                return _mapper.Map<List<ClientDto>>(await _clientRepository.GetList(ids));
+                return _mapper.Map<List<ClientViewModel>>(await _clientRepository.GetList(ids));
             }
             catch(Exception)
             {
@@ -110,7 +110,7 @@ namespace Subscription_Monitoring_System_Domain.Services
             }
         }
 
-        public async Task Create(ClientDto client)
+        public async Task Create(ClientViewModel client)
         {
             try
             {
@@ -122,7 +122,7 @@ namespace Subscription_Monitoring_System_Domain.Services
             }
         }
 
-        public async Task Update(ClientDto client)
+        public async Task Update(ClientViewModel client)
         {
             try
             {
@@ -158,7 +158,7 @@ namespace Subscription_Monitoring_System_Domain.Services
             }
         }
 
-        public async Task HardDelete(RecordIdsDto records)
+        public async Task HardDelete(RecordIdsViewModel records)
         {
             try
             {
@@ -170,7 +170,7 @@ namespace Subscription_Monitoring_System_Domain.Services
             }
         }
 
-        public async Task SoftDelete(RecordIdsDto records)
+        public async Task SoftDelete(RecordIdsViewModel records)
         {
             try
             {
@@ -194,7 +194,7 @@ namespace Subscription_Monitoring_System_Domain.Services
             }
         }
 
-        public async Task Restore(RecordIdsDto records)
+        public async Task Restore(RecordIdsViewModel records)
         {
             try
             {
@@ -206,7 +206,7 @@ namespace Subscription_Monitoring_System_Domain.Services
             }
         }
 
-        public async Task<bool> ClientExists(ClientDto client)
+        public async Task<bool> ClientExists(ClientViewModel client)
         {
             try
             {

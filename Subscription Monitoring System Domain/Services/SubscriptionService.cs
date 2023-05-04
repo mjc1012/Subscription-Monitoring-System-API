@@ -2,9 +2,9 @@
 using Org.BouncyCastle.Asn1.Ocsp;
 using Subscription_Monitoring_System_Data;
 using Subscription_Monitoring_System_Data.Contracts;
-using Subscription_Monitoring_System_Data.Dtos;
 using Subscription_Monitoring_System_Data.Models;
 using Subscription_Monitoring_System_Data.Repositories;
+using Subscription_Monitoring_System_Data.ViewModels;
 using Subscription_Monitoring_System_Domain.Contracts;
 using System;
 using System.Collections.Generic;
@@ -31,12 +31,12 @@ namespace Subscription_Monitoring_System_Domain.Services
             _emailService = emailService;
         }
 
-        public async Task<SubscriptionDto> GetActive(int id)
+        public async Task<SubscriptionViewModel> GetActive(int id)
         {
             try
             {
                 Subscription subscription = await _subscriptionRepository.GetActive(id);
-                SubscriptionDto subscriptionMapped = _mapper.Map<SubscriptionDto>(subscription);
+                SubscriptionViewModel subscriptionMapped = _mapper.Map<SubscriptionViewModel>(subscription);
 
                 if (subscription.Service.ServiceType.Name == SubscriptionTypeConstants.DAILY) subscriptionMapped.TotalPrice = (subscription.EndDate.Date - subscription.StartDate.Date).Days * subscription.Service.Price;
                 if (subscription.Service.ServiceType.Name == SubscriptionTypeConstants.WEEKLY) subscriptionMapped.TotalPrice = Math.Ceiling((subscription.EndDate.Date - subscription.StartDate.Date).Days / 7.0) * subscription.Service.Price;
@@ -50,11 +50,11 @@ namespace Subscription_Monitoring_System_Domain.Services
             }
         }
 
-        public async Task<SubscriptionDto> CreateHistory(int id)
+        public async Task<SubscriptionViewModel> CreateHistory(int id)
         {
             try
             {
-                return _mapper.Map<SubscriptionDto>(await _subscriptionRepository.CreateHistory(id));
+                return _mapper.Map<SubscriptionViewModel>(await _subscriptionRepository.CreateHistory(id));
             }
             catch (Exception)
             {
@@ -62,12 +62,12 @@ namespace Subscription_Monitoring_System_Domain.Services
             }
         }
 
-        public async Task<SubscriptionDto> GetInactive(int id)
+        public async Task<SubscriptionViewModel> GetInactive(int id)
         {
             try
             {
                 Subscription subscription = await _subscriptionRepository.GetInactive(id);
-                SubscriptionDto subscriptionMapped = _mapper.Map<SubscriptionDto>(subscription);
+                SubscriptionViewModel subscriptionMapped = _mapper.Map<SubscriptionViewModel>(subscription);
                 if (subscription.Service.ServiceType.Name == SubscriptionTypeConstants.DAILY) subscriptionMapped.TotalPrice = (subscription.EndDate.Date - subscription.StartDate.Date).Days * subscription.Service.Price;
                 if (subscription.Service.ServiceType.Name == SubscriptionTypeConstants.WEEKLY) subscriptionMapped.TotalPrice = Math.Ceiling((subscription.EndDate.Date - subscription.StartDate.Date).Days / 7.0) * subscription.Service.Price;
                 if (subscription.Service.ServiceType.Name == SubscriptionTypeConstants.MONTHLY) subscriptionMapped.TotalPrice = Math.Ceiling((subscription.EndDate.Date - subscription.StartDate.Date).Days / 30.0) * subscription.Service.Price;
@@ -82,8 +82,8 @@ namespace Subscription_Monitoring_System_Domain.Services
 
         public async Task SendExpiringSubscriptionNotification()
         {
-            List<SubscriptionDto> subscriptions = _mapper.Map<List<SubscriptionDto>>(await _subscriptionRepository.GetList());
-            foreach (SubscriptionDto subscription in subscriptions)
+            List<SubscriptionViewModel> subscriptions = _mapper.Map<List<SubscriptionViewModel>>(await _subscriptionRepository.GetList());
+            foreach (SubscriptionViewModel subscription in subscriptions)
             {   
                 if(!subscription.IsActive) continue;
 
@@ -91,7 +91,7 @@ namespace Subscription_Monitoring_System_Domain.Services
                 {
                     await _subscriptionRepository.Expired(subscription.Id);
 
-                    NotificationDto notification = new()
+                    NotificationViewModel notification = new()
                     {
                         Description = NotificationConstants.SubscriptionExpired(subscription.Id),
                         Date = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
@@ -100,14 +100,14 @@ namespace Subscription_Monitoring_System_Domain.Services
                     };
                     await _notificationService.Create(notification, subscription.UserRecipients.Select(p => p.Id).ToList());
 
-                    foreach (ClientDto clientRecipient in subscription.ClientRecipients)
+                    foreach (ClientViewModel clientRecipient in subscription.ClientRecipients)
                     {
-                        _emailService.SendEmail(new EmailDto(clientRecipient.EmailAddress, "Subscription is Expired", EmailBody.SendSubscriptionExpiryEmail("Subscription is Expired", NotificationConstants.SubscriptionExpired(subscription.Id))));
+                        _emailService.SendEmail(new EmailViewModel(clientRecipient.EmailAddress, "Subscription is Expired", EmailBody.SendSubscriptionExpiryEmail("Subscription is Expired", NotificationConstants.SubscriptionExpired(subscription.Id))));
                     }
                 }
                 else if (subscription.RemainingDays == 7)
                 {
-                    NotificationDto notification = new()
+                    NotificationViewModel notification = new()
                     {
                         Description = NotificationConstants.SubscriptionExpiring(subscription.Id, subscription.RemainingDays),
                         Date = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
@@ -116,23 +116,23 @@ namespace Subscription_Monitoring_System_Domain.Services
                     };
                     await _notificationService.Create(notification, subscription.UserRecipients.Select(p => p.Id).ToList());
 
-                    foreach (ClientDto clientRecipient in subscription.ClientRecipients)
+                    foreach (ClientViewModel clientRecipient in subscription.ClientRecipients)
                     {
-                        _emailService.SendEmail(new EmailDto(clientRecipient.EmailAddress, "Subscription is Expiring", EmailBody.SendSubscriptionExpiryEmail("Subscription is Expiring", NotificationConstants.SubscriptionExpiring(subscription.Id, subscription.RemainingDays))));
+                        _emailService.SendEmail(new EmailViewModel(clientRecipient.EmailAddress, "Subscription is Expiring", EmailBody.SendSubscriptionExpiryEmail("Subscription is Expiring", NotificationConstants.SubscriptionExpiring(subscription.Id, subscription.RemainingDays))));
                     }
                 }
             }
         }
 
-        public async Task<ListDto> GetList(SubscriptionFilterDto filter)
+        public async Task<ListViewModel> GetList(SubscriptionFilterViewModel filter)
         {
             try
             {
                 List<Subscription> subscriptions = await _subscriptionRepository.GetList();
-                List<SubscriptionDto> subscriptionsMapped = new List<SubscriptionDto>();
+                List<SubscriptionViewModel> subscriptionsMapped = new List<SubscriptionViewModel>();
                 foreach(Subscription subscription in subscriptions)
                 {
-                    SubscriptionDto subscriptionMapped = _mapper.Map<SubscriptionDto>(subscription);
+                    SubscriptionViewModel subscriptionMapped = _mapper.Map<SubscriptionViewModel>(subscription);
                     if (subscription.Service.ServiceType.Name == SubscriptionTypeConstants.DAILY) subscriptionMapped.TotalPrice = (subscription.EndDate.Date - subscription.StartDate.Date).Days * subscription.Service.Price;
                     if (subscription.Service.ServiceType.Name == SubscriptionTypeConstants.WEEKLY) subscriptionMapped.TotalPrice = Math.Ceiling((subscription.EndDate.Date - subscription.StartDate.Date).Days / 7.0) * subscription.Service.Price;
                     if (subscription.Service.ServiceType.Name == SubscriptionTypeConstants.MONTHLY) subscriptionMapped.TotalPrice = Math.Ceiling((subscription.EndDate.Date - subscription.StartDate.Date).Days / 30.0) * subscription.Service.Price;
@@ -163,7 +163,7 @@ namespace Subscription_Monitoring_System_Domain.Services
 
                 subscriptionsMapped = subscriptionsMapped.Skip(BaseConstants.PageSize * (filter.Page - 1)).Take(BaseConstants.PageSize).ToList();
 
-                return new ListDto { Pagination = pagination, Data = subscriptionsMapped };
+                return new ListViewModel { Pagination = pagination, Data = subscriptionsMapped };
             }
             catch (Exception)
             {
@@ -171,7 +171,7 @@ namespace Subscription_Monitoring_System_Domain.Services
             }
         }
 
-        public List<SubscriptionDto> SortAscending(string sortBy, List<SubscriptionDto> subscriptions)
+        public List<SubscriptionViewModel> SortAscending(string sortBy, List<SubscriptionViewModel> subscriptions)
         {
             return sortBy switch
             {
@@ -188,7 +188,7 @@ namespace Subscription_Monitoring_System_Domain.Services
             };
         }
 
-        public List<SubscriptionDto> SortDescending(string sortBy, List<SubscriptionDto> subscriptions)
+        public List<SubscriptionViewModel> SortDescending(string sortBy, List<SubscriptionViewModel> subscriptions)
         {
             return sortBy switch
             {
@@ -205,15 +205,15 @@ namespace Subscription_Monitoring_System_Domain.Services
             };
         }
 
-        public async Task<List<SubscriptionDto>> GetList(List<int> ids)
+        public async Task<List<SubscriptionViewModel>> GetList(List<int> ids)
         {
             try
             {
                 List<Subscription> subscriptions = await _subscriptionRepository.GetList(ids);
-                List<SubscriptionDto> subscriptionsMapped = new List<SubscriptionDto>();
+                List<SubscriptionViewModel> subscriptionsMapped = new List<SubscriptionViewModel>();
                 foreach (Subscription subscription in subscriptions)
                 {
-                    SubscriptionDto subscriptionMapped = _mapper.Map<SubscriptionDto>(subscription);
+                    SubscriptionViewModel subscriptionMapped = _mapper.Map<SubscriptionViewModel>(subscription);
                     if (subscription.Service.ServiceType.Name == SubscriptionTypeConstants.DAILY) subscriptionMapped.TotalPrice = (subscription.EndDate.Date - subscription.StartDate.Date).Days * subscription.Service.Price;
                     if (subscription.Service.ServiceType.Name == SubscriptionTypeConstants.WEEKLY) subscriptionMapped.TotalPrice = Math.Ceiling((subscription.EndDate.Date - subscription.StartDate.Date).Days / 7.0) * subscription.Service.Price;
                     if (subscription.Service.ServiceType.Name == SubscriptionTypeConstants.MONTHLY) subscriptionMapped.TotalPrice = Math.Ceiling((subscription.EndDate.Date - subscription.StartDate.Date).Days / 30.0) * subscription.Service.Price;
@@ -228,15 +228,15 @@ namespace Subscription_Monitoring_System_Domain.Services
             }
         }
 
-        public async Task<List<SubscriptionDto>> GetHistoryList(int id)
+        public async Task<List<SubscriptionViewModel>> GetHistoryList(int id)
         {
             try
             {
                 List<Subscription> subscriptions = await _subscriptionRepository.GetHistoryList(id);
-                List<SubscriptionDto> subscriptionsMapped = new List<SubscriptionDto>();
+                List<SubscriptionViewModel> subscriptionsMapped = new List<SubscriptionViewModel>();
                 foreach (Subscription subscription in subscriptions)
                 {
-                    SubscriptionDto subscriptionMapped = _mapper.Map<SubscriptionDto>(subscription);
+                    SubscriptionViewModel subscriptionMapped = _mapper.Map<SubscriptionViewModel>(subscription);
                     if (subscription.Service.ServiceType.Name == SubscriptionTypeConstants.DAILY) subscriptionMapped.TotalPrice = (subscription.EndDate.Date - subscription.StartDate.Date).Days * subscription.Service.Price;
                     if (subscription.Service.ServiceType.Name == SubscriptionTypeConstants.WEEKLY) subscriptionMapped.TotalPrice = Math.Ceiling((subscription.EndDate.Date - subscription.StartDate.Date).Days / 7.0) * subscription.Service.Price;
                     if (subscription.Service.ServiceType.Name == SubscriptionTypeConstants.MONTHLY) subscriptionMapped.TotalPrice = Math.Ceiling((subscription.EndDate.Date - subscription.StartDate.Date).Days / 30.0) * subscription.Service.Price;
@@ -251,7 +251,7 @@ namespace Subscription_Monitoring_System_Domain.Services
             }
         }
 
-        public async Task<SubscriptionDto> Create(SubscriptionDto subscription, ClientDto client, ServiceDto service, UserDto createdBy)
+        public async Task<SubscriptionViewModel> Create(SubscriptionViewModel subscription, ClientViewModel client, ServiceViewModel service, UserViewModel createdBy)
         {
             try
             {
@@ -261,7 +261,7 @@ namespace Subscription_Monitoring_System_Domain.Services
                 subscriptionMapped.ServiceId = service.Id;
                 subscriptionMapped.CreatedById = createdBy.Id;
                 subscriptionMapped.CreatedOn = DateTime.Now;
-                return _mapper.Map<SubscriptionDto>(await _subscriptionRepository.Create(subscriptionMapped, subscription.ClientIds, subscription.UserIds));
+                return _mapper.Map<SubscriptionViewModel>(await _subscriptionRepository.Create(subscriptionMapped, subscription.ClientIds, subscription.UserIds));
             }
             catch (Exception)
             {
@@ -269,7 +269,7 @@ namespace Subscription_Monitoring_System_Domain.Services
             }
         }
 
-        public async Task<SubscriptionDto> Update(SubscriptionDto subscription, ClientDto client, ServiceDto service, UserDto updatedBy)
+        public async Task<SubscriptionViewModel> Update(SubscriptionViewModel subscription, ClientViewModel client, ServiceViewModel service, UserViewModel updatedBy)
         {
             try
             {
@@ -278,7 +278,7 @@ namespace Subscription_Monitoring_System_Domain.Services
                 subscriptionMapped.ServiceId = service.Id;
                 subscriptionMapped.UpdatedById = updatedBy.Id;
                 subscriptionMapped.UpdatedOn = DateTime.Now;
-                return _mapper.Map<SubscriptionDto>(await _subscriptionRepository.Update(subscriptionMapped, subscription.ClientIds, subscription.UserIds));
+                return _mapper.Map<SubscriptionViewModel>(await _subscriptionRepository.Update(subscriptionMapped, subscription.ClientIds, subscription.UserIds));
             }
             catch (Exception)
             {
@@ -310,7 +310,7 @@ namespace Subscription_Monitoring_System_Domain.Services
             }
         }
 
-        public async Task HardDelete(RecordIdsDto records)
+        public async Task HardDelete(RecordIdsViewModel records)
         {
             try
             {
@@ -322,7 +322,7 @@ namespace Subscription_Monitoring_System_Domain.Services
             }
         }
 
-        public async Task SoftDelete(RecordIdsDto records)
+        public async Task SoftDelete(RecordIdsViewModel records)
         {
             try
             {
@@ -346,7 +346,7 @@ namespace Subscription_Monitoring_System_Domain.Services
             }
         }
 
-        public async Task Restore(RecordIdsDto records)
+        public async Task Restore(RecordIdsViewModel records)
         {
             try
             {
@@ -358,7 +358,7 @@ namespace Subscription_Monitoring_System_Domain.Services
             }
         }
 
-        public async Task<bool> SubscriptionExists(SubscriptionDto subscription)
+        public async Task<bool> SubscriptionExists(SubscriptionViewModel subscription)
         {
             try
             {

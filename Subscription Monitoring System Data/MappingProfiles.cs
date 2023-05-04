@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using Subscription_Monitoring_System_Data.Dtos;
 using Subscription_Monitoring_System_Data.Models;
+using Subscription_Monitoring_System_Data.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -15,21 +15,21 @@ namespace Subscription_Monitoring_System_Data
     {
         public MappingProfiles()
         {
-            CreateMap<Client, ClientDto>().ReverseMap();
+            CreateMap<Client, ClientViewModel>().ReverseMap();
 
-            CreateMap<Department, DepartmentDto>().ReverseMap();
+            CreateMap<Department, DepartmentViewModel>().ReverseMap();
 
-            CreateMap<ServiceTypeDto, ServiceType>().ReverseMap();
+            CreateMap<ServiceTypeViewModel, ServiceType>().ReverseMap();
 
-            CreateMap<ServiceDto, Service>();
+            CreateMap<ServiceViewModel, Service>();
 
-            CreateMap<Service, ServiceDto>()
+            CreateMap<Service, ServiceViewModel>()
                 .ForMember(
                 destiny => destiny.ServiceTypeName,
                 opt => opt.MapFrom(origin => origin.ServiceType.Name)
                 );
 
-            CreateMap<User, UserDto>()
+            CreateMap<User, UserViewModel>()
                  .ForMember(
                 destiny => destiny.DepartmentName,
                 opt => opt.MapFrom(origin => origin.Department.Name)
@@ -39,17 +39,17 @@ namespace Subscription_Monitoring_System_Data
                 opt => opt.MapFrom(origin => origin.UserNotifications.Where(p=> p.IsSeen == false).Count())
                 );
 
-            CreateMap<UserDto, User>();
+            CreateMap<UserViewModel, User>();
 
-            CreateMap<AuthenticationDto, User>();
+            CreateMap<AuthenticationViewModel, User>();
 
-            CreateMap<Notification, NotificationDto>()
+            CreateMap<Notification, NotificationViewModel>()
                 .ForMember(
                 destiny => destiny.Date,
                 opt => opt.MapFrom(origin => origin.Date.ToString("yyyy-MM-dd HH:mm:ss"))
                 );
 
-            CreateMap<UserNotification, NotificationDto>()
+            CreateMap<UserNotification, NotificationViewModel>()
                 .ForMember(
                 destiny => destiny.Date,
                 opt => opt.MapFrom(origin => origin.Notification.Date.ToString("yyyy-MM-dd HH:mm:ss"))
@@ -63,13 +63,13 @@ namespace Subscription_Monitoring_System_Data
                 opt => opt.MapFrom(origin => origin.Notification.SubscriptionId)
                 );
 
-            CreateMap<NotificationDto, Notification>()
+            CreateMap<NotificationViewModel, Notification>()
                 .ForMember(
                 destiny => destiny.Date,
                 opt => opt.MapFrom(origin => DateTime.ParseExact(origin.Date, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture))
                 );
 
-            CreateMap<Subscription, SubscriptionDto>()
+            CreateMap<Subscription, SubscriptionViewModel>()
                 .ForMember(
                 destiny => destiny.StartDate,
                 opt => opt.MapFrom(origin => origin.StartDate.ToString("yyyy-MM-dd"))
@@ -123,7 +123,7 @@ namespace Subscription_Monitoring_System_Data
                 opt => opt.MapFrom(origin => (origin.EndDate.Date - DateTime.Now.Date).Days)
                 );
 
-            CreateMap<SubscriptionDto, Subscription>()
+            CreateMap<SubscriptionViewModel, Subscription>()
                 .ForMember(
                 destiny => destiny.StartDate,
                 opt => opt.MapFrom(origin => DateTime.ParseExact(string.IsNullOrEmpty(origin.StartDate) ? "0001-01-01" : origin.StartDate, "yyyy-MM-dd", CultureInfo.InvariantCulture))

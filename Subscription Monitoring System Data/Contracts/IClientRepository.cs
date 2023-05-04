@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.RazorPages;
-using Subscription_Monitoring_System_Data.Dtos;
 using Subscription_Monitoring_System_Data.Models;
+using Subscription_Monitoring_System_Data.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +19,7 @@ namespace Subscription_Monitoring_System_Data.Contracts
         Task<Client> GetActive(string name);
         List<Client> SortAscending(string sortBy, List<Client> clients);
         List<Client> SortDescending(string sortBy, List<Client> clients);
-        Task<List<Client>> GetList(ClientFilterDto filter);
+        Task<List<Client>> GetList(ClientFilterViewModel filter);
         Task<List<Client>> GetList(List<int> ids);
         Task Create(Client client);
         Task Update(Client client);

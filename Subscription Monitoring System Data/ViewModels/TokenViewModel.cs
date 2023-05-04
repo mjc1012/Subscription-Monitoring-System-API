@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Subscription_Monitoring_System_Data.Dtos
+namespace Subscription_Monitoring_System_Data.ViewModels
 {
-    public class TokenDto
+    public class TokenViewModel
     {
         public string AccessToken { get; set; } = string.Empty;
         public string RefreshToken { get; set; } = string.Empty;

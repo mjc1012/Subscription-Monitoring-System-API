@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using static Subscription_Monitoring_System_Data.Constants;
-using Subscription_Monitoring_System_Data.Dtos;
 using Subscription_Monitoring_System_Domain.Contracts;
 using Subscription_Monitoring_System_Data.Models;
 using Subscription_Monitoring_System_Data;
 using System.Net.Mail;
 using System.Globalization;
 using Microsoft.AspNetCore.StaticFiles;
+using Subscription_Monitoring_System_Data.ViewModels;
 
 namespace Subscription_Monitoring_System.Controllers
 {
@@ -26,40 +26,40 @@ namespace Subscription_Monitoring_System.Controllers
         {
             try
             {
-                SubscriptionDto responseData = await _unitOfWork.SubscriptionService.GetActive(id);
-                return StatusCode(StatusCodes.Status200OK, new ResponseDto() { Status = true, Message = BaseConstants.retrievedData, Value = responseData });
+                SubscriptionViewModel responseData = await _unitOfWork.SubscriptionService.GetActive(id);
+                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = BaseConstants.retrievedData, Value = responseData });
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseDto() { Status = false, Message = ex.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseViewModel() { Status = false, Message = ex.Message });
             }
         }
 
         [HttpPost("subscriptions")]
-        public async Task<IActionResult> GetList(SubscriptionFilterDto filter)
+        public async Task<IActionResult> GetList(SubscriptionFilterViewModel filter)
         {
             try
             {
-                ListDto responseData = await _unitOfWork.SubscriptionService.GetList(filter);
-                return StatusCode(StatusCodes.Status200OK, new ResponseDto() { Status = true, Message = BaseConstants.retrievedData, Value = responseData });
+                ListViewModel responseData = await _unitOfWork.SubscriptionService.GetList(filter);
+                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = BaseConstants.retrievedData, Value = responseData });
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseDto() { Status = false, Message = ex.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseViewModel() { Status = false, Message = ex.Message });
             }
         }
 
         [HttpPost("export-excel")]
-        public async Task<IActionResult> GetExcel(SubscriptionFilterDto filter)
+        public async Task<IActionResult> GetExcel(SubscriptionFilterViewModel filter)
         {
             try
             {
-                ListDto responseData = await _unitOfWork.SubscriptionService.GetList(filter);
+                ListViewModel responseData = await _unitOfWork.SubscriptionService.GetList(filter);
                 string emailtemplatepath = Path.Combine("D:\\ALLIANCE LAST PROJECT\\Subscription Monitoring System\\ExcelTemplate\\Subscriptions.html");
                 string htmldata = System.IO.File.ReadAllText(emailtemplatepath);
 
                 string excelstring = "";
-                foreach (SubscriptionDto subscription in (List<SubscriptionDto>)responseData.Data)
+                foreach (SubscriptionViewModel subscription in (List<SubscriptionViewModel>)responseData.Data)
                 {
                     excelstring += "<tr><td>" + subscription.Id + "</td><td>" + subscription.StartDate + "</td><td>" + subscription.EndDate + "</td><td>" + subscription.TotalPrice + "</td><td>" + subscription.RemainingDays +
                          "</td><td>" + subscription.ClientName + "</td><td>" + subscription.ServiceName + "</td><td>" + subscription.CreatedOn + "</td><td>" + subscription.CreatedByCode +
@@ -82,7 +82,7 @@ namespace Subscription_Monitoring_System.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseDto() { Status = false, Message = ex.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseViewModel() { Status = false, Message = ex.Message });
             }
         }
 
@@ -91,17 +91,17 @@ namespace Subscription_Monitoring_System.Controllers
         {
             try
             {
-                List<SubscriptionDto> responseData = await _unitOfWork.SubscriptionService.GetHistoryList(id);
-                return StatusCode(StatusCodes.Status200OK, new ResponseDto() { Status = true, Message = BaseConstants.retrievedData, Value = responseData });
+                List<SubscriptionViewModel> responseData = await _unitOfWork.SubscriptionService.GetHistoryList(id);
+                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = BaseConstants.retrievedData, Value = responseData });
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseDto() { Status = false, Message = ex.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseViewModel() { Status = false, Message = ex.Message });
             }
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] SubscriptionDto subscription)
+        public async Task<IActionResult> Post([FromBody] SubscriptionViewModel subscription)
         {
             try
             {
@@ -109,16 +109,16 @@ namespace Subscription_Monitoring_System.Controllers
 
                 if (validationErrors.Any())
                 {
-                    return StatusCode(StatusCodes.Status200OK, new ResponseDto() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
                 }
                 else
                 {
-                    ClientDto client = await _unitOfWork.ClientService.GetActive(subscription.ClientName);
-                    ServiceDto service = await _unitOfWork.ServiceService.GetActive(subscription.ServiceName);
-                    UserDto createdBy = await _unitOfWork.UserService.GetActive(subscription.CreatedByCode);
-                    SubscriptionDto newSubscription = await _unitOfWork.SubscriptionService.Create(subscription, client, service, createdBy);
+                    ClientViewModel client = await _unitOfWork.ClientService.GetActive(subscription.ClientName);
+                    ServiceViewModel service = await _unitOfWork.ServiceService.GetActive(subscription.ServiceName);
+                    UserViewModel createdBy = await _unitOfWork.UserService.GetActive(subscription.CreatedByCode);
+                    SubscriptionViewModel newSubscription = await _unitOfWork.SubscriptionService.Create(subscription, client, service, createdBy);
 
-                    NotificationDto notification = new()
+                    NotificationViewModel notification = new()
                     {
                         Description = NotificationConstants.SuccessAdd(newSubscription.Id),
                         Date = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
@@ -127,22 +127,22 @@ namespace Subscription_Monitoring_System.Controllers
                     };
                     await _unitOfWork.NotificationService.Create(notification, subscription.UserIds);
 
-                    foreach(ClientDto clientRecipient in await _unitOfWork.ClientService.GetList(subscription.ClientIds))
+                    foreach(ClientViewModel clientRecipient in await _unitOfWork.ClientService.GetList(subscription.ClientIds))
                     {
-                        _unitOfWork.EmailService.SendEmail(new EmailDto(clientRecipient.EmailAddress, "Subscription Created", EmailBody.SendCreatedSubscriptionEmail(NotificationConstants.SuccessAdd(newSubscription.Id), newSubscription)));
+                        _unitOfWork.EmailService.SendEmail(new EmailViewModel(clientRecipient.EmailAddress, "Subscription Created", EmailBody.SendCreatedSubscriptionEmail(NotificationConstants.SuccessAdd(newSubscription.Id), newSubscription)));
                     }
 
-                    return StatusCode(StatusCodes.Status200OK, new ResponseDto() { Status = true, Message = SubscriptionConstants.SuccessAdd });
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = SubscriptionConstants.SuccessAdd });
                 }
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseDto() { Status = false, Message = ex.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseViewModel() { Status = false, Message = ex.Message });
             }
         }
 
         [HttpPut]
-        public async Task<IActionResult> Put([FromBody] SubscriptionDto subscription)
+        public async Task<IActionResult> Put([FromBody] SubscriptionViewModel subscription)
         {
             try
             {
@@ -150,19 +150,19 @@ namespace Subscription_Monitoring_System.Controllers
 
                 if (validationErrors.Any())
                 {
-                    return StatusCode(StatusCodes.Status200OK, new ResponseDto() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
                 }
                 else
                 {
-                    SubscriptionDto oldSubscription = await _unitOfWork.SubscriptionService.CreateHistory(subscription.Id);
+                    SubscriptionViewModel oldSubscription = await _unitOfWork.SubscriptionService.CreateHistory(subscription.Id);
                     List<int> oldUserIds = oldSubscription.UserRecipients.Select(p => p.Id).ToList();
                     List<int> oldClientIds = oldSubscription.ClientRecipients.Select(p => p.Id).ToList();
-                    ClientDto client = await _unitOfWork.ClientService.GetActive(subscription.ClientName);
-                    ServiceDto service = await _unitOfWork.ServiceService.GetActive(subscription.ServiceName);
-                    UserDto updatedBy = await _unitOfWork.UserService.GetActive(subscription.UpdatedByCode);
-                    SubscriptionDto newSubscription = await _unitOfWork.SubscriptionService.Update(subscription, client, service, updatedBy);
+                    ClientViewModel client = await _unitOfWork.ClientService.GetActive(subscription.ClientName);
+                    ServiceViewModel service = await _unitOfWork.ServiceService.GetActive(subscription.ServiceName);
+                    UserViewModel updatedBy = await _unitOfWork.UserService.GetActive(subscription.UpdatedByCode);
+                    SubscriptionViewModel newSubscription = await _unitOfWork.SubscriptionService.Update(subscription, client, service, updatedBy);
 
-                    NotificationDto notification = new()
+                    NotificationViewModel notification = new()
                     {
                         Description = NotificationConstants.SuccessEdit(newSubscription.Id),
                         Date = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
@@ -171,17 +171,17 @@ namespace Subscription_Monitoring_System.Controllers
                     };
                     await _unitOfWork.NotificationService.Create(notification, subscription.UserIds.Union(oldUserIds).ToList());
 
-                    foreach (ClientDto clientRecipient in await _unitOfWork.ClientService.GetList(subscription.ClientIds.Union(oldClientIds).ToList()))
+                    foreach (ClientViewModel clientRecipient in await _unitOfWork.ClientService.GetList(subscription.ClientIds.Union(oldClientIds).ToList()))
                     {
-                        _unitOfWork.EmailService.SendEmail(new EmailDto(clientRecipient.EmailAddress, "Subscription Updated", EmailBody.SendUpdatedSubscriptionEmail(clientRecipient.EmailAddress, NotificationConstants.SuccessEdit(newSubscription.Id), newSubscription, await _unitOfWork.ClientService.GetList(subscription.ClientIds))));
+                        _unitOfWork.EmailService.SendEmail(new EmailViewModel(clientRecipient.EmailAddress, "Subscription Updated", EmailBody.SendUpdatedSubscriptionEmail(clientRecipient.EmailAddress, NotificationConstants.SuccessEdit(newSubscription.Id), newSubscription, await _unitOfWork.ClientService.GetList(subscription.ClientIds))));
                     }
 
-                    return StatusCode(StatusCodes.Status200OK, new ResponseDto() { Status = true, Message = SubscriptionConstants.SuccessEdit });
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = SubscriptionConstants.SuccessEdit });
                 }
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseDto() { Status = false, Message = ex.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseViewModel() { Status = false, Message = ex.Message });
             }
         }
 
@@ -195,17 +195,17 @@ namespace Subscription_Monitoring_System.Controllers
 
                 if (validationErrors.Any())
                 {
-                    return StatusCode(StatusCodes.Status200OK, new ResponseDto() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
                 }
                 else
                 {
                     await _unitOfWork.SubscriptionService.HardDelete(id);
-                    return StatusCode(StatusCodes.Status200OK, new ResponseDto() { Status = true, Message = SubscriptionConstants.SuccessDelete });
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = SubscriptionConstants.SuccessDelete });
                 }
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseDto() { Status = false, Message = ex.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseViewModel() { Status = false, Message = ex.Message });
             }
         }
 
@@ -218,22 +218,22 @@ namespace Subscription_Monitoring_System.Controllers
 
                 if (validationErrors.Any())
                 {
-                    return StatusCode(StatusCodes.Status200OK, new ResponseDto() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
                 }
                 else
                 {
                     await _unitOfWork.SubscriptionService.SoftDelete(id);
-                    return StatusCode(StatusCodes.Status200OK, new ResponseDto() { Status = true, Message = SubscriptionConstants.SuccessDelete });
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = SubscriptionConstants.SuccessDelete });
                 }
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseDto() { Status = false, Message = ex.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseViewModel() { Status = false, Message = ex.Message });
             }
         }
 
         [HttpPut("soft-delete-subscriptions")]
-        public async Task<IActionResult> SoftDelete([FromBody] RecordIdsDto records)
+        public async Task<IActionResult> SoftDelete([FromBody] RecordIdsViewModel records)
         {
             try
             {
@@ -241,23 +241,23 @@ namespace Subscription_Monitoring_System.Controllers
 
                 if (validationErrors.Any())
                 {
-                    return StatusCode(StatusCodes.Status200OK, new ResponseDto() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
                 }
                 else
                 {
 
                     await _unitOfWork.SubscriptionService.SoftDelete(records);
-                    return StatusCode(StatusCodes.Status200OK, new ResponseDto() { Status = true, Message = SubscriptionConstants.SuccessDelete });
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = SubscriptionConstants.SuccessDelete });
                 }
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseDto() { Status = false, Message = ex.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseViewModel() { Status = false, Message = ex.Message });
             }
         }
 
         [HttpPut("hard-delete-subscriptions")]
-        public async Task<IActionResult> HardDelete([FromBody] RecordIdsDto records)
+        public async Task<IActionResult> HardDelete([FromBody] RecordIdsViewModel records)
         {
             try
             {
@@ -265,18 +265,18 @@ namespace Subscription_Monitoring_System.Controllers
 
                 if (validationErrors.Any())
                 {
-                    return StatusCode(StatusCodes.Status200OK, new ResponseDto() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
                 }
                 else
                 {
 
                     await _unitOfWork.SubscriptionService.HardDelete(records);
-                    return StatusCode(StatusCodes.Status200OK, new ResponseDto() { Status = true, Message = SubscriptionConstants.SuccessDelete });
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = SubscriptionConstants.SuccessDelete });
                 }
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseDto() { Status = false, Message = ex.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseViewModel() { Status = false, Message = ex.Message });
             }
         }
 
@@ -290,22 +290,22 @@ namespace Subscription_Monitoring_System.Controllers
 
                 if (validationErrors.Any())
                 {
-                    return StatusCode(StatusCodes.Status200OK, new ResponseDto() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
                 }
                 else
                 {
                     await _unitOfWork.SubscriptionService.Restore(id);
-                    return StatusCode(StatusCodes.Status200OK, new ResponseDto() { Status = true, Message = SubscriptionConstants.SuccessRestore });
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = SubscriptionConstants.SuccessRestore });
                 }
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseDto() { Status = false, Message = ex.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseViewModel() { Status = false, Message = ex.Message });
             }
         }
 
         [HttpPut("restore-subscriptions")]
-        public async Task<IActionResult> Restore([FromBody] RecordIdsDto records)
+        public async Task<IActionResult> Restore([FromBody] RecordIdsViewModel records)
         {
             try
             {
@@ -313,18 +313,18 @@ namespace Subscription_Monitoring_System.Controllers
 
                 if (validationErrors.Any())
                 {
-                    return StatusCode(StatusCodes.Status200OK, new ResponseDto() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
                 }
                 else
                 {
 
                     await _unitOfWork.SubscriptionService.Restore(records);
-                    return StatusCode(StatusCodes.Status200OK, new ResponseDto() { Status = true, Message = SubscriptionConstants.SuccessRestore });
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = SubscriptionConstants.SuccessRestore });
                 }
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseDto() { Status = false, Message = ex.Message });
+                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseViewModel() { Status = false, Message = ex.Message });
             }
         }
     }

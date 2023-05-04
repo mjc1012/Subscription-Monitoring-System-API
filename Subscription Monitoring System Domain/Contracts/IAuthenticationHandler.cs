@@ -1,4 +1,4 @@
-﻿using Subscription_Monitoring_System_Data.Dtos;
+﻿using Subscription_Monitoring_System_Data.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,9 +10,9 @@ namespace Subscription_Monitoring_System_Domain.Contracts
     public interface IAuthenticationHandler
     {
 
-        Task<List<string>> VerifyUser(AuthenticationDto loginUser);
-        Task<List<string>> CanChangePassword(UpdatePasswordDto user);
-        Task<List<string>> CanRefreshToken(TokenDto token);
-        Task<List<string>> CanResetPassword(ResetPasswordDto resetPassword);
+        Task<List<string>> VerifyUser(AuthenticationViewModel loginUser);
+        Task<List<string>> CanChangePassword(UpdatePasswordViewModel user);
+        Task<List<string>> CanRefreshToken(TokenViewModel token);
+        Task<List<string>> CanResetPassword(ResetPasswordViewModel resetPassword);
     }
 }

@@ -1,5 +1,5 @@
-﻿using Subscription_Monitoring_System_Data.Dtos;
-using Subscription_Monitoring_System_Data.Models;
+﻿using Subscription_Monitoring_System_Data.Models;
+using Subscription_Monitoring_System_Data.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,20 +10,20 @@ namespace Subscription_Monitoring_System_Domain.Contracts
 {
     public interface IClientService
     {
-        Task<List<ClientDto>> GetActiveList();
-        Task<ClientDto> GetActive(int id);
-        Task<ClientDto> GetInactive(int id);
-        Task<ClientDto> GetActive(string name);
-        Task<ListDto> GetList(ClientFilterDto filter);
-        Task<List<ClientDto>> GetList(List<int> ids);
-        Task Create(ClientDto client);
-        Task Update(ClientDto client);
+        Task<List<ClientViewModel>> GetActiveList();
+        Task<ClientViewModel> GetActive(int id);
+        Task<ClientViewModel> GetInactive(int id);
+        Task<ClientViewModel> GetActive(string name);
+        Task<ListViewModel> GetList(ClientFilterViewModel filter);
+        Task<List<ClientViewModel>> GetList(List<int> ids);
+        Task Create(ClientViewModel client);
+        Task Update(ClientViewModel client);
         Task SoftDelete(int id);
         Task HardDelete(int id);
-        Task SoftDelete(RecordIdsDto records);
-        Task HardDelete(RecordIdsDto records);
+        Task SoftDelete(RecordIdsViewModel records);
+        Task HardDelete(RecordIdsViewModel records);
         Task Restore(int id);
-        Task Restore(RecordIdsDto records);
-        Task<bool> ClientExists(ClientDto client);
+        Task Restore(RecordIdsViewModel records);
+        Task<bool> ClientExists(ClientViewModel client);
     }
 }

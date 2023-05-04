@@ -1,4 +1,4 @@
-﻿using Subscription_Monitoring_System_Data.Dtos;
+﻿using Subscription_Monitoring_System_Data.ViewModels;
 using Subscription_Monitoring_System_Domain.Contracts;
 using System;
 using System.Collections.Generic;
@@ -21,7 +21,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
         {
             var validationErrors = new List<string>();
 
-            NotificationDto client = await _notificationService.Get(id);
+            NotificationViewModel client = await _notificationService.Get(id);
             if (client == null)
             {
                 validationErrors.Add(NotificationConstants.DoesNotExist);
@@ -30,11 +30,11 @@ namespace Subscription_Monitoring_System_Domain.Handlers
             return validationErrors;
         }
 
-        public async Task<List<string>> CanDelete(RecordIdsDto records)
+        public async Task<List<string>> CanDelete(RecordIdsViewModel records)
         {
             var validationErrors = new List<string>();
 
-            List<NotificationDto> clients = await _notificationService.GetList(records.Ids);
+            List<NotificationViewModel> clients = await _notificationService.GetList(records.Ids);
             if (clients == null)
             {
                 validationErrors.Add(NotificationConstants.DoesNotExist);

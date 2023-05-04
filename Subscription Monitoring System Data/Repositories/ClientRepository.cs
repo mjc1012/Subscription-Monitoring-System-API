@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Subscription_Monitoring_System_Data.Contracts;
-using Subscription_Monitoring_System_Data.Dtos;
 using Subscription_Monitoring_System_Data.Models;
+using Subscription_Monitoring_System_Data.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -68,7 +68,7 @@ namespace Subscription_Monitoring_System_Data.Repositories
                 throw;
             }
         }
-        public async Task<List<Client>> GetList(ClientFilterDto filter)
+        public async Task<List<Client>> GetList(ClientFilterViewModel filter)
         {
             try
             {

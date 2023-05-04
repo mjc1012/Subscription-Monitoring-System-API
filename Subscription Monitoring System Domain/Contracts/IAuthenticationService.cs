@@ -1,5 +1,5 @@
-﻿using Subscription_Monitoring_System_Data.Dtos;
-using Subscription_Monitoring_System_Data.Models;
+﻿using Subscription_Monitoring_System_Data.Models;
+using Subscription_Monitoring_System_Data.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,9 +11,9 @@ namespace Subscription_Monitoring_System_Domain.Contracts
 {
     public interface IAuthenticationService
     {
-        Task<bool> VerifyPassword(AuthenticationDto loginUser);
-        Task<bool> UserExists(AuthenticationDto loginUser);
-        Task ChangePassword(AuthenticationDto user);
+        Task<bool> VerifyPassword(AuthenticationViewModel loginUser);
+        Task<bool> UserExists(AuthenticationViewModel loginUser);
+        Task ChangePassword(AuthenticationViewModel user);
         ClaimsPrincipal GetPrincipalFromExpiredToken(string expiredToken);
 
         Task<string> CreateRefreshToken();
@@ -23,7 +23,7 @@ namespace Subscription_Monitoring_System_Domain.Contracts
 
         Task SaveTokens(User user, string refreshPasswordToken, DateTime resetPasswordExpiry);
 
-        Task SaveTokens(AuthenticationDto user, string accessToken, string refreshToken, DateTime refreshTokenExpiryTime);
+        Task SaveTokens(AuthenticationViewModel user, string accessToken, string refreshToken, DateTime refreshTokenExpiryTime);
 
         string CreateJwt(string code);
     }

@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Subscription_Monitoring_System_Data.Dtos
+namespace Subscription_Monitoring_System_Data.ViewModels
 {
-    public class SubscriptionDto
+    public class SubscriptionViewModel
     {
         public int Id { get; set; }
         public string StartDate { get; set; } = string.Empty;
@@ -18,7 +18,7 @@ namespace Subscription_Monitoring_System_Data.Dtos
         public string ServiceName { get; set; } = string.Empty;
         public string CreatedOn { get; set; } = string.Empty;
         public string CreatedByCode { get; set; } = string.Empty;
-        public string CreatedByName { get; set; } = string.Empty;        
+        public string CreatedByName { get; set; } = string.Empty;
         public string UpdatedOn { get; set; } = string.Empty;
         public string UpdatedByCode { get; set; } = string.Empty;
         public string UpdatedByName { get; set; } = string.Empty;
@@ -26,7 +26,7 @@ namespace Subscription_Monitoring_System_Data.Dtos
         public bool IsActive { get; set; }
         public List<int> ClientIds { get; set; } = new List<int>();
         public List<int> UserIds { get; set; } = new List<int>();
-        public List<UserDto> UserRecipients { get; set; } = new List<UserDto>();
-        public List<ClientDto> ClientRecipients { get; set; } = new List<ClientDto>();
+        public List<UserViewModel> UserRecipients { get; set; } = new List<UserViewModel>();
+        public List<ClientViewModel> ClientRecipients { get; set; } = new List<ClientViewModel>();
     }
 }

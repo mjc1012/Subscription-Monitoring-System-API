@@ -1,5 +1,5 @@
-﻿using Subscription_Monitoring_System_Data.Dtos;
-using Subscription_Monitoring_System_Data.Models;
+﻿using Subscription_Monitoring_System_Data.Models;
+using Subscription_Monitoring_System_Data.ViewModels;
 using Subscription_Monitoring_System_Domain.Contracts;
 using System;
 using System.Collections.Generic;
@@ -44,7 +44,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
             return validationErrors;
         }
 
-        public async Task<List<string>> CanDelete(RecordIdsDto records)
+        public async Task<List<string>> CanDelete(RecordIdsViewModel records)
         {
             var validationErrors = new List<string>();
 
@@ -70,7 +70,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
             return validationErrors;
         }
 
-        public async Task<List<string>> CanRestore(RecordIdsDto records)
+        public async Task<List<string>> CanRestore(RecordIdsViewModel records)
         {
             var validationErrors = new List<string>();
 

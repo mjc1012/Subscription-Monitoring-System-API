@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Subscription_Monitoring_System_Data.Dtos
+namespace Subscription_Monitoring_System_Data.ViewModels
 {
-    public class ServiceTypeDto
+    public class ServiceTypeViewModel
     {
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;

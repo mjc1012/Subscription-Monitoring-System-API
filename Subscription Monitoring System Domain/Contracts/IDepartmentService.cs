@@ -1,4 +1,4 @@
-﻿using Subscription_Monitoring_System_Data.Dtos;
+﻿using Subscription_Monitoring_System_Data.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,8 +9,8 @@ namespace Subscription_Monitoring_System_Domain.Contracts
 {
     public interface IDepartmentService
     {
-        Task<DepartmentDto> Get(int id);
-        Task<DepartmentDto> Get(string name);
-        Task<List<DepartmentDto>> GetList();
+        Task<DepartmentViewModel> Get(int id);
+        Task<DepartmentViewModel> Get(string name);
+        Task<List<DepartmentViewModel>> GetList();
     }
 }

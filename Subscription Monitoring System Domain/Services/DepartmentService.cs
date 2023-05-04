@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Subscription_Monitoring_System_Data.Contracts;
-using Subscription_Monitoring_System_Data.Dtos;
+using Subscription_Monitoring_System_Data.ViewModels;
 using Subscription_Monitoring_System_Domain.Contracts;
 using System;
 using System.Collections.Generic;
@@ -21,11 +21,11 @@ namespace Subscription_Monitoring_System_Domain.Services
             _roleRepository = roleRepository;
         }
 
-        public async Task<DepartmentDto> Get(int id)
+        public async Task<DepartmentViewModel> Get(int id)
         {
             try
             {
-                return _mapper.Map<DepartmentDto>(await _roleRepository.Get(id));
+                return _mapper.Map<DepartmentViewModel>(await _roleRepository.Get(id));
             }
             catch (Exception)
             {
@@ -33,11 +33,11 @@ namespace Subscription_Monitoring_System_Domain.Services
             }
         }
 
-        public async Task<DepartmentDto> Get(string name)
+        public async Task<DepartmentViewModel> Get(string name)
         {
             try
             {
-                return _mapper.Map<DepartmentDto>(await _roleRepository.Get(name));
+                return _mapper.Map<DepartmentViewModel>(await _roleRepository.Get(name));
             }
             catch (Exception)
             {
@@ -45,11 +45,11 @@ namespace Subscription_Monitoring_System_Domain.Services
             }
         }
 
-        public async Task<List<DepartmentDto>> GetList()
+        public async Task<List<DepartmentViewModel>> GetList()
         {
             try
             {
-                return _mapper.Map<List<DepartmentDto>>(await _roleRepository.GetList());
+                return _mapper.Map<List<DepartmentViewModel>>(await _roleRepository.GetList());
             }
             catch (Exception)
             {

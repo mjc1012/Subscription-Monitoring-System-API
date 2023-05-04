@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using Subscription_Monitoring_System_Data.Contracts;
-using Subscription_Monitoring_System_Data.Dtos;
 using Subscription_Monitoring_System_Data.Models;
 using Subscription_Monitoring_System_Data.Repositories;
+using Subscription_Monitoring_System_Data.ViewModels;
 using Subscription_Monitoring_System_Domain.Contracts;
 using System;
 using System.Collections.Generic;
@@ -24,11 +24,11 @@ namespace Subscription_Monitoring_System_Domain.Services
             _serviceRepository = serviceRepository;
         }
 
-        public async Task<List<ServiceDto>> GetActiveList()
+        public async Task<List<ServiceViewModel>> GetActiveList()
         {
             try
             {
-                return _mapper.Map<List<ServiceDto>>(await _serviceRepository.GetActiveList());
+                return _mapper.Map<List<ServiceViewModel>>(await _serviceRepository.GetActiveList());
             }
             catch (Exception)
             {
@@ -36,11 +36,11 @@ namespace Subscription_Monitoring_System_Domain.Services
             }
         }
 
-        public async Task<ServiceDto> GetActive(int id)
+        public async Task<ServiceViewModel> GetActive(int id)
         {
             try
             {
-                return _mapper.Map<ServiceDto>(await _serviceRepository.GetActive(id));
+                return _mapper.Map<ServiceViewModel>(await _serviceRepository.GetActive(id));
             }
             catch (Exception)
             {
@@ -48,11 +48,11 @@ namespace Subscription_Monitoring_System_Domain.Services
             }
         }
 
-        public async Task<ServiceDto> GetInactive(int id)
+        public async Task<ServiceViewModel> GetInactive(int id)
         {
             try
             {
-                return _mapper.Map<ServiceDto>(await _serviceRepository.GetInactive(id));
+                return _mapper.Map<ServiceViewModel>(await _serviceRepository.GetInactive(id));
             }
             catch (Exception)
             {
@@ -60,11 +60,11 @@ namespace Subscription_Monitoring_System_Domain.Services
             }
         }
 
-        public async Task<ServiceDto> GetActive(string name)
+        public async Task<ServiceViewModel> GetActive(string name)
         {
             try
             {
-                return _mapper.Map<ServiceDto>(await _serviceRepository.GetActive(name));
+                return _mapper.Map<ServiceViewModel>(await _serviceRepository.GetActive(name));
             }
             catch (Exception)
             {
@@ -72,11 +72,11 @@ namespace Subscription_Monitoring_System_Domain.Services
             }
         }
 
-        public async Task<ListDto> GetList(ServiceFilterDto filter)
+        public async Task<ListViewModel> GetList(ServiceFilterViewModel filter)
         {
             try
             {
-                List<ServiceDto> services = _mapper.Map<List<ServiceDto>>(await _serviceRepository.GetList(filter));
+                List<ServiceViewModel> services = _mapper.Map<List<ServiceViewModel>>(await _serviceRepository.GetList(filter));
 
                 int totalCount = services.Count;
                 int totalPages = (int)Math.Ceiling((double)totalCount / BaseConstants.PageSize);
@@ -88,7 +88,7 @@ namespace Subscription_Monitoring_System_Domain.Services
 
                 services = services.Skip(BaseConstants.PageSize * (filter.Page - 1)).Take(BaseConstants.PageSize).ToList();
 
-                return new ListDto { Pagination = pagination, Data = services };
+                return new ListViewModel { Pagination = pagination, Data = services };
             }
             catch (Exception)
             {
@@ -97,11 +97,11 @@ namespace Subscription_Monitoring_System_Domain.Services
 
         }
 
-        public async Task<List<ServiceDto>> GetList(List<int> ids)
+        public async Task<List<ServiceViewModel>> GetList(List<int> ids)
         {
             try
             {
-                return _mapper.Map<List<ServiceDto>>(await _serviceRepository.GetList(ids));
+                return _mapper.Map<List<ServiceViewModel>>(await _serviceRepository.GetList(ids));
             }
             catch (Exception)
             {
@@ -109,7 +109,7 @@ namespace Subscription_Monitoring_System_Domain.Services
             }
         }
 
-        public async Task Create(ServiceDto service, ServiceTypeDto serviceType)
+        public async Task Create(ServiceViewModel service, ServiceTypeViewModel serviceType)
         {
             try
             {
@@ -123,7 +123,7 @@ namespace Subscription_Monitoring_System_Domain.Services
             }
         }
 
-        public async Task Update(ServiceDto service, ServiceTypeDto serviceType)
+        public async Task Update(ServiceViewModel service, ServiceTypeViewModel serviceType)
         {
             try
             {
@@ -161,7 +161,7 @@ namespace Subscription_Monitoring_System_Domain.Services
             }
         }
 
-        public async Task HardDelete(RecordIdsDto records)
+        public async Task HardDelete(RecordIdsViewModel records)
         {
             try
             {
@@ -173,7 +173,7 @@ namespace Subscription_Monitoring_System_Domain.Services
             }
         }
 
-        public async Task SoftDelete(RecordIdsDto records)
+        public async Task SoftDelete(RecordIdsViewModel records)
         {
             try
             {
@@ -197,7 +197,7 @@ namespace Subscription_Monitoring_System_Domain.Services
             }
         }
 
-        public async Task Restore(RecordIdsDto records)
+        public async Task Restore(RecordIdsViewModel records)
         {
             try
             {
@@ -208,7 +208,7 @@ namespace Subscription_Monitoring_System_Domain.Services
                 throw;
             }
         }
-        public async Task<bool> ServiceExists(ServiceDto service)
+        public async Task<bool> ServiceExists(ServiceViewModel service)
         {
             try
             {

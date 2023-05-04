@@ -1,5 +1,5 @@
-﻿using Subscription_Monitoring_System_Data.Dtos;
-using Subscription_Monitoring_System_Data.Models;
+﻿using Subscription_Monitoring_System_Data.Models;
+using Subscription_Monitoring_System_Data.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +16,7 @@ namespace Subscription_Monitoring_System_Data.Contracts
         Task<User> GetActive(string code);
         List<User> SortAscending(string sortBy, List<User> users);
         List<User> SortDescending(string sortBy, List<User> users);
-        Task<List<User>> GetList(UserFilterDto filter);
+        Task<List<User>> GetList(UserFilterViewModel filter);
         Task<List<User>> GetList(List<int> ids);
         Task Create(User user);
         Task Update(User user);

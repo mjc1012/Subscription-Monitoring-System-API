@@ -1,5 +1,5 @@
 ﻿using Subscription_Monitoring_System_Data;
-using Subscription_Monitoring_System_Data.Dtos;
+using Subscription_Monitoring_System_Data.ViewModels;
 using Subscription_Monitoring_System_Domain.Contracts;
 using System;
 using System.Collections.Generic;
@@ -32,7 +32,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
             return validationErrors;
         }
 
-        public async Task<List<string>> CanAdd(UserDto user)
+        public async Task<List<string>> CanAdd(UserViewModel user)
         {
             var validationErrors = new List<string>();
 
@@ -46,7 +46,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
 
                 try
                 {
-                    _emailService.SendEmail(new EmailDto(user.EmailAddress, "Checking Email", EmailBody.CheckEmailBody()));
+                    _emailService.SendEmail(new EmailViewModel(user.EmailAddress, "Checking Email", EmailBody.CheckEmailBody()));
                 }
                 catch (Exception)
                 {
@@ -61,7 +61,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
             return validationErrors;
         }
 
-        public async Task<List<string>> CanUpdate(UserDto user)
+        public async Task<List<string>> CanUpdate(UserViewModel user)
         {
             var validationErrors = new List<string>();
 
@@ -75,7 +75,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
 
                 try
                 {
-                    _emailService.SendEmail(new EmailDto(user.EmailAddress, "Checking Email", EmailBody.CheckEmailBody()));
+                    _emailService.SendEmail(new EmailViewModel(user.EmailAddress, "Checking Email", EmailBody.CheckEmailBody()));
                 }
                 catch (Exception)
                 {
@@ -94,7 +94,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
         {
             var validationErrors = new List<string>();
 
-            UserDto client = await _userService.GetActive(id);
+            UserViewModel client = await _userService.GetActive(id);
             if (client == null)
             {
                 validationErrors.Add(UserConstants.DoesNotExist);
@@ -107,7 +107,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
         {
             var validationErrors = new List<string>();
 
-            UserDto client = await _userService.GetInactive(id);
+            UserViewModel client = await _userService.GetInactive(id);
             if (client == null)
             {
                 validationErrors.Add(UserConstants.DoesNotExist);
@@ -116,11 +116,11 @@ namespace Subscription_Monitoring_System_Domain.Handlers
             return validationErrors;
         }
 
-        public async Task<List<string>> CanDelete(RecordIdsDto records)
+        public async Task<List<string>> CanDelete(RecordIdsViewModel records)
         {
             var validationErrors = new List<string>();
 
-            List<UserDto> clients = await _userService.GetList(records.Ids);
+            List<UserViewModel> clients = await _userService.GetList(records.Ids);
             if (clients == null)
             {
                 validationErrors.Add(UserConstants.DoesNotExist);
@@ -133,7 +133,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
         {
             var validationErrors = new List<string>();
 
-            UserDto client = await _userService.GetInactive(id);
+            UserViewModel client = await _userService.GetInactive(id);
             if (client == null)
             {
                 validationErrors.Add(UserConstants.DoesNotExist);
@@ -142,11 +142,11 @@ namespace Subscription_Monitoring_System_Domain.Handlers
             return validationErrors;
         }
 
-        public async Task<List<string>> CanRestore(RecordIdsDto records)
+        public async Task<List<string>> CanRestore(RecordIdsViewModel records)
         {
             var validationErrors = new List<string>();
 
-            List<UserDto> clients = await _userService.GetList(records.Ids);
+            List<UserViewModel> clients = await _userService.GetList(records.Ids);
             if (clients == null)
             {
                 validationErrors.Add(UserConstants.DoesNotExist);

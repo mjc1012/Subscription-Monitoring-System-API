@@ -1,7 +1,7 @@
 ﻿using MailKit.Net.Smtp;
 using Microsoft.Extensions.Configuration;
 using MimeKit;
-using Subscription_Monitoring_System_Data.Dtos;
+using Subscription_Monitoring_System_Data.ViewModels;
 using Subscription_Monitoring_System_Domain.Contracts;
 using System;
 using System.Collections.Generic;
@@ -16,7 +16,7 @@ namespace Subscription_Monitoring_System_Domain.Services
     {
         public EmailService() { }
 
-        public void SendEmail(EmailDto email)
+        public void SendEmail(EmailViewModel email)
         {
             var emailMessage = new MimeMessage();
             emailMessage.From.Add(new MailboxAddress(EmailConstants.Username, EmailConstants.From));

@@ -1,4 +1,4 @@
-﻿using Subscription_Monitoring_System_Data.Dtos;
+﻿using Subscription_Monitoring_System_Data.ViewModels;
 using Subscription_Monitoring_System_Domain.Contracts;
 using System;
 using System.Collections.Generic;
@@ -16,7 +16,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
         {
             _subscriptionService = subscriptionService;
         }
-        public async Task<List<string>> CanAdd(SubscriptionDto subscription)
+        public async Task<List<string>> CanAdd(SubscriptionViewModel subscription)
         {
             var validationErrors = new List<string>();
 
@@ -36,7 +36,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
             return validationErrors;
         }
 
-        public async Task<List<string>> CanUpdate(SubscriptionDto subscription)
+        public async Task<List<string>> CanUpdate(SubscriptionViewModel subscription)
         {
             var validationErrors = new List<string>();
 
@@ -60,7 +60,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
         {
             var validationErrors = new List<string>();
 
-            SubscriptionDto subscription = await _subscriptionService.GetActive(id);
+            SubscriptionViewModel subscription = await _subscriptionService.GetActive(id);
             if (subscription == null)
             {
                 validationErrors.Add(SubscriptionConstants.DoesNotExist);
@@ -73,7 +73,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
         {
             var validationErrors = new List<string>();
 
-            SubscriptionDto subscription = await _subscriptionService.GetInactive(id);
+            SubscriptionViewModel subscription = await _subscriptionService.GetInactive(id);
             if (subscription == null)
             {
                 validationErrors.Add(SubscriptionConstants.DoesNotExist);
@@ -82,11 +82,11 @@ namespace Subscription_Monitoring_System_Domain.Handlers
             return validationErrors;
         }
 
-        public async Task<List<string>> CanDelete(RecordIdsDto records)
+        public async Task<List<string>> CanDelete(RecordIdsViewModel records)
         {
             var validationErrors = new List<string>();
 
-            List<SubscriptionDto> subscriptions = await _subscriptionService.GetList(records.Ids);
+            List<SubscriptionViewModel> subscriptions = await _subscriptionService.GetList(records.Ids);
             if (subscriptions == null)
             {
                 validationErrors.Add(SubscriptionConstants.DoesNotExist);
@@ -99,7 +99,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
         {
             var validationErrors = new List<string>();
 
-            SubscriptionDto subscription = await _subscriptionService.GetInactive(id);
+            SubscriptionViewModel subscription = await _subscriptionService.GetInactive(id);
             if (subscription == null)
             {
                 validationErrors.Add(SubscriptionConstants.DoesNotExist);
@@ -108,11 +108,11 @@ namespace Subscription_Monitoring_System_Domain.Handlers
             return validationErrors;
         }
 
-        public async Task<List<string>> CanRestore(RecordIdsDto records)
+        public async Task<List<string>> CanRestore(RecordIdsViewModel records)
         {
             var validationErrors = new List<string>();
 
-            List<SubscriptionDto> subscriptions = await _subscriptionService.GetList(records.Ids);
+            List<SubscriptionViewModel> subscriptions = await _subscriptionService.GetList(records.Ids);
             if (subscriptions == null)
             {
                 validationErrors.Add(SubscriptionConstants.DoesNotExist);

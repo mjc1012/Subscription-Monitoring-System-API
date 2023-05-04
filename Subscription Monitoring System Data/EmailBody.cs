@@ -1,4 +1,4 @@
-﻿using Subscription_Monitoring_System_Data.Dtos;
+﻿using Subscription_Monitoring_System_Data.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -102,7 +102,7 @@ namespace Subscription_Monitoring_System_Data
             ";
         }
 
-        public static string SendCreatedSubscriptionEmail(string message, SubscriptionDto subscription)
+        public static string SendCreatedSubscriptionEmail(string message, SubscriptionViewModel subscription)
         {
             return $@"<html>
             <head>
@@ -132,7 +132,7 @@ namespace Subscription_Monitoring_System_Data
             ";
         }
 
-        public static string SendUpdatedSubscriptionEmail(string emailAddress, string message, SubscriptionDto subscription, List<ClientDto> clients)
+        public static string SendUpdatedSubscriptionEmail(string emailAddress, string message, SubscriptionViewModel subscription, List<ClientViewModel> clients)
         {
             return $@"<html>
             <head>

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
-using Subscription_Monitoring_System_Data.Dtos;
 using Subscription_Monitoring_System_Data.Models;
+using Subscription_Monitoring_System_Data.ViewModels;
 using Subscription_Monitoring_System_Domain.Contracts;
 using System;
 using System.Collections.Generic;
@@ -25,7 +25,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
             _authenticationService = authenticationService;
             _userService = userService;
         }
-        public async Task<List<string>> VerifyUser(AuthenticationDto loginUser)
+        public async Task<List<string>> VerifyUser(AuthenticationViewModel loginUser)
         {
             var validationErrors = new List<string>();
 
@@ -49,7 +49,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
             return validationErrors;
         }
 
-        public async Task<List<string>> CanChangePassword(UpdatePasswordDto user)
+        public async Task<List<string>> CanChangePassword(UpdatePasswordViewModel user)
         {
             var validationErrors = new List<string>();
 
@@ -59,7 +59,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
             }
             else
             {
-                AuthenticationDto authentication = new()
+                AuthenticationViewModel authentication = new()
                 {
                     Code = user.Code,
                     Password = user.OldPassword
@@ -85,7 +85,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
             return validationErrors;
         }
 
-        public async Task<List<string>> CanRefreshToken(TokenDto token)
+        public async Task<List<string>> CanRefreshToken(TokenViewModel token)
         {
             var validationErrors = new List<string>();
 
@@ -106,7 +106,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
             return validationErrors;
         }
 
-        public async Task<List<string>> CanResetPassword(ResetPasswordDto resetPassword)
+        public async Task<List<string>> CanResetPassword(ResetPasswordViewModel resetPassword)
         {
             var validationErrors = new List<string>();
 
