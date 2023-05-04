@@ -14,7 +14,7 @@ namespace Subscription_Monitoring_System_Data.Contracts
         Task<Subscription> GetInactive(int id);
         Task<List<Subscription>> GetList(List<int> ids);
         Task<List<Subscription>> GetHistoryList(int id);
-        Task<List<Subscription>> GetActiveList();
+        Task<List<Subscription>> GetList();
         Task Expired(int id);
         Task<Subscription> Create(Subscription subscription, List<int> clientIds, List<int> userIds);
         Task<Subscription> CreateHistory(int id);

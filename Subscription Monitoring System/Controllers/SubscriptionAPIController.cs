@@ -6,6 +6,7 @@ using Subscription_Monitoring_System_Data.Models;
 using Subscription_Monitoring_System_Data;
 using System.Net.Mail;
 using System.Globalization;
+using Microsoft.AspNetCore.StaticFiles;
 
 namespace Subscription_Monitoring_System.Controllers
 {
@@ -20,14 +21,12 @@ namespace Subscription_Monitoring_System.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        [HttpPut("{id}")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
             try
             {
                 SubscriptionDto responseData = await _unitOfWork.SubscriptionService.GetActive(id);
-                DateTime endDate = DateTime.ParseExact(responseData.EndDate, "yyyy-MM-dd", CultureInfo.InvariantCulture);
-                responseData.RemainingDays = (endDate - DateTime.Now.Date).Days;
                 return StatusCode(StatusCodes.Status200OK, new ResponseDto() { Status = true, Message = BaseConstants.retrievedData, Value = responseData });
             }
             catch (Exception ex)
@@ -36,13 +35,50 @@ namespace Subscription_Monitoring_System.Controllers
             }
         }
 
-        [HttpPut("subscriptions")]
+        [HttpPost("subscriptions")]
         public async Task<IActionResult> GetList(SubscriptionFilterDto filter)
         {
             try
             {
                 ListDto responseData = await _unitOfWork.SubscriptionService.GetList(filter);
                 return StatusCode(StatusCodes.Status200OK, new ResponseDto() { Status = true, Message = BaseConstants.retrievedData, Value = responseData });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseDto() { Status = false, Message = ex.Message });
+            }
+        }
+
+        [HttpPost("export-excel")]
+        public async Task<IActionResult> GetExcel(SubscriptionFilterDto filter)
+        {
+            try
+            {
+                ListDto responseData = await _unitOfWork.SubscriptionService.GetList(filter);
+                string emailtemplatepath = Path.Combine("D:\\ALLIANCE LAST PROJECT\\Subscription Monitoring System\\ExcelTemplate\\Subscriptions.html");
+                string htmldata = System.IO.File.ReadAllText(emailtemplatepath);
+
+                string excelstring = "";
+                foreach (SubscriptionDto subscription in (List<SubscriptionDto>)responseData.Data)
+                {
+                    excelstring += "<tr><td>" + subscription.Id + "</td><td>" + subscription.StartDate + "</td><td>" + subscription.EndDate + "</td><td>" + subscription.TotalPrice + "</td><td>" + subscription.RemainingDays +
+                         "</td><td>" + subscription.ClientName + "</td><td>" + subscription.ServiceName + "</td><td>" + subscription.CreatedOn + "</td><td>" + subscription.CreatedByCode +
+                          "</td><td>" + subscription.CreatedByName + "</td><td>" + subscription.UpdatedOn + "</td><td>" + subscription.UpdatedByCode + "</td><td>" + subscription.UpdatedByName + "</td></tr>";
+                }
+                htmldata = htmldata.Replace("@@ActualData", excelstring);
+
+                string StoredFilePath = Path.Combine("D:\\ALLIANCE LAST PROJECT\\Subscription Monitoring System\\ExcelFiles", DateTime.Now.Ticks.ToString() + ".xls");
+                System.IO.File.AppendAllText(StoredFilePath, htmldata);
+
+                var provider = new FileExtensionContentTypeProvider();
+                if (!provider.TryGetContentType(StoredFilePath, out var contettype))
+                {
+                    contettype = "application/octet-stream";
+                }
+
+                var bytes = await System.IO.File.ReadAllBytesAsync(StoredFilePath);
+
+                return File(bytes, contettype, Path.Combine(StoredFilePath));
             }
             catch (Exception ex)
             {

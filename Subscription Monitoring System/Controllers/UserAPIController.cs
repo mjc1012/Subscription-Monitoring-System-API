@@ -45,7 +45,7 @@ namespace Subscription_Monitoring_System.Controllers
             }
         }
 
-        [HttpPut("users")]
+        [HttpPost("users")]
         public async Task<IActionResult> GetList(UserFilterDto filter)
         {
             try

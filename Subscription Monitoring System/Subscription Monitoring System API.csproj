@@ -32,4 +32,8 @@
     <ProjectReference Include="..\Subscription Monitoring System Domain\Subscription Monitoring System Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="ExcelFiles\" />
+  </ItemGroup>
+
 </Project>

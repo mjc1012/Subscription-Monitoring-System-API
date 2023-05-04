@@ -33,7 +33,7 @@ namespace Subscription_Monitoring_System.Controllers
             }
         }
 
-        [HttpPut("clients")]
+        [HttpPost("clients")]
         public async Task<IActionResult> GetList(ClientFilterDto filter)
         {
             try

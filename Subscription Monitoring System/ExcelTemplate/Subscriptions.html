@@ -1,0 +1,40 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+
+    <style>
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+    </style>
+
+</head>
+<body>
+    <table style="width:100%;">
+        <thead>
+            <tr style="font-weight:bold;">
+                <td>Id</td>
+                <td>StartDate</td>
+                <td>EndDate</td>
+                <td>TotalPrice</td>
+                <td>RemainingDays</td>
+                <td>Client</td>
+                <td>Service</td>
+                <td>CreatedOn</td>
+                <td>CreatedByCode</td>
+                <td>CreatedByName</td>
+                <td>UpdatedOn</td>
+                <td>UpdatedByCode</td>
+                <td>UpdatedByName</td>
+            </tr>
+        </thead>
+        <tbody>
+            @@ActualData
+
+        </tbody>
+    </table>
+</body>
+</html>

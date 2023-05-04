@@ -68,11 +68,11 @@ namespace Subscription_Monitoring_System_Data.Repositories
             }
         }
 
-        public async Task<List<Subscription>> GetActiveList()
+        public async Task<List<Subscription>> GetList()
         {
             try
             {
-                return await _context.Subscriptions.Where(p => p.IsActive).Include(p => p.UpdatedBy).Include(p => p.CreatedBy).Include(p => p.Client).Include(p => p.Service).ThenInclude(p => p.ServiceType).Include(p => p.SubscriptionHistory).Include(p => p.SubscriptionHistories).Include(p => p.Notifications).Include(p => p.SubscriptionUsers).ThenInclude(p => p.User).Include(p => p.SubscriptionClients).ThenInclude(p => p.Client).ToListAsync();
+                return await _context.Subscriptions.Include(p => p.UpdatedBy).Include(p => p.CreatedBy).Include(p => p.Client).Include(p => p.Service).ThenInclude(p => p.ServiceType).Include(p => p.SubscriptionHistory).Include(p => p.SubscriptionHistories).Include(p => p.Notifications).Include(p => p.SubscriptionUsers).ThenInclude(p => p.User).Include(p => p.SubscriptionClients).ThenInclude(p => p.Client).ToListAsync();
             }
             catch (Exception)
             {

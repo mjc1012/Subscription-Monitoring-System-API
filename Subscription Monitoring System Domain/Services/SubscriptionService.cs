@@ -82,9 +82,11 @@ namespace Subscription_Monitoring_System_Domain.Services
 
         public async Task SendExpiringSubscriptionNotification()
         {
-            List<SubscriptionDto> subscriptions = _mapper.Map<List<SubscriptionDto>>(await _subscriptionRepository.GetActiveList());
+            List<SubscriptionDto> subscriptions = _mapper.Map<List<SubscriptionDto>>(await _subscriptionRepository.GetList());
             foreach (SubscriptionDto subscription in subscriptions)
             {   
+                if(!subscription.IsActive) continue;
+
                 if (subscription.RemainingDays == 0)
                 {
                     await _subscriptionRepository.Expired(subscription.Id);
@@ -126,7 +128,7 @@ namespace Subscription_Monitoring_System_Domain.Services
         {
             try
             {
-                List<Subscription> subscriptions = await _subscriptionRepository.GetActiveList();
+                List<Subscription> subscriptions = await _subscriptionRepository.GetList();
                 List<SubscriptionDto> subscriptionsMapped = new List<SubscriptionDto>();
                 foreach(Subscription subscription in subscriptions)
                 {
