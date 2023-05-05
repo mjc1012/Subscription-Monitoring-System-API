@@ -190,6 +190,8 @@ namespace Subscription_Monitoring_System_Data
         public class PathConstants
         {
             public const string ProfilePicturesPath = "D:\\ALLIANCE LAST PROJECT\\Subscription Monitoring System Data\\Profile Pictures";
+            public const string SubscriptionExcelTemplatePath = "D:\\ALLIANCE LAST PROJECT\\Subscription Monitoring System\\ExcelTemplate\\Subscriptions.html";
+            public const string ExcelFilesPath = "D:\\ALLIANCE LAST PROJECT\\Subscription Monitoring System\\ExcelFiles";
         }
 
 

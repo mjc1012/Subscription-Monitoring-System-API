@@ -55,7 +55,7 @@ namespace Subscription_Monitoring_System.Controllers
             try
             {
                 ListViewModel responseData = await _unitOfWork.SubscriptionService.GetList(filter);
-                string emailtemplatepath = Path.Combine("D:\\ALLIANCE LAST PROJECT\\Subscription Monitoring System\\ExcelTemplate\\Subscriptions.html");
+                string emailtemplatepath = Path.Combine(PathConstants.SubscriptionExcelTemplatePath);
                 string htmldata = System.IO.File.ReadAllText(emailtemplatepath);
 
                 string excelstring = "";
@@ -67,7 +67,7 @@ namespace Subscription_Monitoring_System.Controllers
                 }
                 htmldata = htmldata.Replace("@@ActualData", excelstring);
 
-                string StoredFilePath = Path.Combine("D:\\ALLIANCE LAST PROJECT\\Subscription Monitoring System\\ExcelFiles", DateTime.Now.Ticks.ToString() + ".xls");
+                string StoredFilePath = Path.Combine(PathConstants.ExcelFilesPath, DateTime.Now.Ticks.ToString() + ".xls");
                 System.IO.File.AppendAllText(StoredFilePath, htmldata);
 
                 var provider = new FileExtensionContentTypeProvider();
