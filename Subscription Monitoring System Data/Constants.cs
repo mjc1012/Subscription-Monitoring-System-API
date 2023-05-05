@@ -115,9 +115,9 @@ namespace Subscription_Monitoring_System_Data
 
         public class EmailConstants
         {
-            public const string From = "corralmarcjohn@gmail.com";
+            public const string From = "jd2925084@gmail.com";
             public const string SmtpServer = "smtp.gmail.com";
-            public const string Password = "zjigoixnywuljwev";
+            public const string Password = "pmgpwlxwrihgpxcx";
             public const int Port = 465;
             public const bool UseSsl = true;
             public const bool Quit = true;
@@ -189,9 +189,9 @@ namespace Subscription_Monitoring_System_Data
 
         public class PathConstants
         {
-            public const string ProfilePicturesPath = "D:\\ALLIANCE LAST PROJECT\\Subscription Monitoring System Data\\Profile Pictures";
-            public const string SubscriptionExcelTemplatePath = "D:\\ALLIANCE LAST PROJECT\\Subscription Monitoring System\\ExcelTemplate\\Subscriptions.html";
-            public const string ExcelFilesPath = "D:\\ALLIANCE LAST PROJECT\\Subscription Monitoring System\\ExcelFiles";
+            public const string ProfilePicturesPath = "D:\\New folder\\Subscription Monitoring System Data\\Profile Pictures\\";
+            public const string SubscriptionExcelTemplatePath = "D:\\New folder\\Subscription Monitoring System\\ExcelTemplate\\Subscriptions.html";
+            public const string ExcelFilesPath = "D:\\New folder\\Subscription Monitoring System\\ExcelFiles";
         }
 
 
