@@ -93,7 +93,7 @@ namespace Subscription_Monitoring_System.Controllers
             }
         }
 
-        [HttpDelete("hard-deletion/{id}")]
+        [HttpDelete("hard-delete/{id}")]
         public async Task<IActionResult> HardDelete(int id)
         {
             try
@@ -117,7 +117,7 @@ namespace Subscription_Monitoring_System.Controllers
             }
         }
 
-        [HttpDelete("soft-deletion/{id}")]
+        [HttpDelete("soft-delete/{id}")]
         public async Task<IActionResult> SoftDelete(int id)
         {
             try
