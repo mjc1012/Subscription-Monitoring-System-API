@@ -113,14 +113,13 @@ namespace Subscription_Monitoring_System.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    TotalPrice = table.Column<double>(type: "float", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
                     IsExpired = table.Column<bool>(type: "bit", nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatedById = table.Column<int>(type: "int", nullable: false),
+                    CreatedById = table.Column<int>(type: "int", nullable: true),
                     UpdatedById = table.Column<int>(type: "int", nullable: true),
-                    ClientId = table.Column<int>(type: "int", nullable: false),
+                    ClientId = table.Column<int>(type: "int", nullable: true),
                     ServiceId = table.Column<int>(type: "int", nullable: false),
                     SubscriptionHistoryId = table.Column<int>(type: "int", nullable: true)
                 },
@@ -136,7 +135,8 @@ namespace Subscription_Monitoring_System.Migrations
                         name: "FK_Subscriptions_Services_ServiceId",
                         column: x => x.ServiceId,
                         principalTable: "Services",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Subscriptions_Subscriptions_SubscriptionHistoryId",
                         column: x => x.SubscriptionHistoryId,
@@ -278,7 +278,7 @@ namespace Subscription_Monitoring_System.Migrations
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "AccessToken", "Code", "DepartmentId", "EmailAddress", "FirstName", "IsActive", "LastName", "MiddleName", "Password", "ProfilePictureImageName", "RefreshToken", "RefreshTokenExpiryTime", "ResetPasswordExpiry", "ResetPasswordToken" },
-                values: new object[] { 1, "", "ADMIN", 1, "", "", true, "", "", "bfaszAJCbjRs9o8vq9qOs4gi+2CsXHJljEHCdesDDBA=", "default_image.jpg", "", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "" });
+                values: new object[] { 1, "", "ADMIN", 1, "", "", true, "", "", "bCOBNrfxP+HFbIuG3fxmDmw2ZRVT96IWVkn0+DNAsjU=", "default_image.jpg", "", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Notifications_SubscriptionId",

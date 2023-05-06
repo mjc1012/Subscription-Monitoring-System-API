@@ -12,11 +12,10 @@ namespace Subscription_Monitoring_System_Data.Contracts
     {
         Task<Subscription> GetActive(int id);
         Task<Subscription> GetInactive(int id);
-        List<Subscription> SortAscending(string sortBy, List<Subscription> subscriptions);
-        List<Subscription> SortDescending(string sortBy, List<Subscription> subscriptions);
-        Task<List<Subscription>> GetList(SubscriptionFilterDto filter);
         Task<List<Subscription>> GetList(List<int> ids);
         Task<List<Subscription>> GetHistoryList(int id);
+        Task<List<Subscription>> GetActiveList();
+        Task Expired(int id);
         Task<Subscription> Create(Subscription subscription, List<int> clientIds, List<int> userIds);
         Task<Subscription> CreateHistory(int id);
         Task<Subscription> Update(Subscription subscriptionn, List<int> clientIds, List<int> userIds);

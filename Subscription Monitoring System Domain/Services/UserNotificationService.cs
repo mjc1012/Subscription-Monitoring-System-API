@@ -2,6 +2,7 @@
 using Subscription_Monitoring_System_Data.Contracts;
 using Subscription_Monitoring_System_Data.Dtos;
 using Subscription_Monitoring_System_Data.Models;
+using Subscription_Monitoring_System_Data.Repositories;
 using Subscription_Monitoring_System_Domain.Contracts;
 using System;
 using System.Collections.Generic;
@@ -15,10 +16,12 @@ namespace Subscription_Monitoring_System_Domain.Services
     public class UserNotificationService : IUserNotificationService
     {
         private readonly IUserNotificationRepository _userNotificationRepository;
+        private readonly IMapper _mapper;
 
-        public UserNotificationService(IUserNotificationRepository userNotificationRepository)
+        public UserNotificationService(IUserNotificationRepository userNotificationRepository, IMapper mapper)
         {
             _userNotificationRepository = userNotificationRepository;
+            _mapper = mapper;
         }
 
         public async Task<UserNotification> GetActive(int id)
@@ -57,11 +60,12 @@ namespace Subscription_Monitoring_System_Domain.Services
             }
         }
 
-        public async Task<List<UserNotification>> GetList(int userId)
+        public async Task<List<NotificationDto>> GetList(int userId)
         {
             try
             {
-                return await _userNotificationRepository.GetList(userId);
+                List<UserNotification> userNotifications = await _userNotificationRepository.GetList(userId);
+                return _mapper.Map<List<NotificationDto>>(userNotifications);
             }
             catch (Exception)
             {

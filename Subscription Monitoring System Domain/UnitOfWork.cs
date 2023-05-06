@@ -48,14 +48,14 @@ namespace Subscription_Monitoring_System_Domain
         public IDepartmentService DepartmentService => new DepartmentService(_deparmentRepository, _mapper);
         public IUserService UserService => new UserService(_userRepository, _mapper);
         public IUserHandler UserHandler => new UserHandler(UserService, EmailService);
-        public ISubscriptionService SubscriptionService => new SubscriptionService(_subscriptionRepository, _mapper);
+        public ISubscriptionService SubscriptionService => new SubscriptionService(_subscriptionRepository, _mapper, NotificationService, EmailService);
         public ISubscriptionHandler SubscriptionHandler => new SubscriptionHandler(SubscriptionService);
         public IImageService ImageService => new ImageService();
         public IAuthenticationService AuthenticationService => new AuthenticationService(_userRepository,_mapper);
         public IAuthenticationHandler AuthenticationHandler => new AuthenticationHandler(AuthenticationService, UserService);
         public INotificationService NotificationService => new NotificationService(_notificationRepository,_mapper);
         public INotificationHandler NotificationHandler => new NotificationHandler(NotificationService);
-        public IUserNotificationService UserNotificationService => new UserNotificationService(_userNotificationRepository);
+        public IUserNotificationService UserNotificationService => new UserNotificationService(_userNotificationRepository, _mapper);
         public IUserNotificationHandler UserNotificationHandler => new UserNotificationHandler(UserNotificationService);
     }
 }

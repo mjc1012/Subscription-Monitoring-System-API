@@ -12,7 +12,7 @@ namespace Subscription_Monitoring_System_Domain.Contracts
     {
         Task<UserNotification> GetActive(int id);
         Task<UserNotification> GetInactive(int id);
-        Task<List<UserNotification>> GetList(int userId);
+        Task<List<NotificationDto>> GetList(int userId);
         Task<List<UserNotification>> GetList(List<int> ids);
         Task SoftDelete(int id);
         Task HardDelete(int id);

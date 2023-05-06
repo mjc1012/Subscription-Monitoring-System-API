@@ -179,10 +179,10 @@ namespace Subscription_Monitoring_System.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("ClientId")
+                    b.Property<int?>("ClientId")
                         .HasColumnType("int");
 
-                    b.Property<int>("CreatedById")
+                    b.Property<int?>("CreatedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedOn")
@@ -205,9 +205,6 @@ namespace Subscription_Monitoring_System.Migrations
 
                     b.Property<int?>("SubscriptionHistoryId")
                         .HasColumnType("int");
-
-                    b.Property<double>("TotalPrice")
-                        .HasColumnType("float");
 
                     b.Property<int?>("UpdatedById")
                         .HasColumnType("int");
@@ -354,7 +351,7 @@ namespace Subscription_Monitoring_System.Migrations
                             IsActive = true,
                             LastName = "",
                             MiddleName = "",
-                            Password = "bfaszAJCbjRs9o8vq9qOs4gi+2CsXHJljEHCdesDDBA=",
+                            Password = "bCOBNrfxP+HFbIuG3fxmDmw2ZRVT96IWVkn0+DNAsjU=",
                             ProfilePictureImageName = "default_image.jpg",
                             RefreshToken = "",
                             RefreshTokenExpiryTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -418,17 +415,16 @@ namespace Subscription_Monitoring_System.Migrations
                 {
                     b.HasOne("Subscription_Monitoring_System_Data.Models.Client", "Client")
                         .WithMany("InvolvedSubscriptions")
-                        .HasForeignKey("ClientId")
-                        .IsRequired();
+                        .HasForeignKey("ClientId");
 
                     b.HasOne("Subscription_Monitoring_System_Data.Models.User", "CreatedBy")
                         .WithMany("CreatedSubscriptions")
-                        .HasForeignKey("CreatedById")
-                        .IsRequired();
+                        .HasForeignKey("CreatedById");
 
                     b.HasOne("Subscription_Monitoring_System_Data.Models.Service", "Service")
                         .WithMany("Subscriptions")
                         .HasForeignKey("ServiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Subscription_Monitoring_System_Data.Models.Subscription", "SubscriptionHistory")

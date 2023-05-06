@@ -66,6 +66,16 @@ namespace Subscription_Monitoring_System_Data
                 return "Subscription #" + subscriptionId + " deleted temporarily.";
             }
 
+            public static string SubscriptionExpired(int subscriptionId)
+            {
+                return "Subscription #" + subscriptionId + " is expired.";
+            }
+
+            public static string SubscriptionExpiring(int subscriptionId, int remainingDays)
+            {
+                return "Subscription #" + subscriptionId + " will expire in the next " + remainingDays + " days.";
+            }
+
             public static string SuccessPermanentDelete(int subscriptionId)
             {
                 return "Subscription #" + subscriptionId + " deleted permanently";

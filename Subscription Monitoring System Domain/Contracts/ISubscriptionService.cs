@@ -13,9 +13,13 @@ namespace Subscription_Monitoring_System_Domain.Contracts
     {
         Task<SubscriptionDto> GetActive(int id);
         Task<SubscriptionDto> GetInactive(int id);
+        List<SubscriptionDto> SortAscending(string sortBy, List<SubscriptionDto> subscriptions);
+        List<SubscriptionDto> SortDescending(string sortBy, List<SubscriptionDto> subscriptions);
+
         Task<ListDto> GetList(SubscriptionFilterDto filter);
         Task<List<SubscriptionDto>> GetList(List<int> ids);
         Task<List<SubscriptionDto>> GetHistoryList(int id);
+        Task SendExpiringSubscriptionNotification();
         Task<SubscriptionDto> Create(SubscriptionDto subscription, ClientDto client, ServiceDto service, UserDto createdBy);
         Task<SubscriptionDto> Update(SubscriptionDto subscription, ClientDto client, ServiceDto service, UserDto updatedBy);
         Task SoftDelete(int id);

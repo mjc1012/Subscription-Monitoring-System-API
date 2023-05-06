@@ -22,7 +22,7 @@ namespace Subscription_Monitoring_System.Controllers
         {
             try
             {
-                List<UserNotification> responseData = await _unitOfWork.UserNotificationService.GetList(id);
+                List<NotificationDto> responseData = await _unitOfWork.UserNotificationService.GetList(id);
                 return StatusCode(StatusCodes.Status200OK, new ResponseDto() { Status = true, Message = BaseConstants.retrievedData, Value = responseData });
             }
             catch (Exception ex)

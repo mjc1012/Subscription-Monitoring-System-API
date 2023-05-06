@@ -76,7 +76,7 @@ namespace Subscription_Monitoring_System_Data
                 .HasOne(p => p.Service)
                 .WithMany(p => p.Subscriptions)
                 .HasForeignKey(p => p.ServiceId)
-                .OnDelete(DeleteBehavior.ClientSetNull);
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Subscription>()
                 .HasOne(p => p.CreatedBy)

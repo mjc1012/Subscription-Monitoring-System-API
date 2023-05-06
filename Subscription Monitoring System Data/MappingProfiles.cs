@@ -7,6 +7,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Subscription_Monitoring_System_Data.Constants;
 
 namespace Subscription_Monitoring_System_Data
 {
@@ -46,6 +47,20 @@ namespace Subscription_Monitoring_System_Data
                 .ForMember(
                 destiny => destiny.Date,
                 opt => opt.MapFrom(origin => origin.Date.ToString("yyyy-MM-dd HH:mm:ss"))
+                );
+
+            CreateMap<UserNotification, NotificationDto>()
+                .ForMember(
+                destiny => destiny.Date,
+                opt => opt.MapFrom(origin => origin.Notification.Date.ToString("yyyy-MM-dd HH:mm:ss"))
+                )
+                .ForMember(
+                destiny => destiny.Description,
+                opt => opt.MapFrom(origin => origin.Notification.Description)
+                )
+                .ForMember(
+                destiny => destiny.SubscriptionId,
+                opt => opt.MapFrom(origin => origin.Notification.SubscriptionId)
                 );
 
             CreateMap<NotificationDto, Notification>()
@@ -102,6 +117,10 @@ namespace Subscription_Monitoring_System_Data
                 .ForMember(
                 destiny => destiny.UserRecipients,
                 opt => opt.MapFrom(origin => origin.SubscriptionUsers.Select(p => p.User).ToList())
+                )
+                .ForMember(
+                destiny => destiny.RemainingDays,
+                opt => opt.MapFrom(origin => (origin.EndDate.Date - DateTime.Now.Date).Days)
                 );
 
             CreateMap<SubscriptionDto, Subscription>()

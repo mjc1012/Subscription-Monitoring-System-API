@@ -80,7 +80,7 @@ namespace Subscription_Monitoring_System_Data
             ";
         }
 
-        public static string SendSubscriptionExpiryEmail(string message)
+        public static string SendSubscriptionExpiryEmail(string header, string message)
         {
             return $@"<html>
             <head>
@@ -89,7 +89,7 @@ namespace Subscription_Monitoring_System_Data
             <div >
             <div>
             <div>
-            <h1>Account Credentials</h1>
+            <h1>{header}</h1>
             <hr>
             <p>{message}</p>
             <p>Kind Regards, <br><br>
