@@ -9,6 +9,7 @@ namespace Subscription_Monitoring_System_Domain.Contracts
 {
     public interface IClientHandler
     {
+        List<string> CanFilter(ClientFilterViewModel filter);
         Task<List<string>> CanAdd(ClientViewModel client);
         Task<List<string>> CanUpdate(ClientViewModel client);
         Task<List<string>> CanDeleteActive(int id);

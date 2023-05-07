@@ -77,7 +77,14 @@ namespace Subscription_Monitoring_System_Domain.Services
         {
             try
             {
-                List<ClientViewModel> clients = _mapper.Map<List<ClientViewModel>>(await _clientRepository.GetList(filter));
+                if (filter.Page == 0) filter.Page = 1;
+                List<ClientViewModel> clients = _mapper.Map<List<ClientViewModel>>(await _clientRepository.GetList());
+
+                clients = clients.Where(p => (filter.Id == 0 || p.Id == filter.Id) &&
+                (string.IsNullOrEmpty(filter.Name) || p.Name == filter.Name) && (string.IsNullOrEmpty(filter.EmailAddress)
+                || p.EmailAddress == filter.EmailAddress) && p.IsActive == filter.IsActive).ToList();
+
+                clients = (!string.IsNullOrEmpty(filter.SortOrder) && filter.SortOrder.Equals(SortDirectionConstants.Descending)) ? SortDescending(filter.SortBy, clients) : SortAscending(filter.SortBy, clients); 
 
                 int totalCount = clients.Count;
                 int totalPages = (int)Math.Ceiling((double)totalCount / BaseConstants.PageSize);
@@ -96,6 +103,28 @@ namespace Subscription_Monitoring_System_Domain.Services
                 throw;
             }
 
+        }
+
+        public List<ClientViewModel> SortAscending(string sortBy, List<ClientViewModel> clients)
+        {
+            return sortBy switch
+            {
+                ClientConstants.HeaderId => clients.OrderBy(p => p.Id).ToList(),
+                ClientConstants.HeaderName => clients.OrderBy(p => p.Name).ToList(),
+                ClientConstants.HeaderEmailAddress => clients.OrderBy(p => p.EmailAddress).ToList(),
+                _ => clients.OrderBy(p => p.Id).ToList(),
+            };
+        }
+
+        public List<ClientViewModel> SortDescending(string sortBy, List<ClientViewModel> clients)
+        {
+            return sortBy switch
+            {
+                ClientConstants.HeaderId => clients.OrderByDescending(p => p.Id).ToList(),
+                ClientConstants.HeaderName => clients.OrderByDescending(p => p.Name).ToList(),
+                ClientConstants.HeaderEmailAddress => clients.OrderByDescending(p => p.EmailAddress).ToList(),
+                _ => clients.OrderByDescending(p => p.Id).ToList(),
+            };
         }
 
         public async Task<List<ClientViewModel>> GetList(List<int> ids)

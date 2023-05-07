@@ -17,11 +17,11 @@ namespace Subscription_Monitoring_System_Data.Repositories
             _context = context;
         }
 
-        public async Task<ServiceType> Get(int id)
+        public async Task<ServiceType?> Get(int id)
         {
             try
             {
-                return await _context.ServiceTypes.Where(p => p.Id == id ).Include(p => p.Services).FirstOrDefaultAsync();
+                return await _context.ServiceTypes!.Where(p => p.Id == id ).Include(p => p.Services).FirstOrDefaultAsync();
             }
             catch (Exception)
             {
@@ -29,11 +29,11 @@ namespace Subscription_Monitoring_System_Data.Repositories
             }
         }
 
-        public async Task<ServiceType> Get(string name)
+        public async Task<ServiceType?> Get(string name)
         {
             try
             {
-                return await _context.ServiceTypes.Where(p => p.Name == name).Include(p => p.Services).FirstOrDefaultAsync();
+                return await _context.ServiceTypes!.Where(p => p.Name == name).Include(p => p.Services).FirstOrDefaultAsync();
             }
             catch (Exception)
             {
@@ -45,7 +45,19 @@ namespace Subscription_Monitoring_System_Data.Repositories
         {
             try
             {
-                return await _context.ServiceTypes.Include(p => p.Services).ToListAsync();  
+                return await _context.ServiceTypes!.Include(p => p.Services).ToListAsync();  
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<bool> ServiceTypeExists(string name)
+        {
+            try
+            {
+                return await _context.ServiceTypes!.AnyAsync(p => p.Name == name);
             }
             catch (Exception)
             {

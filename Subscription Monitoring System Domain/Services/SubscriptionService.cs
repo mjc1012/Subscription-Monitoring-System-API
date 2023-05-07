@@ -38,10 +38,10 @@ namespace Subscription_Monitoring_System_Domain.Services
                 Subscription subscription = await _subscriptionRepository.GetActive(id);
                 SubscriptionViewModel subscriptionMapped = _mapper.Map<SubscriptionViewModel>(subscription);
 
-                if (subscription.Service.ServiceType.Name == SubscriptionTypeConstants.DAILY) subscriptionMapped.TotalPrice = (subscription.EndDate.Date - subscription.StartDate.Date).Days * subscription.Service.Price;
-                if (subscription.Service.ServiceType.Name == SubscriptionTypeConstants.WEEKLY) subscriptionMapped.TotalPrice = Math.Ceiling((subscription.EndDate.Date - subscription.StartDate.Date).Days / 7.0) * subscription.Service.Price;
-                if (subscription.Service.ServiceType.Name == SubscriptionTypeConstants.MONTHLY) subscriptionMapped.TotalPrice = Math.Ceiling((subscription.EndDate.Date - subscription.StartDate.Date).Days / 30.0) * subscription.Service.Price;
-                if (subscription.Service.ServiceType.Name == SubscriptionTypeConstants.YEARLY) subscriptionMapped.TotalPrice = Math.Ceiling((subscription.EndDate.Date - subscription.StartDate.Date).Days / 365.0) * subscription.Service.Price;
+                if (subscription.Service.ServiceType.Name == ServiceTypeConstants.DAILY) subscriptionMapped.TotalPrice = (subscription.EndDate.Date - subscription.StartDate.Date).Days * subscription.Service.Price;
+                if (subscription.Service.ServiceType.Name == ServiceTypeConstants.WEEKLY) subscriptionMapped.TotalPrice = Math.Ceiling((subscription.EndDate.Date - subscription.StartDate.Date).Days / 7.0) * subscription.Service.Price;
+                if (subscription.Service.ServiceType.Name == ServiceTypeConstants.MONTHLY) subscriptionMapped.TotalPrice = Math.Ceiling((subscription.EndDate.Date - subscription.StartDate.Date).Days / 30.0) * subscription.Service.Price;
+                if (subscription.Service.ServiceType.Name == ServiceTypeConstants.YEARLY) subscriptionMapped.TotalPrice = Math.Ceiling((subscription.EndDate.Date - subscription.StartDate.Date).Days / 365.0) * subscription.Service.Price;
                 return subscriptionMapped;
             }
             catch (Exception)
@@ -68,10 +68,10 @@ namespace Subscription_Monitoring_System_Domain.Services
             {
                 Subscription subscription = await _subscriptionRepository.GetInactive(id);
                 SubscriptionViewModel subscriptionMapped = _mapper.Map<SubscriptionViewModel>(subscription);
-                if (subscription.Service.ServiceType.Name == SubscriptionTypeConstants.DAILY) subscriptionMapped.TotalPrice = (subscription.EndDate.Date - subscription.StartDate.Date).Days * subscription.Service.Price;
-                if (subscription.Service.ServiceType.Name == SubscriptionTypeConstants.WEEKLY) subscriptionMapped.TotalPrice = Math.Ceiling((subscription.EndDate.Date - subscription.StartDate.Date).Days / 7.0) * subscription.Service.Price;
-                if (subscription.Service.ServiceType.Name == SubscriptionTypeConstants.MONTHLY) subscriptionMapped.TotalPrice = Math.Ceiling((subscription.EndDate.Date - subscription.StartDate.Date).Days / 30.0) * subscription.Service.Price;
-                if (subscription.Service.ServiceType.Name == SubscriptionTypeConstants.YEARLY) subscriptionMapped.TotalPrice = Math.Ceiling((subscription.EndDate.Date - subscription.StartDate.Date).Days / 365.0) * subscription.Service.Price;
+                if (subscription.Service.ServiceType.Name == ServiceTypeConstants.DAILY) subscriptionMapped.TotalPrice = (subscription.EndDate.Date - subscription.StartDate.Date).Days * subscription.Service.Price;
+                if (subscription.Service.ServiceType.Name == ServiceTypeConstants.WEEKLY) subscriptionMapped.TotalPrice = Math.Ceiling((subscription.EndDate.Date - subscription.StartDate.Date).Days / 7.0) * subscription.Service.Price;
+                if (subscription.Service.ServiceType.Name == ServiceTypeConstants.MONTHLY) subscriptionMapped.TotalPrice = Math.Ceiling((subscription.EndDate.Date - subscription.StartDate.Date).Days / 30.0) * subscription.Service.Price;
+                if (subscription.Service.ServiceType.Name == ServiceTypeConstants.YEARLY) subscriptionMapped.TotalPrice = Math.Ceiling((subscription.EndDate.Date - subscription.StartDate.Date).Days / 365.0) * subscription.Service.Price;
                 return subscriptionMapped;
             }
             catch (Exception)
@@ -94,7 +94,7 @@ namespace Subscription_Monitoring_System_Domain.Services
                     NotificationViewModel notification = new()
                     {
                         Description = NotificationConstants.SubscriptionExpired(subscription.Id),
-                        Date = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                        Date = DateTime.Now.ToString(DateConstants.DateTimeFormat),
                         IsActive = true,
                         SubscriptionId = subscription.Id,
                     };
@@ -102,7 +102,7 @@ namespace Subscription_Monitoring_System_Domain.Services
 
                     foreach (ClientViewModel clientRecipient in subscription.ClientRecipients)
                     {
-                        _emailService.SendEmail(new EmailViewModel(clientRecipient.EmailAddress, "Subscription is Expired", EmailBody.SendSubscriptionExpiryEmail("Subscription is Expired", NotificationConstants.SubscriptionExpired(subscription.Id))));
+                        _emailService.SendEmail(new EmailViewModel(clientRecipient.EmailAddress, NotificationConstants.ExpiredSubject, EmailBody.SendSubscriptionExpiryEmail("Subscription is Expired", NotificationConstants.SubscriptionExpired(subscription.Id))));
                     }
                 }
                 else if (subscription.RemainingDays == 7)
@@ -110,7 +110,7 @@ namespace Subscription_Monitoring_System_Domain.Services
                     NotificationViewModel notification = new()
                     {
                         Description = NotificationConstants.SubscriptionExpiring(subscription.Id, subscription.RemainingDays),
-                        Date = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                        Date = DateTime.Now.ToString(DateConstants.DateTimeFormat),
                         IsActive = true,
                         SubscriptionId = subscription.Id,
                     };
@@ -118,7 +118,7 @@ namespace Subscription_Monitoring_System_Domain.Services
 
                     foreach (ClientViewModel clientRecipient in subscription.ClientRecipients)
                     {
-                        _emailService.SendEmail(new EmailViewModel(clientRecipient.EmailAddress, "Subscription is Expiring", EmailBody.SendSubscriptionExpiryEmail("Subscription is Expiring", NotificationConstants.SubscriptionExpiring(subscription.Id, subscription.RemainingDays))));
+                        _emailService.SendEmail(new EmailViewModel(clientRecipient.EmailAddress, NotificationConstants.ExpiringSubject, EmailBody.SendSubscriptionExpiryEmail("Subscription is Expiring", NotificationConstants.SubscriptionExpiring(subscription.Id, subscription.RemainingDays))));
                     }
                 }
             }
@@ -128,15 +128,17 @@ namespace Subscription_Monitoring_System_Domain.Services
         {
             try
             {
+                if (filter.Page == 0) filter.Page = 1;
+
                 List<Subscription> subscriptions = await _subscriptionRepository.GetList();
-                List<SubscriptionViewModel> subscriptionsMapped = new List<SubscriptionViewModel>();
+                List<SubscriptionViewModel> subscriptionsMapped = new();
                 foreach(Subscription subscription in subscriptions)
                 {
                     SubscriptionViewModel subscriptionMapped = _mapper.Map<SubscriptionViewModel>(subscription);
-                    if (subscription.Service.ServiceType.Name == SubscriptionTypeConstants.DAILY) subscriptionMapped.TotalPrice = (subscription.EndDate.Date - subscription.StartDate.Date).Days * subscription.Service.Price;
-                    if (subscription.Service.ServiceType.Name == SubscriptionTypeConstants.WEEKLY) subscriptionMapped.TotalPrice = Math.Ceiling((subscription.EndDate.Date - subscription.StartDate.Date).Days / 7.0) * subscription.Service.Price;
-                    if (subscription.Service.ServiceType.Name == SubscriptionTypeConstants.MONTHLY) subscriptionMapped.TotalPrice = Math.Ceiling((subscription.EndDate.Date - subscription.StartDate.Date).Days / 30.0) * subscription.Service.Price;
-                    if (subscription.Service.ServiceType.Name == SubscriptionTypeConstants.YEARLY) subscriptionMapped.TotalPrice = Math.Ceiling((subscription.EndDate.Date - subscription.StartDate.Date).Days / 365.0) * subscription.Service.Price;
+                    if (subscription.Service.ServiceType.Name == ServiceTypeConstants.DAILY) subscriptionMapped.TotalPrice = (subscription.EndDate.Date - subscription.StartDate.Date).Days * subscription.Service.Price;
+                    if (subscription.Service.ServiceType.Name == ServiceTypeConstants.WEEKLY) subscriptionMapped.TotalPrice = Math.Ceiling((subscription.EndDate.Date - subscription.StartDate.Date).Days / 7.0) * subscription.Service.Price;
+                    if (subscription.Service.ServiceType.Name == ServiceTypeConstants.MONTHLY) subscriptionMapped.TotalPrice = Math.Ceiling((subscription.EndDate.Date - subscription.StartDate.Date).Days / 30.0) * subscription.Service.Price;
+                    if (subscription.Service.ServiceType.Name == ServiceTypeConstants.YEARLY) subscriptionMapped.TotalPrice = Math.Ceiling((subscription.EndDate.Date - subscription.StartDate.Date).Days / 365.0) * subscription.Service.Price;
                     subscriptionsMapped.Add(subscriptionMapped);
                 }
 
@@ -210,14 +212,14 @@ namespace Subscription_Monitoring_System_Domain.Services
             try
             {
                 List<Subscription> subscriptions = await _subscriptionRepository.GetList(ids);
-                List<SubscriptionViewModel> subscriptionsMapped = new List<SubscriptionViewModel>();
+                List<SubscriptionViewModel> subscriptionsMapped = new();
                 foreach (Subscription subscription in subscriptions)
                 {
                     SubscriptionViewModel subscriptionMapped = _mapper.Map<SubscriptionViewModel>(subscription);
-                    if (subscription.Service.ServiceType.Name == SubscriptionTypeConstants.DAILY) subscriptionMapped.TotalPrice = (subscription.EndDate.Date - subscription.StartDate.Date).Days * subscription.Service.Price;
-                    if (subscription.Service.ServiceType.Name == SubscriptionTypeConstants.WEEKLY) subscriptionMapped.TotalPrice = Math.Ceiling((subscription.EndDate.Date - subscription.StartDate.Date).Days / 7.0) * subscription.Service.Price;
-                    if (subscription.Service.ServiceType.Name == SubscriptionTypeConstants.MONTHLY) subscriptionMapped.TotalPrice = Math.Ceiling((subscription.EndDate.Date - subscription.StartDate.Date).Days / 30.0) * subscription.Service.Price;
-                    if (subscription.Service.ServiceType.Name == SubscriptionTypeConstants.YEARLY) subscriptionMapped.TotalPrice = Math.Ceiling((subscription.EndDate.Date - subscription.StartDate.Date).Days / 365.0) * subscription.Service.Price;
+                    if (subscription.Service.ServiceType.Name == ServiceTypeConstants.DAILY) subscriptionMapped.TotalPrice = (subscription.EndDate.Date - subscription.StartDate.Date).Days * subscription.Service.Price;
+                    if (subscription.Service.ServiceType.Name == ServiceTypeConstants.WEEKLY) subscriptionMapped.TotalPrice = Math.Ceiling((subscription.EndDate.Date - subscription.StartDate.Date).Days / 7.0) * subscription.Service.Price;
+                    if (subscription.Service.ServiceType.Name == ServiceTypeConstants.MONTHLY) subscriptionMapped.TotalPrice = Math.Ceiling((subscription.EndDate.Date - subscription.StartDate.Date).Days / 30.0) * subscription.Service.Price;
+                    if (subscription.Service.ServiceType.Name == ServiceTypeConstants.YEARLY) subscriptionMapped.TotalPrice = Math.Ceiling((subscription.EndDate.Date - subscription.StartDate.Date).Days / 365.0) * subscription.Service.Price;
                     subscriptionsMapped.Add(subscriptionMapped);
                 }
                 return subscriptionsMapped;
@@ -233,14 +235,14 @@ namespace Subscription_Monitoring_System_Domain.Services
             try
             {
                 List<Subscription> subscriptions = await _subscriptionRepository.GetHistoryList(id);
-                List<SubscriptionViewModel> subscriptionsMapped = new List<SubscriptionViewModel>();
+                List<SubscriptionViewModel> subscriptionsMapped = new();
                 foreach (Subscription subscription in subscriptions)
                 {
                     SubscriptionViewModel subscriptionMapped = _mapper.Map<SubscriptionViewModel>(subscription);
-                    if (subscription.Service.ServiceType.Name == SubscriptionTypeConstants.DAILY) subscriptionMapped.TotalPrice = (subscription.EndDate.Date - subscription.StartDate.Date).Days * subscription.Service.Price;
-                    if (subscription.Service.ServiceType.Name == SubscriptionTypeConstants.WEEKLY) subscriptionMapped.TotalPrice = Math.Ceiling((subscription.EndDate.Date - subscription.StartDate.Date).Days / 7.0) * subscription.Service.Price;
-                    if (subscription.Service.ServiceType.Name == SubscriptionTypeConstants.MONTHLY) subscriptionMapped.TotalPrice = Math.Ceiling((subscription.EndDate.Date - subscription.StartDate.Date).Days / 30.0) * subscription.Service.Price;
-                    if (subscription.Service.ServiceType.Name == SubscriptionTypeConstants.YEARLY) subscriptionMapped.TotalPrice = Math.Ceiling((subscription.EndDate.Date - subscription.StartDate.Date).Days / 365.0) * subscription.Service.Price;
+                    if (subscription.Service.ServiceType.Name == ServiceTypeConstants.DAILY) subscriptionMapped.TotalPrice = (subscription.EndDate.Date - subscription.StartDate.Date).Days * subscription.Service.Price;
+                    if (subscription.Service.ServiceType.Name == ServiceTypeConstants.WEEKLY) subscriptionMapped.TotalPrice = Math.Ceiling((subscription.EndDate.Date - subscription.StartDate.Date).Days / 7.0) * subscription.Service.Price;
+                    if (subscription.Service.ServiceType.Name == ServiceTypeConstants.MONTHLY) subscriptionMapped.TotalPrice = Math.Ceiling((subscription.EndDate.Date - subscription.StartDate.Date).Days / 30.0) * subscription.Service.Price;
+                    if (subscription.Service.ServiceType.Name == ServiceTypeConstants.YEARLY) subscriptionMapped.TotalPrice = Math.Ceiling((subscription.EndDate.Date - subscription.StartDate.Date).Days / 365.0) * subscription.Service.Price;
                     subscriptionsMapped.Add(subscriptionMapped);
                 }
                 return subscriptionsMapped;

@@ -165,7 +165,7 @@ namespace Subscription_Monitoring_System_Domain.Services
         {
             try
             {
-                User userMapped = new User
+                User userMapped = new()
                 {
                     Code = user.Code,
                     Password = PasswordHasher.HashPassword(user.Password)

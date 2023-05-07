@@ -16,10 +16,12 @@ namespace Subscription_Monitoring_System_Domain.Contracts
         Task<UserViewModel> GetActive(string code);
         Task<User> GetByEmail(string emailAddress);
         Task<User> Get(string name);
+        List<UserViewModel> SortAscending(string sortBy, List<UserViewModel> subscriptions);
+        List<UserViewModel> SortDescending(string sortBy, List<UserViewModel> subscriptions);
         Task<ListViewModel> GetList(UserFilterViewModel filter);
         Task<List<UserViewModel>> GetList(List<int> ids);
         Task Create(UserViewModel user, DepartmentViewModel department);
-        Task Update(UserViewModel user, DepartmentViewModel department);
+        Task Update(UserViewModel newUser, UserViewModel oldUser, DepartmentViewModel department);
         Task SoftDelete(int id);
         Task HardDelete(int id);
         Task SoftDelete(RecordIdsViewModel records);

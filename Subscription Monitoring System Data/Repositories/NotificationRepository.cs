@@ -16,23 +16,11 @@ namespace Subscription_Monitoring_System_Data.Repositories
         {
             _context = context;
         }
-        public async Task<Notification> Get(int id)
+        public async Task<Notification?> Get(int id)
         {
             try
             {
-                return await _context.Notifications.Where(p => p.Id == id).Include(p => p.UserNotifications).ThenInclude(p => p.User).Include(p => p.Subscription).FirstOrDefaultAsync();
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
-        public async Task<Notification> GetInactive(int id)
-        {
-            try
-            {
-                return await _context.Notifications.Where(p => p.Id == id).Include(p => p.UserNotifications).ThenInclude(p => p.User).Include(p => p.Subscription).FirstOrDefaultAsync();
+                return await _context.Notifications!.Where(p => p.Id == id).Include(p => p.UserNotifications).ThenInclude(p => p.User).Include(p => p.Subscription).FirstOrDefaultAsync();
             }
             catch (Exception)
             {
@@ -53,7 +41,7 @@ namespace Subscription_Monitoring_System_Data.Repositories
                         IsActive = true
                     });
                 }
-                await _context.Notifications.AddAsync(notification);
+                await _context.Notifications!.AddAsync(notification);
                 await _context.SaveChangesAsync();
             }
             catch (Exception)
@@ -66,8 +54,8 @@ namespace Subscription_Monitoring_System_Data.Repositories
         {
             try
             {
-                Notification notification = await GetInactive(id);
-                _context.Notifications.Remove(notification);
+                Notification? notification = await Get(id);
+                _context.Notifications!.Remove(notification!);
                 await _context.SaveChangesAsync();
             }
             catch (Exception)
@@ -80,7 +68,7 @@ namespace Subscription_Monitoring_System_Data.Repositories
         {
             try
             {
-                return await _context.Notifications.Where(p => ids.Contains(p.Id)).Include(p => p.UserNotifications).ThenInclude(p => p.User).Include(p => p.Subscription).ToListAsync();
+                return await _context.Notifications!.Where(p => ids.Contains(p.Id)).Include(p => p.UserNotifications).ThenInclude(p => p.User).Include(p => p.Subscription).ToListAsync();
             }
             catch (Exception)
             {
@@ -93,7 +81,7 @@ namespace Subscription_Monitoring_System_Data.Repositories
             try
             {
                 List<Notification> notifications = await GetList(ids);
-                _context.Notifications.RemoveRange(notifications);
+                _context.Notifications!.RemoveRange(notifications);
                 await _context.SaveChangesAsync();
             }
             catch (Exception)

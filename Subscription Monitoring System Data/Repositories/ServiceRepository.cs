@@ -23,7 +23,7 @@ namespace Subscription_Monitoring_System_Data.Repositories
         {
             try
             {
-                return await _context.Services.Where(p => p.IsActive == true).Include(p => p.ServiceType).Include(p => p.Subscriptions).ToListAsync();
+                return await _context.Services!.Where(p => p.IsActive).Include(p => p.ServiceType).Include(p => p.Subscriptions).ToListAsync();
             }
             catch (Exception)
             {
@@ -31,11 +31,11 @@ namespace Subscription_Monitoring_System_Data.Repositories
             }
         }
 
-        public async Task<Service> GetActive(int id)
+        public async Task<Service?> GetActive(int id)
         {
             try
             {
-                return await _context.Services.Where(p => p.Id == id && p.IsActive == true).Include(p => p.ServiceType).Include(p => p.Subscriptions).FirstOrDefaultAsync();
+                return await _context.Services!.Where(p => p.Id == id && p.IsActive).Include(p => p.ServiceType).Include(p => p.Subscriptions).FirstOrDefaultAsync();
             }
             catch (Exception)
             {
@@ -43,11 +43,11 @@ namespace Subscription_Monitoring_System_Data.Repositories
             }
         }
 
-        public async Task<Service> GetInactive(int id)
+        public async Task<Service?> GetInactive(int id)
         {
             try
             {
-                return await _context.Services.Where(p => p.Id == id && p.IsActive == false).Include(p => p.ServiceType).Include(p => p.Subscriptions).FirstOrDefaultAsync();
+                return await _context.Services!.Where(p => p.Id == id && !p.IsActive).Include(p => p.ServiceType).Include(p => p.Subscriptions).FirstOrDefaultAsync();
             }
             catch (Exception)
             {
@@ -55,11 +55,11 @@ namespace Subscription_Monitoring_System_Data.Repositories
             }
         }
 
-        public async Task<Service> GetActive(string name)
+        public async Task<Service?> GetActive(string name)
         {
             try
             {
-                return await _context.Services.Where(p => p.Name == name && p.IsActive == true).Include(p => p.ServiceType).Include(p => p.Subscriptions).FirstOrDefaultAsync();
+                return await _context.Services!.Where(p => p.Name == name && p.IsActive).Include(p => p.ServiceType).Include(p => p.Subscriptions).FirstOrDefaultAsync();
             }
             catch (Exception)
             {
@@ -70,56 +70,23 @@ namespace Subscription_Monitoring_System_Data.Repositories
         {
             try
             {
-                return await _context.Services.Where(p => ids.Contains(p.Id)).Include(p => p.ServiceType).Include(p => p.Subscriptions).ToListAsync();
+                return await _context.Services!.Where(p => ids.Contains(p.Id)).Include(p => p.ServiceType).Include(p => p.Subscriptions).ToListAsync();
             }
             catch (Exception)
             {
                 throw;
             }
         }
-        public async Task<List<Service>> GetList(ServiceFilterViewModel filter)
+        public async Task<List<Service>> GetList()
         {
             try
             {
-                if (filter.Page == 0) filter.Page = 1;
-
-                List<Service> services = await _context.Services.Where(p => (filter.Id == 0 || p.Id == filter.Id) && (string.IsNullOrEmpty(filter.Name) || p.Name == filter.Name) && 
-                (string.IsNullOrEmpty(filter.Description) || p.Description == filter.Description) && (filter.Price == 0 || p.Price == filter.Price) &&
-                (string.IsNullOrEmpty(filter.ServiceTypeName) || p.ServiceType.Name == filter.ServiceTypeName) && p.IsActive == filter.IsActive)
-                    .Include(p => p.ServiceType).Include(p => p.Subscriptions).ToListAsync();
-
-                return (!string.IsNullOrEmpty(filter.SortOrder) && filter.SortOrder.Equals(SortDirectionConstants.Descending)) ? SortDescending(filter.SortBy, services) : SortAscending(filter.SortBy, services);
+                return await _context.Services!.Include(p => p.ServiceType).Include(p => p.Subscriptions).ToListAsync();
             }
             catch (Exception)
             {
                 throw;
             }
-        }
-
-        public List<Service> SortAscending(string sortBy, List<Service> services)
-        {
-            return sortBy switch
-            {
-                ServiceConstants.HeaderId => services.OrderBy(p => p.Id).ToList(),
-                ServiceConstants.HeaderName => services.OrderBy(p => p.Name).ToList(),
-                ServiceConstants.HeaderDescription => services.OrderBy(p => p.Description).ToList(),
-                ServiceConstants.HeaderPrice => services.OrderBy(p => p.Price).ToList(),
-                ServiceConstants.HeaderServiceTypeName => services.OrderBy(p => p.ServiceType.Name).ToList(),
-                _ => services.OrderBy(p => p.Id).ToList(),
-            };
-        }
-
-        public List<Service> SortDescending(string sortBy, List<Service> services)
-        {
-            return sortBy switch
-            {
-                ServiceConstants.HeaderId => services.OrderByDescending(p => p.Id).ToList(),
-                ServiceConstants.HeaderName => services.OrderByDescending(p => p.Name).ToList(),
-                ServiceConstants.HeaderDescription => services.OrderByDescending(p => p.Description).ToList(),
-                ServiceConstants.HeaderPrice => services.OrderByDescending(p => p.Price).ToList(),
-                ServiceConstants.HeaderServiceTypeName => services.OrderByDescending(p => p.ServiceType.Name).ToList(),
-                _ => services.OrderByDescending(p => p.Id).ToList(),
-            };
         }
 
         public async Task Create(Service service)
@@ -127,7 +94,7 @@ namespace Subscription_Monitoring_System_Data.Repositories
             try
             {
                 service.IsActive = true;
-                await _context.Services.AddAsync(service);
+                await _context.Services!.AddAsync(service);
                 await _context.SaveChangesAsync();
             }
             catch (Exception)
@@ -139,11 +106,12 @@ namespace Subscription_Monitoring_System_Data.Repositories
         {
             try
             {
-                var serviceUpdate = await GetActive(service.Id);
-                serviceUpdate.Name = service.Name;
+                Service? serviceUpdate = await GetActive(service.Id);
+                serviceUpdate!.Name = service.Name;
                 serviceUpdate.Description = service.Description;
                 serviceUpdate.Price = service.Price;
                 serviceUpdate.ServiceTypeId = service.ServiceTypeId;
+                _context.Services!.Update(serviceUpdate);
                 await _context.SaveChangesAsync();
             }
             catch (Exception)
@@ -155,8 +123,8 @@ namespace Subscription_Monitoring_System_Data.Repositories
         {
             try
             {
-                Service service = await GetInactive(id);
-                _context.Services.Remove(service);
+                Service? service = await GetInactive(id);
+                _context.Services!.Remove(service!);
                 await _context.SaveChangesAsync();
             }
             catch (Exception)
@@ -169,9 +137,9 @@ namespace Subscription_Monitoring_System_Data.Repositories
         {
             try
             {
-                Service service = await GetActive(id);
-                service.IsActive = false;
-                _context.Services.Update(service);
+                Service? service = await GetActive(id);
+                service!.IsActive = false;
+                _context.Services!.Update(service);
                 await _context.SaveChangesAsync();
             }
             catch (Exception)
@@ -185,7 +153,7 @@ namespace Subscription_Monitoring_System_Data.Repositories
             try
             {
                 List<Service> services = await GetList(ids);
-                _context.Services.RemoveRange(services);
+                _context.Services!.RemoveRange(services);
                 await _context.SaveChangesAsync();
             }
             catch (Exception)
@@ -200,7 +168,7 @@ namespace Subscription_Monitoring_System_Data.Repositories
             {
                 List<Service> services = await GetList(ids);
                 services.ForEach(p => p.IsActive = false);
-                _context.Services.UpdateRange(services);
+                _context.Services!.UpdateRange(services);
                 await _context.SaveChangesAsync();
             }
             catch (Exception)
@@ -213,9 +181,9 @@ namespace Subscription_Monitoring_System_Data.Repositories
         {
             try
             {
-                Service service = await GetInactive(id);
-                service.IsActive = true;
-                _context.Services.Update(service);
+                Service? service = await GetInactive(id);
+                service!.IsActive = true;
+                _context.Services!.Update(service);
                 await _context.SaveChangesAsync();
             }
             catch (Exception)
@@ -230,7 +198,7 @@ namespace Subscription_Monitoring_System_Data.Repositories
             {
                 List<Service> services = await GetList(ids);
                 services.ForEach(p => p.IsActive = true);
-                _context.Services.UpdateRange(services);
+                _context.Services!.UpdateRange(services);
                 await _context.SaveChangesAsync();
             }
             catch (Exception)
@@ -242,7 +210,7 @@ namespace Subscription_Monitoring_System_Data.Repositories
         {
             try
             {
-                return await _context.Services.AnyAsync(p => (p.Name == service.Name || p.Description == service.Description) && p.Id != service.Id && p.IsActive == true);
+                return await _context.Services!.AnyAsync(p => (p.Name == service.Name || p.Description == service.Description) && p.Id != service.Id && p.IsActive);
             }
             catch (Exception)
             {

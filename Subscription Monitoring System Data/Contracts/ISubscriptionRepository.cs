@@ -9,8 +9,8 @@ namespace Subscription_Monitoring_System_Data.Contracts
 {
     public interface ISubscriptionRepository
     {
-        Task<Subscription> GetActive(int id);
-        Task<Subscription> GetInactive(int id);
+        Task<Subscription?> GetActive(int id);
+        Task<Subscription?> GetInactive(int id);
         Task<List<Subscription>> GetList(List<int> ids);
         Task<List<Subscription>> GetHistoryList(int id);
         Task<List<Subscription>> GetList();

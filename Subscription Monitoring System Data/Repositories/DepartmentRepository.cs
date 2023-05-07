@@ -17,11 +17,11 @@ namespace Subscription_Monitoring_System_Data.Repositories
             _context = context;
         }
 
-        public async Task<Department> Get(int id)
+        public async Task<Department?> Get(int id)
         {
             try
             {
-                return await _context.Departments.Where(p => p.Id == id).Include(p => p.Users).FirstOrDefaultAsync();
+                return await _context.Departments!.Where(p => p.Id == id).Include(p => p.Users).FirstOrDefaultAsync();
             }
             catch (Exception)
             {
@@ -29,11 +29,11 @@ namespace Subscription_Monitoring_System_Data.Repositories
             }
         }
 
-        public async Task<Department> Get(string name)
+        public async Task<Department?> Get(string name)
         {
             try
             {
-                return await _context.Departments.Where(p => p.Name == name).Include(p => p.Users).FirstOrDefaultAsync();
+                return await _context.Departments!.Where(p => p.Name == name).Include(p => p.Users).FirstOrDefaultAsync();
             }
             catch (Exception)
             {
@@ -45,7 +45,19 @@ namespace Subscription_Monitoring_System_Data.Repositories
         {
             try
             {
-                return await _context.Departments.Include(p => p.Users).ToListAsync();
+                return await _context.Departments!.Include(p => p.Users).ToListAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<bool> DepartmentExists(string name)
+        {
+            try
+            {
+                return await _context.Departments!.AnyAsync(p => p.Name == name);
             }
             catch (Exception)
             {

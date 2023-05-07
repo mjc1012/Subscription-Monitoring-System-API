@@ -20,11 +20,11 @@ namespace Subscription_Monitoring_System_Data.Repositories
             _context = context;
         }
 
-        public async Task<Subscription> GetActive(int id)
+        public async Task<Subscription?> GetActive(int id)
         {
             try
             {
-                return await _context.Subscriptions.Where(p => p.Id == id && p.IsActive == true).Include(p => p.UpdatedBy).Include(p => p.CreatedBy).Include(p => p.Client).Include(p => p.Service).ThenInclude(p => p.ServiceType).Include(p => p.SubscriptionHistory).Include(p => p.SubscriptionHistories).Include(p => p.Notifications).Include(p => p.SubscriptionUsers).ThenInclude(p => p.User).Include(p => p.SubscriptionClients).ThenInclude(p => p.Client).FirstOrDefaultAsync();
+                return await _context.Subscriptions!.Where(p => p.Id == id && p.IsActive).Include(p => p.UpdatedBy).Include(p => p.CreatedBy).Include(p => p.Client).Include(p => p.Service).ThenInclude(p => p.ServiceType).Include(p => p.SubscriptionHistory).Include(p => p.SubscriptionHistories).Include(p => p.Notifications).Include(p => p.SubscriptionUsers).ThenInclude(p => p.User).Include(p => p.SubscriptionClients).ThenInclude(p => p.Client).FirstOrDefaultAsync();
             }
             catch (Exception)
             {
@@ -32,11 +32,11 @@ namespace Subscription_Monitoring_System_Data.Repositories
             }
         }
 
-        public async Task<Subscription> GetInactive(int id)
+        public async Task<Subscription?> GetInactive(int id)
         {
             try
             {
-                return await _context.Subscriptions.Where(p => p.Id == id && p.IsActive == false).Include(p => p.UpdatedBy).Include(p => p.CreatedBy).Include(p => p.Client).Include(p => p.Service).ThenInclude(p => p.ServiceType).Include(p => p.SubscriptionHistory).Include(p => p.SubscriptionHistories).Include(p => p.Notifications).Include(p => p.SubscriptionUsers).ThenInclude(p => p.User).Include(p => p.SubscriptionClients).ThenInclude(p => p.Client).FirstOrDefaultAsync();
+                return await _context.Subscriptions!.Where(p => p.Id == id && !p.IsActive).Include(p => p.UpdatedBy).Include(p => p.CreatedBy).Include(p => p.Client).Include(p => p.Service).ThenInclude(p => p.ServiceType).Include(p => p.SubscriptionHistory).Include(p => p.SubscriptionHistories).Include(p => p.Notifications).Include(p => p.SubscriptionUsers).ThenInclude(p => p.User).Include(p => p.SubscriptionClients).ThenInclude(p => p.Client).FirstOrDefaultAsync();
             }
             catch (Exception)
             {
@@ -47,7 +47,7 @@ namespace Subscription_Monitoring_System_Data.Repositories
         {
             try
             {
-                return await _context.Subscriptions.Where(p => ids.Contains(p.Id)).Include(p => p.UpdatedBy).Include(p => p.CreatedBy).Include(p => p.Client).Include(p => p.Service).ThenInclude(p => p.ServiceType).Include(p => p.SubscriptionHistory).Include(p => p.SubscriptionHistories).Include(p => p.Notifications).Include(p => p.SubscriptionUsers).ThenInclude(p => p.User).Include(p => p.SubscriptionClients).ThenInclude(p => p.Client).ToListAsync();
+                return await _context.Subscriptions!.Where(p => ids.Contains(p.Id)).Include(p => p.UpdatedBy).Include(p => p.CreatedBy).Include(p => p.Client).Include(p => p.Service).ThenInclude(p => p.ServiceType).Include(p => p.SubscriptionHistory).Include(p => p.SubscriptionHistories).Include(p => p.Notifications).Include(p => p.SubscriptionUsers).ThenInclude(p => p.User).Include(p => p.SubscriptionClients).ThenInclude(p => p.Client).ToListAsync();
             }
             catch (Exception)
             {
@@ -59,7 +59,7 @@ namespace Subscription_Monitoring_System_Data.Repositories
         {
             try
             {
-                return await _context.Subscriptions.Where(p => p.SubscriptionHistoryId == id).Include(p => p.UpdatedBy).Include(p => p.CreatedBy).Include(p => p.Client).Include(p => p.Service).ThenInclude(p => p.ServiceType).Include(p => p.SubscriptionHistory).Include(p => p.SubscriptionHistories).Include(p => p.Notifications).Include(p => p.SubscriptionUsers).ThenInclude(p => p.User).Include(p => p.SubscriptionClients).ThenInclude(p => p.Client).ToListAsync();
+                return await _context.Subscriptions!.Where(p => p.SubscriptionHistoryId == id).Include(p => p.UpdatedBy).Include(p => p.CreatedBy).Include(p => p.Client).Include(p => p.Service).ThenInclude(p => p.ServiceType).Include(p => p.SubscriptionHistory).Include(p => p.SubscriptionHistories).Include(p => p.Notifications).Include(p => p.SubscriptionUsers).ThenInclude(p => p.User).Include(p => p.SubscriptionClients).ThenInclude(p => p.Client).ToListAsync();
             }
             catch (Exception)
             {
@@ -71,7 +71,7 @@ namespace Subscription_Monitoring_System_Data.Repositories
         {
             try
             {
-                return await _context.Subscriptions.Include(p => p.UpdatedBy).Include(p => p.CreatedBy).Include(p => p.Client).Include(p => p.Service).ThenInclude(p => p.ServiceType).Include(p => p.SubscriptionHistory).Include(p => p.SubscriptionHistories).Include(p => p.Notifications).Include(p => p.SubscriptionUsers).ThenInclude(p => p.User).Include(p => p.SubscriptionClients).ThenInclude(p => p.Client).ToListAsync();
+                return await _context.Subscriptions!.Include(p => p.UpdatedBy).Include(p => p.CreatedBy).Include(p => p.Client).Include(p => p.Service).ThenInclude(p => p.ServiceType).Include(p => p.SubscriptionHistory).Include(p => p.SubscriptionHistories).Include(p => p.Notifications).Include(p => p.SubscriptionUsers).ThenInclude(p => p.User).Include(p => p.SubscriptionClients).ThenInclude(p => p.Client).ToListAsync();
             }
             catch (Exception)
             {
@@ -100,7 +100,7 @@ namespace Subscription_Monitoring_System_Data.Repositories
                         Subscription = subscription
                     });
                 }
-                await _context.Subscriptions.AddAsync(subscription);
+                await _context.Subscriptions!.AddAsync(subscription);
                 await _context.SaveChangesAsync();
                 return subscription;
             }
@@ -114,10 +114,10 @@ namespace Subscription_Monitoring_System_Data.Repositories
         {
             try
             {
-                Subscription subscription = await GetActive(id);
-                Subscription subscriptionHistory = new Subscription
+                Subscription? subscription = await GetActive(id);
+                Subscription subscriptionHistory = new()
                 {
-                    StartDate = subscription.StartDate,
+                    StartDate = subscription!.StartDate,
                     EndDate = subscription.EndDate,
                     IsActive = false,
                     IsExpired = subscription.IsExpired,
@@ -131,7 +131,7 @@ namespace Subscription_Monitoring_System_Data.Repositories
                     Notifications = subscription.Notifications
                 };
 
-                List<int> clientIds = subscription.SubscriptionClients.Select(p => (int)p.ClientId).ToList();
+                List<int> clientIds = subscription.SubscriptionClients.Select(p => p.ClientId).ToList();
                 foreach (var clientId in clientIds)
                 {
                     subscriptionHistory.SubscriptionClients.Add(new SubscriptionClient()
@@ -141,7 +141,7 @@ namespace Subscription_Monitoring_System_Data.Repositories
                     });
                 }
 
-                List<int> userIds = subscription.SubscriptionUsers.Select(p => (int)p.UserId).ToList();
+                List<int> userIds = subscription.SubscriptionUsers.Select(p => p.UserId).ToList();
                 foreach (int userId in userIds)
                 {
                     subscriptionHistory.SubscriptionUsers.Add(new SubscriptionUser()
@@ -150,7 +150,7 @@ namespace Subscription_Monitoring_System_Data.Repositories
                         Subscription = subscriptionHistory
                     });
                 }
-                await _context.Subscriptions.AddAsync(subscriptionHistory);
+                await _context.Subscriptions!.AddAsync(subscriptionHistory);
                 await _context.SaveChangesAsync();
                 return subscriptionHistory;
             }
@@ -164,15 +164,15 @@ namespace Subscription_Monitoring_System_Data.Repositories
         {
             try
             {
-                var subscriptionUpdate = await GetActive(subscription.Id);
-                subscriptionUpdate.StartDate = subscription.StartDate;
+                Subscription? subscriptionUpdate = await GetActive(subscription.Id);
+                subscriptionUpdate!.StartDate = subscription.StartDate;
                 subscriptionUpdate.EndDate = subscription.EndDate;
                 subscriptionUpdate.ClientId = subscription.ClientId;
                 subscriptionUpdate.ServiceId = subscription.ServiceId;
                 subscriptionUpdate.UpdatedOn = subscription.UpdatedOn;
                 subscriptionUpdate.UpdatedById = subscription.UpdatedById;
 
-                List<SubscriptionClient> newClients= new List<SubscriptionClient>();
+                List<SubscriptionClient> newClients= new();
                 foreach (int id in clientIds)
                 {
                     newClients.Add(new SubscriptionClient()
@@ -183,7 +183,7 @@ namespace Subscription_Monitoring_System_Data.Repositories
                 }
                 subscriptionUpdate.SubscriptionClients = newClients;
 
-                List<SubscriptionUser> newUsers = new List<SubscriptionUser>();
+                List<SubscriptionUser> newUsers = new();
                 foreach (int id in userIds)
                 {
                     newUsers.Add(new SubscriptionUser()
@@ -194,7 +194,7 @@ namespace Subscription_Monitoring_System_Data.Repositories
                 }
                 subscriptionUpdate.SubscriptionUsers = newUsers;
 
-                _context.Update(subscriptionUpdate);
+                _context.Subscriptions!.Update(subscriptionUpdate);
                 await _context.SaveChangesAsync();
                 return subscriptionUpdate;
             }
@@ -208,8 +208,9 @@ namespace Subscription_Monitoring_System_Data.Repositories
             try
             {
                 List<Subscription> subscriptionHistory = await GetHistoryList(id);
-                subscriptionHistory.Add(await GetInactive(id));
-                _context.Subscriptions.RemoveRange(subscriptionHistory);
+                Subscription? subscription = await GetInactive(id);
+                subscriptionHistory.Add(subscription!);
+                _context.Subscriptions!.RemoveRange(subscriptionHistory);
                 await _context.SaveChangesAsync();
             }
             catch (Exception)
@@ -222,9 +223,9 @@ namespace Subscription_Monitoring_System_Data.Repositories
         {
             try
             {
-                Subscription subscription = await GetActive(id);
-                subscription.IsActive = false;
-                _context.Subscriptions.Update(subscription);
+                Subscription? subscription = await GetActive(id);
+                subscription!.IsActive = false;
+                _context.Subscriptions!.Update(subscription);
                 await _context.SaveChangesAsync();
             }
             catch (Exception)
@@ -237,9 +238,9 @@ namespace Subscription_Monitoring_System_Data.Repositories
         {
             try
             {
-                Subscription subscription = await GetActive(id);
-                subscription.IsExpired = true;
-                _context.Subscriptions.Update(subscription);
+                Subscription? subscription = await GetActive(id);
+                subscription!.IsExpired = true;
+                _context.Subscriptions!.Update(subscription);
                 await _context.SaveChangesAsync();
             }
             catch (Exception)
@@ -257,7 +258,7 @@ namespace Subscription_Monitoring_System_Data.Repositories
                 {
                     subscriptions.AddRange(await GetHistoryList(id));
                 }
-                _context.Subscriptions.RemoveRange(subscriptions);
+                _context.Subscriptions!.RemoveRange(subscriptions);
                 await _context.SaveChangesAsync();
             }
             catch (Exception)
@@ -272,7 +273,7 @@ namespace Subscription_Monitoring_System_Data.Repositories
             {
                 List<Subscription> subscriptions = await GetList(ids);
                 subscriptions.ForEach(p => p.IsActive = false);
-                _context.Subscriptions.UpdateRange(subscriptions);
+                _context.Subscriptions!.UpdateRange(subscriptions);
                 await _context.SaveChangesAsync();
             }
             catch (Exception)
@@ -285,9 +286,9 @@ namespace Subscription_Monitoring_System_Data.Repositories
         {
             try
             {
-                Subscription subscription = await GetInactive(id);
-                subscription.IsActive = true;
-                _context.Subscriptions.Update(subscription);
+                Subscription? subscription = await GetInactive(id);
+                subscription!.IsActive = true;
+                _context.Subscriptions!.Update(subscription);
                 await _context.SaveChangesAsync();
             }
             catch (Exception)
@@ -302,7 +303,7 @@ namespace Subscription_Monitoring_System_Data.Repositories
             {
                 List<Subscription> subscriptions = await GetList(ids);
                 subscriptions.ForEach(p => p.IsActive = true);
-                _context.Subscriptions.UpdateRange(subscriptions);
+                _context.Subscriptions!.UpdateRange(subscriptions);
                 await _context.SaveChangesAsync();
             }
             catch (Exception)
@@ -314,7 +315,7 @@ namespace Subscription_Monitoring_System_Data.Repositories
         {
             try
             {
-                return await _context.Subscriptions.AnyAsync(p => p.ServiceId == subscription.ServiceId && p.ClientId == subscription.ClientId && p.Id != subscription.Id && p.IsActive == true);
+                return await _context.Subscriptions!.AnyAsync(p => p.ServiceId == subscription.ServiceId && p.ClientId == subscription.ClientId && p.Id != subscription.Id && p.IsActive);
             }
             catch (Exception)
             {

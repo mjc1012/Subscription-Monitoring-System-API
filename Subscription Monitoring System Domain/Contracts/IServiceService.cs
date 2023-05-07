@@ -1,4 +1,5 @@
-﻿using Subscription_Monitoring_System_Data.ViewModels;
+﻿using Subscription_Monitoring_System_Data.Models;
+using Subscription_Monitoring_System_Data.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,8 @@ namespace Subscription_Monitoring_System_Domain.Contracts
         Task<ServiceViewModel> GetActive(int id);
         Task<ServiceViewModel> GetInactive(int id);
         Task<ServiceViewModel> GetActive(string name);
+        List<ServiceViewModel> SortAscending(string sortBy, List<ServiceViewModel> services);
+        List<ServiceViewModel> SortDescending(string sortBy, List<ServiceViewModel> services);
         Task<ListViewModel> GetList(ServiceFilterViewModel filter);
         Task<List<ServiceViewModel>> GetList(List<int> ids);
         Task Create(ServiceViewModel service, ServiceTypeViewModel serviceType);

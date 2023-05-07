@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using Subscription_Monitoring_System_Data.Contracts;
+using Subscription_Monitoring_System_Data.Models;
+using Subscription_Monitoring_System_Data.Repositories;
 using Subscription_Monitoring_System_Data.ViewModels;
 using Subscription_Monitoring_System_Domain.Contracts;
 using System;
@@ -12,20 +14,20 @@ namespace Subscription_Monitoring_System_Domain.Services
 {
     public class DepartmentService : IDepartmentService
     {
-        private readonly IDepartmentRepository _roleRepository;
+        private readonly IDepartmentRepository _departmentRepository;
         private readonly IMapper _mapper;
 
-        public DepartmentService(IDepartmentRepository roleRepository, IMapper mapper)
+        public DepartmentService(IDepartmentRepository departmentRepository, IMapper mapper)
         {
             _mapper = mapper;
-            _roleRepository = roleRepository;
+            _departmentRepository = departmentRepository;
         }
 
         public async Task<DepartmentViewModel> Get(int id)
         {
             try
             {
-                return _mapper.Map<DepartmentViewModel>(await _roleRepository.Get(id));
+                return _mapper.Map<DepartmentViewModel>(await _departmentRepository.Get(id));
             }
             catch (Exception)
             {
@@ -37,7 +39,7 @@ namespace Subscription_Monitoring_System_Domain.Services
         {
             try
             {
-                return _mapper.Map<DepartmentViewModel>(await _roleRepository.Get(name));
+                return _mapper.Map<DepartmentViewModel>(await _departmentRepository.Get(name));
             }
             catch (Exception)
             {
@@ -49,7 +51,19 @@ namespace Subscription_Monitoring_System_Domain.Services
         {
             try
             {
-                return _mapper.Map<List<DepartmentViewModel>>(await _roleRepository.GetList());
+                return _mapper.Map<List<DepartmentViewModel>>(await _departmentRepository.GetList());
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<bool> DepartmentExists(string name)
+        {
+            try
+            {
+                return await _departmentRepository.DepartmentExists(name);
             }
             catch (Exception)
             {

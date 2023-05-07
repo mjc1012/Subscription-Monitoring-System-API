@@ -23,8 +23,9 @@ namespace Subscription_Monitoring_System_Data
             <p>Your receiving this email because you requested a password reset for your Subscription Monitoring System Account.</p>
             <p>Please click the link below to go to the reset password page</p>
             <a href=""http://localhost:4200/reset?email={emailAddress}&code={refreshToken}"">Reset Password Link</a>
-            <p>Kind Regards, <br><br>
-            Alliance</p>
+            <br>
+            <p>Kind Regards,</p>
+            <p>Alliance</p>
             </div>
             </div>
             </div>
@@ -45,11 +46,62 @@ namespace Subscription_Monitoring_System_Data
             <div>
             <h1>Account Credentials</h1>
             <hr>
-            <p>Your receiving this email because you requested an account for the Subscription Monitoring Management System.</p>
+            <p>Below is your account credentials for the Subscription Monitoring Management System.</p>
             <p>Id Number: {code}</p>
             <p>Password: {password}</p>
-            <p>Kind Regards, <br><br>
-            Alliance</p>
+            <br>
+            <p>Kind Regards,</p>
+            <p>Alliance</p>
+            </div>
+            </div>
+            </div>
+            </body>
+            </html>
+            ";
+        }
+
+        public static string UpdateCredentialsEmailBody(string code)
+        {
+            return $@"<html>
+            <head>
+            </head>
+            <body >
+            <div >
+            <div>
+            <div>
+            <h1>Updated Account Credentials</h1>
+            <hr>
+            <p>Below is your updated account credentials for the Subscription Monitoring Management System.</p>
+            <p>Id Number: {code}</p>
+            <p>Your password is still the same as before.</p>
+            <br>
+            <p>Kind Regards,</p>
+            <p>Alliance</p>
+            </div>
+            </div>
+            </div>
+            </body>
+            </html>
+            ";
+        }
+
+        public static string UpdateCredentialsEmailBody(string code, string password)
+        {
+            return $@"<html>
+            <head>
+            </head>
+            <body >
+            <div >
+            <div>
+            <div>
+            <h1>Updated Account Credentials</h1>
+            <hr>
+            <p>Below is your updated account credentials for the Subscription Monitoring Management System.</p>
+            <p>Id Number: {code}</p>
+            <p>Password: {password}</p>
+            <br>
+            <p>Kind Regards,</p>
+            <p>Alliance</p>
             </div>
             </div>
             </div>
@@ -70,8 +122,9 @@ namespace Subscription_Monitoring_System_Data
             <h1>Checking Email</h1>
             <hr>
             <p>Hi, We're just checking if this address is valid. </p>
-            <p>Kind Regards, <br><br>
-            Alliance</p>
+            <br>
+            <p>Kind Regards,</p>
+            <p>Alliance</p>
             </div>
             </div>
             </div>
@@ -92,8 +145,9 @@ namespace Subscription_Monitoring_System_Data
             <h1>{header}</h1>
             <hr>
             <p>{message}</p>
-            <p>Kind Regards, <br><br>
-            Alliance</p>
+            <br>
+            <p>Kind Regards,</p>
+            <p>Alliance</p>
             </div>
             </div>
             </div>
@@ -122,8 +176,9 @@ namespace Subscription_Monitoring_System_Data
             <p>Service: {subscription.ServiceName}</p>
             <p>CreatedOn: {subscription.CreatedOn}</p>
             <p>CreatedBy: {subscription.CreatedByName}</p>
-            <p>Kind Regards, <br><br>
-            Alliance</p>
+            <br>
+            <p>Kind Regards,</p>
+            <p>Alliance</p>
             </div>
             </div>
             </div>
@@ -153,8 +208,9 @@ namespace Subscription_Monitoring_System_Data
             <p>UpdatedOn: {subscription.UpdatedOn}</p>
             <p>UpdatedBy: {subscription.UpdatedByName}</p>
             <p>{(clients.Any(p => p.EmailAddress == emailAddress)? "" : "Due to certain changes you are no longer one of the notification recipients to this subscription. If you are any questions, please contact us.")}</p>
-            <p>Kind Regards, <br><br>
-            Alliance</p>
+            <br>
+            <p>Kind Regards,</p>
+            <p>Alliance</p>
             </div>
             </div>
             </div>

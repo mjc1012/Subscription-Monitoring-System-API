@@ -5,6 +5,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <RootNamespace>Subscription_Monitoring_System_Data</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
+	  <NoWarn>$(NoWarn);SYSLIB0023</NoWarn>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 

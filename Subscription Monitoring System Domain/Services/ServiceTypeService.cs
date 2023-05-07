@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Subscription_Monitoring_System_Data.Contracts;
+using Subscription_Monitoring_System_Data.Repositories;
 using Subscription_Monitoring_System_Data.ViewModels;
 using Subscription_Monitoring_System_Domain.Contracts;
 using System;
@@ -50,6 +51,18 @@ namespace Subscription_Monitoring_System_Domain.Services
             try
             {
                 return _mapper.Map<List<ServiceTypeViewModel>>(await _serviceTypeRepository.GetList());
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<bool> ServiceTypeExists(string name)
+        {
+            try
+            {
+                return await _serviceTypeRepository.ServiceTypeExists(name);
             }
             catch (Exception)
             {

@@ -24,10 +24,5 @@ namespace Subscription_Monitoring_System_Data
             var base64Hash = Convert.ToBase64String(hashBytes);
             return base64Hash;
         }
-
-        public static string CreateTemporaryPassword(string lastname)
-        {
-            return "Alliance" + lastname.Replace(" ", string.Empty) + "@123";
-        }
     }
 }

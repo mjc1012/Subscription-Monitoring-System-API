@@ -9,8 +9,9 @@ namespace Subscription_Monitoring_System_Data.Contracts
 {
     public interface IDepartmentRepository
     {
-        Task<Department> Get(int id);
-        Task<Department> Get(string name);
+        Task<Department?> Get(int id);
+        Task<Department?> Get(string name);
         Task<List<Department>> GetList();
+        Task<bool> DepartmentExists(string name);
     }
 }

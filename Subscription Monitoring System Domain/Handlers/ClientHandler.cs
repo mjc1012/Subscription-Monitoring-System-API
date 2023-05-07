@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using static Subscription_Monitoring_System_Data.Constants;
 
@@ -20,16 +21,40 @@ namespace Subscription_Monitoring_System_Domain.Handlers
             _clientService = clientService;
             _emailService = emailService;
         }
+
+        public List<string> CanFilter(ClientFilterViewModel filter)
+        {
+            var validationErrors = new List<string>();
+
+            if (!string.IsNullOrEmpty(filter.SortOrder) && (filter.SortOrder is not SortDirectionConstants.Ascending and not SortDirectionConstants.Descending))
+            {
+                validationErrors.Add(SortDirectionConstants.SortDirectionInvalid);
+            }
+
+            if (!string.IsNullOrEmpty(filter.SortBy) && (filter.SortBy is not ClientConstants.HeaderId and not ClientConstants.NameInvalid and not ClientConstants.HeaderEmailAddress))
+            {
+                validationErrors.Add(ClientConstants.SortByInvalid);
+            }
+
+            return validationErrors;
+        }
+
         public async Task<List<string>> CanAdd(ClientViewModel client)
         {
             var validationErrors = new List<string>();
 
             if (client != null)
-            {
+            { 
 
                 if (await _clientService.ClientExists(client))
                 {
                     validationErrors.Add(ClientConstants.Exists);
+                }
+
+                Match match = Regex.Match(client.Name, "[^A-Z]");
+                if (match.Success)
+                {
+                    validationErrors.Add(ClientConstants.NameInvalid);
                 }
 
                 try
@@ -53,21 +78,35 @@ namespace Subscription_Monitoring_System_Domain.Handlers
         {
             var validationErrors = new List<string>();
 
-            if (client != null)
+            ClientViewModel clientFound = await _clientService.GetActive(client.Id);
+            if (client != null && clientFound != null)
             {
-
-                if (await _clientService.ClientExists(client))
+                if(client.Name == clientFound.Name && client.EmailAddress == clientFound.EmailAddress)
                 {
-                    validationErrors.Add(ClientConstants.Exists);
+                    validationErrors.Add(ClientConstants.NoChanges);
                 }
+                else
+                {
 
-                try
-                {
-                    _emailService.SendEmail(new EmailViewModel(client.EmailAddress, "Checking Email", EmailBody.CheckEmailBody()));
-                }
-                catch (Exception)
-                {
-                    validationErrors.Add(EmailConstants.CannotReachEmail);
+                    if (await _clientService.ClientExists(client))
+                    {
+                        validationErrors.Add(ClientConstants.Exists);
+                    }
+
+                    Match match = Regex.Match(client.Name, "[^A-Z]");
+                    if (match.Success)
+                    {
+                        validationErrors.Add(ClientConstants.NameInvalid);
+                    }
+
+                    try
+                    {
+                        _emailService.SendEmail(new EmailViewModel(client.EmailAddress, "Checking Email", EmailBody.CheckEmailBody()));
+                    }
+                    catch (Exception)
+                    {
+                        validationErrors.Add(EmailConstants.CannotReachEmail);
+                    }
                 }
             }
             else

@@ -100,7 +100,19 @@ namespace Subscription_Monitoring_System_Domain.Services
         {
             try
             {
-                List<UserViewModel> users = _mapper.Map<List<UserViewModel>>(await _userRepository.GetList(filter));
+                if (filter.Page == 0) filter.Page = 1;
+
+                List<UserViewModel> users = _mapper.Map<List<UserViewModel>>(await _userRepository.GetList());
+
+                users = users.Where(p => (filter.Id == 0 || p.Id == filter.Id) &&
+                (string.IsNullOrEmpty(filter.Code) || p.Code == filter.Code) &&
+                (string.IsNullOrEmpty(filter.FirstName) || p.FirstName == filter.FirstName) &&
+                (string.IsNullOrEmpty(filter.MiddleName) || p.MiddleName == filter.MiddleName) &&
+                (string.IsNullOrEmpty(filter.LastName) || p.LastName == filter.LastName) &&
+                (string.IsNullOrEmpty(filter.EmailAddress) || p.EmailAddress == filter.EmailAddress) &&
+                (string.IsNullOrEmpty(filter.DepartmentName) || p.DepartmentName == filter.DepartmentName) && p.IsActive == filter.IsActive).ToList();
+
+                users = (!string.IsNullOrEmpty(filter.SortOrder) && filter.SortOrder.Equals(SortDirectionConstants.Descending)) ? SortDescending(filter.SortBy, users) : SortAscending(filter.SortBy, users);
 
                 int totalCount = users.Count;
                 int totalPages = (int)Math.Ceiling((double)totalCount / BaseConstants.PageSize);
@@ -119,6 +131,36 @@ namespace Subscription_Monitoring_System_Domain.Services
                 throw;
             }
 
+        }
+
+        public List<UserViewModel> SortAscending(string sortBy, List<UserViewModel> users)
+        {
+            return sortBy switch
+            {
+                UserConstants.HeaderId => users.OrderBy(p => p.Id).ToList(),
+                UserConstants.HeaderCode => users.OrderBy(p => p.Code).ToList(),
+                UserConstants.HeaderFirstName => users.OrderBy(p => p.FirstName).ToList(),
+                UserConstants.HeaderMiddleName => users.OrderBy(p => p.MiddleName).ToList(),
+                UserConstants.HeaderLastName => users.OrderBy(p => p.LastName).ToList(),
+                UserConstants.HeaderEmailAddress => users.OrderBy(p => p.EmailAddress).ToList(),
+                UserConstants.HeaderDepartmentName => users.OrderBy(p => p.DepartmentName).ToList(),
+                _ => users.OrderBy(p => p.Id).ToList(),
+            };
+        }
+
+        public List<UserViewModel> SortDescending(string sortBy, List<UserViewModel> users)
+        {
+            return sortBy switch
+            {
+                UserConstants.HeaderId => users.OrderByDescending(p => p.Id).ToList(),
+                UserConstants.HeaderCode => users.OrderByDescending(p => p.Code).ToList(),
+                UserConstants.HeaderFirstName => users.OrderByDescending(p => p.FirstName).ToList(),
+                UserConstants.HeaderMiddleName => users.OrderByDescending(p => p.MiddleName).ToList(),
+                UserConstants.HeaderLastName => users.OrderByDescending(p => p.LastName).ToList(),
+                UserConstants.HeaderEmailAddress => users.OrderByDescending(p => p.EmailAddress).ToList(),
+                UserConstants.HeaderDepartmentName => users.OrderByDescending(p => p.DepartmentName).ToList(),
+                _ => users.OrderByDescending(p => p.Id).ToList(),
+            };
         }
 
         public async Task<List<UserViewModel>> GetList(List<int> ids)
@@ -147,13 +189,13 @@ namespace Subscription_Monitoring_System_Domain.Services
             }
         }
 
-        public async Task Update(UserViewModel user, DepartmentViewModel department)
+        public async Task Update(UserViewModel user, UserViewModel oldUser, DepartmentViewModel department)
         {
             try
             {
                 User userMapped = _mapper.Map<User>(user);
                 userMapped.DepartmentId = department.Id;
-                await _userRepository.Update(userMapped);
+                await _userRepository.Update(userMapped, _mapper.Map<User>(oldUser));
             }
             catch (Exception)
             {

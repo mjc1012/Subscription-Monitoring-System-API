@@ -11,12 +11,10 @@ namespace Subscription_Monitoring_System_Data.Contracts
     public interface IServiceRepository
     {
         Task<List<Service>> GetActiveList();
-        Task<Service> GetActive(int id);
-        Task<Service> GetInactive(int id);
-        Task<Service> GetActive(string name);
-        List<Service> SortAscending(string sortBy, List<Service> services);
-        List<Service> SortDescending(string sortBy, List<Service> services);
-        Task<List<Service>> GetList(ServiceFilterViewModel filter);
+        Task<Service?> GetActive(int id);
+        Task<Service?> GetInactive(int id);
+        Task<Service?> GetActive(string name);
+        Task<List<Service>> GetList();
         Task<List<Service>> GetList(List<int> ids);
         Task Create(Service service);
         Task Update(Service service);

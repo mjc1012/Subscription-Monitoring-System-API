@@ -22,7 +22,7 @@ namespace Subscription_Monitoring_System.Controllers
             try
             {
                 List<ServiceViewModel> responseData = await _unitOfWork.ServiceService.GetActiveList();
-                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = BaseConstants.retrievedData, Value = responseData });
+                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = BaseConstants.RetrievedData, Value = responseData });
             }
             catch (Exception ex)
             {
@@ -35,8 +35,15 @@ namespace Subscription_Monitoring_System.Controllers
         {
             try
             {
+                List<string> validationErrors = _unitOfWork.ServiceHandler.CanFilter(filter);
+
+                if (validationErrors.Any())
+                {
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.ErrorList, Value = validationErrors });
+                }
+
                 ListViewModel responseData = await _unitOfWork.ServiceService.GetList(filter);
-                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = BaseConstants.retrievedData, Value = responseData });
+                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = BaseConstants.RetrievedData, Value = responseData });
             }
             catch (Exception ex)
             {
@@ -53,14 +60,12 @@ namespace Subscription_Monitoring_System.Controllers
 
                 if (validationErrors.Any())
                 {
-                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.ErrorList, Value = validationErrors });
                 }
-                else
-                {
-                    ServiceTypeViewModel serviceType = await _unitOfWork.ServiceTypeService.Get(service.ServiceTypeName);
-                    await _unitOfWork.ServiceService.Create(service, serviceType);
-                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = ServiceConstants.SuccessAdd });
-                }
+
+                ServiceTypeViewModel serviceType = await _unitOfWork.ServiceTypeService.Get(service.ServiceTypeName);
+                await _unitOfWork.ServiceService.Create(service, serviceType);
+                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = ServiceConstants.SuccessAdd });
             }
             catch (Exception ex)
             {
@@ -77,14 +82,12 @@ namespace Subscription_Monitoring_System.Controllers
 
                 if (validationErrors.Any())
                 {
-                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.ErrorList, Value = validationErrors });
                 }
-                else
-                {
-                    ServiceTypeViewModel serviceType = await _unitOfWork.ServiceTypeService.Get(service.ServiceTypeName);
-                    await _unitOfWork.ServiceService.Update(service, serviceType);
-                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = ServiceConstants.SuccessEdit });
-                }
+
+                ServiceTypeViewModel serviceType = await _unitOfWork.ServiceTypeService.Get(service.ServiceTypeName);
+                await _unitOfWork.ServiceService.Update(service, serviceType);
+                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = ServiceConstants.SuccessEdit });
             }
             catch (Exception ex)
             {
@@ -102,13 +105,11 @@ namespace Subscription_Monitoring_System.Controllers
 
                 if (validationErrors.Any())
                 {
-                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.ErrorList, Value = validationErrors });
                 }
-                else
-                {
-                    await _unitOfWork.ServiceService.HardDelete(id);
-                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = ServiceConstants.SuccessDelete });
-                }
+
+                await _unitOfWork.ServiceService.HardDelete(id);
+                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = ServiceConstants.SuccessDelete });
             }
             catch (Exception ex)
             {
@@ -125,13 +126,11 @@ namespace Subscription_Monitoring_System.Controllers
 
                 if (validationErrors.Any())
                 {
-                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.ErrorList, Value = validationErrors });
                 }
-                else
-                {
-                    await _unitOfWork.ServiceService.SoftDelete(id);
-                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = ServiceConstants.SuccessDelete });
-                }
+
+                await _unitOfWork.ServiceService.SoftDelete(id);
+                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = ServiceConstants.SuccessDelete });
             }
             catch (Exception ex)
             {
@@ -148,14 +147,11 @@ namespace Subscription_Monitoring_System.Controllers
 
                 if (validationErrors.Any())
                 {
-                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.ErrorList, Value = validationErrors });
                 }
-                else
-                {
 
-                    await _unitOfWork.ServiceService.SoftDelete(records);
-                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = ServiceConstants.SuccessDelete });
-                }
+                await _unitOfWork.ServiceService.SoftDelete(records);
+                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = ServiceConstants.SuccessDelete });
             }
             catch (Exception ex)
             {
@@ -172,14 +168,11 @@ namespace Subscription_Monitoring_System.Controllers
 
                 if (validationErrors.Any())
                 {
-                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.ErrorList, Value = validationErrors });
                 }
-                else
-                {
 
-                    await _unitOfWork.ServiceService.HardDelete(records);
-                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = ServiceConstants.SuccessDelete });
-                }
+                await _unitOfWork.ServiceService.HardDelete(records);
+                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = ServiceConstants.SuccessDelete });
             }
             catch (Exception ex)
             {
@@ -197,13 +190,11 @@ namespace Subscription_Monitoring_System.Controllers
 
                 if (validationErrors.Any())
                 {
-                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.ErrorList, Value = validationErrors });
                 }
-                else
-                {
-                    await _unitOfWork.ServiceService.Restore(id);
-                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = ServiceConstants.SuccessRestore });
-                }
+
+                await _unitOfWork.ServiceService.Restore(id);
+                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = ServiceConstants.SuccessRestore });
             }
             catch (Exception ex)
             {
@@ -220,14 +211,11 @@ namespace Subscription_Monitoring_System.Controllers
 
                 if (validationErrors.Any())
                 {
-                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.ErrorList, Value = validationErrors });
                 }
-                else
-                {
 
-                    await _unitOfWork.ServiceService.Restore(records);
-                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = ServiceConstants.SuccessRestore });
-                }
+                await _unitOfWork.ServiceService.Restore(records);
+                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = ServiceConstants.SuccessRestore });
             }
             catch (Exception ex)
             {

@@ -16,16 +16,16 @@ namespace Subscription_Monitoring_System_Data
     {
         public DataContext(DbContextOptions<DataContext> options) : base(options){ }
 
-        public virtual DbSet<Department> Departments { get; set; }
-        public virtual DbSet<User> Users { get; set; }
-        public virtual DbSet<Client> Clients { get; set; }
-        public virtual DbSet<ServiceType> ServiceTypes { get; set; }
-        public virtual DbSet<Service> Services { get; set; }
-        public virtual DbSet<Subscription> Subscriptions { get; set; }
-        public virtual DbSet<Notification> Notifications { get; set; }
-        public virtual DbSet<UserNotification> UserNotifications { get; set; }
-        public virtual DbSet<SubscriptionClient> SubscriptionClients { get; set; }
-        public virtual DbSet<SubscriptionUser> SubscriptionUsers { get; set; }
+        public virtual DbSet<Department>? Departments { get; set; }
+        public virtual DbSet<User>? Users { get; set; }
+        public virtual DbSet<Client>? Clients { get; set; }
+        public virtual DbSet<ServiceType>? ServiceTypes { get; set; }
+        public virtual DbSet<Service>? Services { get; set; }
+        public virtual DbSet<Subscription>? Subscriptions { get; set; }
+        public virtual DbSet<Notification>? Notifications { get; set; }
+        public virtual DbSet<UserNotification>? UserNotifications { get; set; }
+        public virtual DbSet<SubscriptionClient>? SubscriptionClients { get; set; }
+        public virtual DbSet<SubscriptionUser>? SubscriptionUsers { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

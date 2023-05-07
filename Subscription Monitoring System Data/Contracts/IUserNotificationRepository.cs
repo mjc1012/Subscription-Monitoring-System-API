@@ -9,8 +9,8 @@ namespace Subscription_Monitoring_System_Data.Contracts
 {
     public interface IUserNotificationRepository
     {
-        Task<UserNotification> GetActive(int id);
-        Task<UserNotification> GetInactive(int id);
+        Task<UserNotification?> GetActive(int id);
+        Task<UserNotification?> GetInactive(int id);
         Task<List<UserNotification>> GetList(int userId);
         Task<List<UserNotification>> GetList(List<int> ids);
         Task SoftDelete(int id);

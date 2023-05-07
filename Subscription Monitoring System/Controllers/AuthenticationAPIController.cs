@@ -1,12 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Subscription_Monitoring_System_Data;
 using Subscription_Monitoring_System_Data.Models;
 using Subscription_Monitoring_System_Data.ViewModels;
 using Subscription_Monitoring_System_Domain.Contracts;
-using Subscription_Monitoring_System_Domain.Services;
-using System.Data;
-using System.Net.Mail;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using static Subscription_Monitoring_System_Data.Constants;
@@ -33,7 +29,7 @@ namespace Subscription_Monitoring_System.Controllers
 
                 if (validationErrors.Any())
                 {
-                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.ErrorList, Value = validationErrors });
                 }
 
                 string accessToken = _unitOfWork.AuthenticationService.CreateJwt(loginUser.Code);
@@ -64,7 +60,7 @@ namespace Subscription_Monitoring_System.Controllers
 
                 if (validationErrors.Any())
                 {
-                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.ErrorList, Value = validationErrors });
                 }
                 AuthenticationViewModel authentication = new()
                 {
@@ -89,7 +85,7 @@ namespace Subscription_Monitoring_System.Controllers
 
                 if (validationErrors.Any())
                 {
-                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.ErrorList, Value = validationErrors });
                 }
 
                 ClaimsPrincipal principal = _unitOfWork.AuthenticationService.GetPrincipalFromExpiredToken(token.AccessToken);
@@ -104,7 +100,7 @@ namespace Subscription_Monitoring_System.Controllers
                     RefreshToken = newRefreshToken
                 };
 
-                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = "Token refreshed", Value = newTokens });
+                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = AuthenticationConstants.TokenRefreshed, Value = newTokens });
             }
             catch (Exception ex)
             {
@@ -121,7 +117,7 @@ namespace Subscription_Monitoring_System.Controllers
 
                 if (validationErrors.Any())
                 {
-                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.ErrorList, Value = validationErrors });
                 }
 
                 User user = await _unitOfWork.UserService.GetByEmail(emailAddress);
@@ -130,7 +126,7 @@ namespace Subscription_Monitoring_System.Controllers
                 string resetPasswordToken = Convert.ToBase64String(tokenBytes);
                 DateTime resetPasswordExpiry = DateTime.Now.AddMinutes(15);
                 await _unitOfWork.AuthenticationService.SaveTokens(user, resetPasswordToken, resetPasswordExpiry);
-                _unitOfWork.EmailService.SendEmail(new EmailViewModel(emailAddress, "Reset Password", EmailBody.ResetEmailBody(emailAddress, resetPasswordToken)));
+                _unitOfWork.EmailService.SendEmail(new EmailViewModel(emailAddress, AuthenticationConstants.ResetPassword, EmailBody.ResetEmailBody(emailAddress, resetPasswordToken)));
 
                 return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = EmailConstants.ResetPasswordEmailed });
                 
@@ -151,7 +147,7 @@ namespace Subscription_Monitoring_System.Controllers
 
                 if (validationErrors.Any())
                 {
-                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.ErrorList, Value = validationErrors });
                 }
 
                 User user = await _unitOfWork.UserService.GetByEmail(resetPassword.EmailAddress);
@@ -161,7 +157,7 @@ namespace Subscription_Monitoring_System.Controllers
                     Password = resetPassword.NewPassword
                 };
                 await _unitOfWork.AuthenticationService.ChangePassword(authentication);
-                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = "Password Reset Successful" });
+                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = AuthenticationConstants.SuccessResetPassword });
                 
             }
             catch (Exception ex)

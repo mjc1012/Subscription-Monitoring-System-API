@@ -27,7 +27,7 @@ namespace Subscription_Monitoring_System.Controllers
             try
             {
                 SubscriptionViewModel responseData = await _unitOfWork.SubscriptionService.GetActive(id);
-                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = BaseConstants.retrievedData, Value = responseData });
+                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = BaseConstants.RetrievedData, Value = responseData });
             }
             catch (Exception ex)
             {
@@ -40,8 +40,15 @@ namespace Subscription_Monitoring_System.Controllers
         {
             try
             {
+                List<string> validationErrors = _unitOfWork.SubscriptionHandler.CanFilter(filter);
+
+                if (validationErrors.Any())
+                {
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.ErrorList, Value = validationErrors });
+                }
+
                 ListViewModel responseData = await _unitOfWork.SubscriptionService.GetList(filter);
-                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = BaseConstants.retrievedData, Value = responseData });
+                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = BaseConstants.RetrievedData, Value = responseData });
             }
             catch (Exception ex)
             {
@@ -54,6 +61,13 @@ namespace Subscription_Monitoring_System.Controllers
         {
             try
             {
+                List<string> validationErrors = _unitOfWork.SubscriptionHandler.CanFilter(filter);
+
+                if (validationErrors.Any())
+                {
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.ErrorList, Value = validationErrors });
+                }
+
                 ListViewModel responseData = await _unitOfWork.SubscriptionService.GetList(filter);
                 string emailtemplatepath = Path.Combine(PathConstants.SubscriptionExcelTemplatePath);
                 string htmldata = System.IO.File.ReadAllText(emailtemplatepath);
@@ -61,19 +75,17 @@ namespace Subscription_Monitoring_System.Controllers
                 string excelstring = "";
                 foreach (SubscriptionViewModel subscription in (List<SubscriptionViewModel>)responseData.Data)
                 {
-                    excelstring += "<tr><td>" + subscription.Id + "</td><td>" + subscription.StartDate + "</td><td>" + subscription.EndDate + "</td><td>" + subscription.TotalPrice + "</td><td>" + subscription.RemainingDays +
-                         "</td><td>" + subscription.ClientName + "</td><td>" + subscription.ServiceName + "</td><td>" + subscription.CreatedOn + "</td><td>" + subscription.CreatedByCode +
-                          "</td><td>" + subscription.CreatedByName + "</td><td>" + subscription.UpdatedOn + "</td><td>" + subscription.UpdatedByCode + "</td><td>" + subscription.UpdatedByName + "</td></tr>";
+                    excelstring += SubscriptionConstants.RowData(subscription);
                 }
-                htmldata = htmldata.Replace("@@ActualData", excelstring);
+                htmldata = htmldata.Replace(ExcelConstants.ActualData, excelstring);
 
-                string StoredFilePath = Path.Combine(PathConstants.ExcelFilesPath, DateTime.Now.Ticks.ToString() + ".xls");
+                string StoredFilePath = Path.Combine(PathConstants.ExcelFilesPath, DateTime.Now.Ticks.ToString() + ExcelConstants.FileType);
                 System.IO.File.AppendAllText(StoredFilePath, htmldata);
 
                 var provider = new FileExtensionContentTypeProvider();
                 if (!provider.TryGetContentType(StoredFilePath, out var contettype))
                 {
-                    contettype = "application/octet-stream";
+                    contettype = ExcelConstants.Contettype;
                 }
 
                 var bytes = await System.IO.File.ReadAllBytesAsync(StoredFilePath);
@@ -92,7 +104,7 @@ namespace Subscription_Monitoring_System.Controllers
             try
             {
                 List<SubscriptionViewModel> responseData = await _unitOfWork.SubscriptionService.GetHistoryList(id);
-                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = BaseConstants.retrievedData, Value = responseData });
+                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = BaseConstants.RetrievedData, Value = responseData });
             }
             catch (Exception ex)
             {
@@ -109,31 +121,29 @@ namespace Subscription_Monitoring_System.Controllers
 
                 if (validationErrors.Any())
                 {
-                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.ErrorList, Value = validationErrors });
                 }
-                else
+
+                ClientViewModel client = await _unitOfWork.ClientService.GetActive(subscription.ClientName);
+                ServiceViewModel service = await _unitOfWork.ServiceService.GetActive(subscription.ServiceName);
+                UserViewModel createdBy = await _unitOfWork.UserService.GetActive(subscription.CreatedByCode);
+                SubscriptionViewModel newSubscription = await _unitOfWork.SubscriptionService.Create(subscription, client, service, createdBy);
+
+                NotificationViewModel notification = new()
                 {
-                    ClientViewModel client = await _unitOfWork.ClientService.GetActive(subscription.ClientName);
-                    ServiceViewModel service = await _unitOfWork.ServiceService.GetActive(subscription.ServiceName);
-                    UserViewModel createdBy = await _unitOfWork.UserService.GetActive(subscription.CreatedByCode);
-                    SubscriptionViewModel newSubscription = await _unitOfWork.SubscriptionService.Create(subscription, client, service, createdBy);
+                    Description = NotificationConstants.SuccessAdd(newSubscription.Id),
+                    Date = DateTime.Now.ToString(DateConstants.DateTimeFormat),
+                    IsActive = true,
+                    SubscriptionId = newSubscription.Id,
+                };
+                await _unitOfWork.NotificationService.Create(notification, subscription.UserIds);
 
-                    NotificationViewModel notification = new()
-                    {
-                        Description = NotificationConstants.SuccessAdd(newSubscription.Id),
-                        Date = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
-                        IsActive = true,
-                        SubscriptionId = newSubscription.Id,
-                    };
-                    await _unitOfWork.NotificationService.Create(notification, subscription.UserIds);
-
-                    foreach(ClientViewModel clientRecipient in await _unitOfWork.ClientService.GetList(subscription.ClientIds))
-                    {
-                        _unitOfWork.EmailService.SendEmail(new EmailViewModel(clientRecipient.EmailAddress, "Subscription Created", EmailBody.SendCreatedSubscriptionEmail(NotificationConstants.SuccessAdd(newSubscription.Id), newSubscription)));
-                    }
-
-                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = SubscriptionConstants.SuccessAdd });
+                foreach(ClientViewModel clientRecipient in await _unitOfWork.ClientService.GetList(subscription.ClientIds))
+                {
+                    _unitOfWork.EmailService.SendEmail(new EmailViewModel(clientRecipient.EmailAddress, NotificationConstants.CreateSubject, EmailBody.SendCreatedSubscriptionEmail(NotificationConstants.SuccessAdd(newSubscription.Id), newSubscription)));
                 }
+
+                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = SubscriptionConstants.SuccessAdd });
             }
             catch (Exception ex)
             {
@@ -150,34 +160,32 @@ namespace Subscription_Monitoring_System.Controllers
 
                 if (validationErrors.Any())
                 {
-                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.ErrorList, Value = validationErrors });
                 }
-                else
+
+                SubscriptionViewModel oldSubscription = await _unitOfWork.SubscriptionService.CreateHistory(subscription.Id);
+                List<int> oldUserIds = oldSubscription.UserRecipients.Select(p => p.Id).ToList();
+                List<int> oldClientIds = oldSubscription.ClientRecipients.Select(p => p.Id).ToList();
+                ClientViewModel client = await _unitOfWork.ClientService.GetActive(subscription.ClientName);
+                ServiceViewModel service = await _unitOfWork.ServiceService.GetActive(subscription.ServiceName);
+                UserViewModel updatedBy = await _unitOfWork.UserService.GetActive(subscription.UpdatedByCode);
+                SubscriptionViewModel newSubscription = await _unitOfWork.SubscriptionService.Update(subscription, client, service, updatedBy);
+
+                NotificationViewModel notification = new()
                 {
-                    SubscriptionViewModel oldSubscription = await _unitOfWork.SubscriptionService.CreateHistory(subscription.Id);
-                    List<int> oldUserIds = oldSubscription.UserRecipients.Select(p => p.Id).ToList();
-                    List<int> oldClientIds = oldSubscription.ClientRecipients.Select(p => p.Id).ToList();
-                    ClientViewModel client = await _unitOfWork.ClientService.GetActive(subscription.ClientName);
-                    ServiceViewModel service = await _unitOfWork.ServiceService.GetActive(subscription.ServiceName);
-                    UserViewModel updatedBy = await _unitOfWork.UserService.GetActive(subscription.UpdatedByCode);
-                    SubscriptionViewModel newSubscription = await _unitOfWork.SubscriptionService.Update(subscription, client, service, updatedBy);
+                    Description = NotificationConstants.SuccessEdit(newSubscription.Id),
+                    Date = DateTime.Now.ToString(DateConstants.DateTimeFormat),
+                    IsActive = true,
+                    SubscriptionId = newSubscription.Id,
+                };
+                await _unitOfWork.NotificationService.Create(notification, subscription.UserIds.Union(oldUserIds).ToList());
 
-                    NotificationViewModel notification = new()
-                    {
-                        Description = NotificationConstants.SuccessEdit(newSubscription.Id),
-                        Date = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
-                        IsActive = true,
-                        SubscriptionId = newSubscription.Id,
-                    };
-                    await _unitOfWork.NotificationService.Create(notification, subscription.UserIds.Union(oldUserIds).ToList());
-
-                    foreach (ClientViewModel clientRecipient in await _unitOfWork.ClientService.GetList(subscription.ClientIds.Union(oldClientIds).ToList()))
-                    {
-                        _unitOfWork.EmailService.SendEmail(new EmailViewModel(clientRecipient.EmailAddress, "Subscription Updated", EmailBody.SendUpdatedSubscriptionEmail(clientRecipient.EmailAddress, NotificationConstants.SuccessEdit(newSubscription.Id), newSubscription, await _unitOfWork.ClientService.GetList(subscription.ClientIds))));
-                    }
-
-                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = SubscriptionConstants.SuccessEdit });
+                foreach (ClientViewModel clientRecipient in await _unitOfWork.ClientService.GetList(subscription.ClientIds.Union(oldClientIds).ToList()))
+                {
+                    _unitOfWork.EmailService.SendEmail(new EmailViewModel(clientRecipient.EmailAddress, NotificationConstants.UpdateSubject, EmailBody.SendUpdatedSubscriptionEmail(clientRecipient.EmailAddress, NotificationConstants.SuccessEdit(newSubscription.Id), newSubscription, await _unitOfWork.ClientService.GetList(subscription.ClientIds))));
                 }
+
+                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = SubscriptionConstants.SuccessEdit });
             }
             catch (Exception ex)
             {
@@ -195,13 +203,11 @@ namespace Subscription_Monitoring_System.Controllers
 
                 if (validationErrors.Any())
                 {
-                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.ErrorList, Value = validationErrors });
                 }
-                else
-                {
-                    await _unitOfWork.SubscriptionService.HardDelete(id);
-                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = SubscriptionConstants.SuccessDelete });
-                }
+
+                await _unitOfWork.SubscriptionService.HardDelete(id);
+                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = SubscriptionConstants.SuccessDelete });
             }
             catch (Exception ex)
             {
@@ -218,13 +224,11 @@ namespace Subscription_Monitoring_System.Controllers
 
                 if (validationErrors.Any())
                 {
-                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.ErrorList, Value = validationErrors });
                 }
-                else
-                {
-                    await _unitOfWork.SubscriptionService.SoftDelete(id);
-                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = SubscriptionConstants.SuccessDelete });
-                }
+
+                await _unitOfWork.SubscriptionService.SoftDelete(id);
+                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = SubscriptionConstants.SuccessDelete });
             }
             catch (Exception ex)
             {
@@ -241,14 +245,11 @@ namespace Subscription_Monitoring_System.Controllers
 
                 if (validationErrors.Any())
                 {
-                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.ErrorList, Value = validationErrors });
                 }
-                else
-                {
 
-                    await _unitOfWork.SubscriptionService.SoftDelete(records);
-                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = SubscriptionConstants.SuccessDelete });
-                }
+                await _unitOfWork.SubscriptionService.SoftDelete(records);
+                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = SubscriptionConstants.SuccessDelete });
             }
             catch (Exception ex)
             {
@@ -265,14 +266,11 @@ namespace Subscription_Monitoring_System.Controllers
 
                 if (validationErrors.Any())
                 {
-                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.ErrorList, Value = validationErrors });
                 }
-                else
-                {
 
-                    await _unitOfWork.SubscriptionService.HardDelete(records);
-                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = SubscriptionConstants.SuccessDelete });
-                }
+                await _unitOfWork.SubscriptionService.HardDelete(records);
+                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = SubscriptionConstants.SuccessDelete });
             }
             catch (Exception ex)
             {
@@ -290,13 +288,11 @@ namespace Subscription_Monitoring_System.Controllers
 
                 if (validationErrors.Any())
                 {
-                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.ErrorList, Value = validationErrors });
                 }
-                else
-                {
-                    await _unitOfWork.SubscriptionService.Restore(id);
-                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = SubscriptionConstants.SuccessRestore });
-                }
+
+                await _unitOfWork.SubscriptionService.Restore(id);
+                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = SubscriptionConstants.SuccessRestore });
             }
             catch (Exception ex)
             {
@@ -313,14 +309,11 @@ namespace Subscription_Monitoring_System.Controllers
 
                 if (validationErrors.Any())
                 {
-                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.ErrorList, Value = validationErrors });
                 }
-                else
-                {
 
-                    await _unitOfWork.SubscriptionService.Restore(records);
-                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = SubscriptionConstants.SuccessRestore });
-                }
+                await _unitOfWork.SubscriptionService.Restore(records);
+                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = SubscriptionConstants.SuccessRestore });
             }
             catch (Exception ex)
             {

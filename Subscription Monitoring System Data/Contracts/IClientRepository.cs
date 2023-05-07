@@ -14,12 +14,10 @@ namespace Subscription_Monitoring_System_Data.Contracts
     public interface IClientRepository
     {
         Task<List<Client>> GetActiveList();
-        Task<Client> GetActive(int id);
-        Task<Client> GetInactive(int id);
-        Task<Client> GetActive(string name);
-        List<Client> SortAscending(string sortBy, List<Client> clients);
-        List<Client> SortDescending(string sortBy, List<Client> clients);
-        Task<List<Client>> GetList(ClientFilterViewModel filter);
+        Task<Client?> GetActive(int id);
+        Task<Client?> GetInactive(int id);
+        Task<Client?> GetActive(string name);
+        Task<List<Client>> GetList();
         Task<List<Client>> GetList(List<int> ids);
         Task Create(Client client);
         Task Update(Client client);

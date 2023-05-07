@@ -76,7 +76,15 @@ namespace Subscription_Monitoring_System_Domain.Services
         {
             try
             {
-                List<ServiceViewModel> services = _mapper.Map<List<ServiceViewModel>>(await _serviceRepository.GetList(filter));
+                if (filter.Page == 0) filter.Page = 1;
+
+                List<ServiceViewModel> services = _mapper.Map<List<ServiceViewModel>>(await _serviceRepository.GetList());
+
+                services = services.Where(p => (filter.Id == 0 || p.Id == filter.Id) && (string.IsNullOrEmpty(filter.Name) || p.Name == filter.Name) &&
+                (string.IsNullOrEmpty(filter.Description) || p.Description == filter.Description) && (filter.Price == 0 || p.Price == filter.Price) &&
+                (string.IsNullOrEmpty(filter.ServiceTypeName) || p.ServiceTypeName == filter.ServiceTypeName) && p.IsActive == filter.IsActive).ToList();
+
+                services = (!string.IsNullOrEmpty(filter.SortOrder) && filter.SortOrder.Equals(SortDirectionConstants.Descending)) ? SortDescending(filter.SortBy, services) : SortAscending(filter.SortBy, services);
 
                 int totalCount = services.Count;
                 int totalPages = (int)Math.Ceiling((double)totalCount / BaseConstants.PageSize);
@@ -94,7 +102,32 @@ namespace Subscription_Monitoring_System_Domain.Services
             {
                 throw;
             }
+        }
 
+        public List<ServiceViewModel> SortAscending(string sortBy, List<ServiceViewModel> services)
+        {
+            return sortBy switch
+            {
+                ServiceConstants.HeaderId => services.OrderBy(p => p.Id).ToList(),
+                ServiceConstants.HeaderName => services.OrderBy(p => p.Name).ToList(),
+                ServiceConstants.HeaderDescription => services.OrderBy(p => p.Description).ToList(),
+                ServiceConstants.HeaderPrice => services.OrderBy(p => p.Price).ToList(),
+                ServiceConstants.HeaderServiceTypeName => services.OrderBy(p => p.ServiceTypeName).ToList(),
+                _ => services.OrderBy(p => p.Id).ToList(),
+            };
+        }
+
+        public List<ServiceViewModel> SortDescending(string sortBy, List<ServiceViewModel> services)
+        {
+            return sortBy switch
+            {
+                ServiceConstants.HeaderId => services.OrderByDescending(p => p.Id).ToList(),
+                ServiceConstants.HeaderName => services.OrderByDescending(p => p.Name).ToList(),
+                ServiceConstants.HeaderDescription => services.OrderByDescending(p => p.Description).ToList(),
+                ServiceConstants.HeaderPrice => services.OrderByDescending(p => p.Price).ToList(),
+                ServiceConstants.HeaderServiceTypeName => services.OrderByDescending(p => p.ServiceTypeName).ToList(),
+                _ => services.OrderByDescending(p => p.Id).ToList(),
+            };
         }
 
         public async Task<List<ServiceViewModel>> GetList(List<int> ids)

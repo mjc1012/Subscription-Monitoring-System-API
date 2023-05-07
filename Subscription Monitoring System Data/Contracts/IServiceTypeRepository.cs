@@ -9,8 +9,9 @@ namespace Subscription_Monitoring_System_Data.Contracts
 {
     public interface IServiceTypeRepository
     {
-        Task<ServiceType> Get(int id);
-        Task<ServiceType> Get(string name);
+        Task<ServiceType?> Get(int id);
+        Task<ServiceType?> Get(string name);
         Task<List<ServiceType>> GetList();
+        Task<bool> ServiceTypeExists(string name);
     }
 }

@@ -44,12 +44,12 @@ namespace Subscription_Monitoring_System_Domain
         public IClientHandler ClientHandler => new ClientHandler(ClientService, EmailService);
         public IServiceTypeService ServiceTypeService => new ServiceTypeService(_serviceTypeRepository, _mapper);
         public IServiceService ServiceService => new ServiceService(_serviceRepository, _mapper);
-        public IServiceHandler ServiceHandler => new ServiceHandler(ServiceService);
+        public IServiceHandler ServiceHandler => new ServiceHandler(ServiceService, ServiceTypeService);
         public IDepartmentService DepartmentService => new DepartmentService(_deparmentRepository, _mapper);
         public IUserService UserService => new UserService(_userRepository, _mapper);
-        public IUserHandler UserHandler => new UserHandler(UserService, EmailService);
+        public IUserHandler UserHandler => new UserHandler(UserService, EmailService, DepartmentService);
         public ISubscriptionService SubscriptionService => new SubscriptionService(_subscriptionRepository, _mapper, NotificationService, EmailService);
-        public ISubscriptionHandler SubscriptionHandler => new SubscriptionHandler(SubscriptionService);
+        public ISubscriptionHandler SubscriptionHandler => new SubscriptionHandler(SubscriptionService, UserService, ClientService, ServiceService);
         public IImageService ImageService => new ImageService();
         public IAuthenticationService AuthenticationService => new AuthenticationService(_userRepository,_mapper);
         public IAuthenticationHandler AuthenticationHandler => new AuthenticationHandler(AuthenticationService, UserService);

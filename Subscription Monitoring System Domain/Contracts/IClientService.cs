@@ -14,6 +14,8 @@ namespace Subscription_Monitoring_System_Domain.Contracts
         Task<ClientViewModel> GetActive(int id);
         Task<ClientViewModel> GetInactive(int id);
         Task<ClientViewModel> GetActive(string name);
+        List<ClientViewModel> SortAscending(string sortBy, List<ClientViewModel> subscriptions);
+        List<ClientViewModel> SortDescending(string sortBy, List<ClientViewModel> subscriptions);
         Task<ListViewModel> GetList(ClientFilterViewModel filter);
         Task<List<ClientViewModel>> GetList(List<int> ids);
         Task Create(ClientViewModel client);

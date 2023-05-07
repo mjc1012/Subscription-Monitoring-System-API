@@ -12,5 +12,6 @@ namespace Subscription_Monitoring_System_Domain.Contracts
         Task<DepartmentViewModel> Get(int id);
         Task<DepartmentViewModel> Get(string name);
         Task<List<DepartmentViewModel>> GetList();
+        Task<bool> DepartmentExists(string name);
     }
 }

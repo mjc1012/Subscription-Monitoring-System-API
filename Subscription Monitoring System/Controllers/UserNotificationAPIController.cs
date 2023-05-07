@@ -23,7 +23,7 @@ namespace Subscription_Monitoring_System.Controllers
             try
             {
                 List<NotificationViewModel> responseData = await _unitOfWork.UserNotificationService.GetList(id);
-                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = BaseConstants.retrievedData, Value = responseData });
+                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = BaseConstants.RetrievedData, Value = responseData });
             }
             catch (Exception ex)
             {
@@ -38,16 +38,13 @@ namespace Subscription_Monitoring_System.Controllers
             {
                 List<string> validationErrors = await _unitOfWork.UserNotificationHandler.CanDeleteInactive(id);
 
-
                 if (validationErrors.Any())
                 {
-                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.ErrorList, Value = validationErrors });
                 }
-                else
-                {
-                    await _unitOfWork.UserNotificationService.HardDelete(id);
-                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = NotificationConstants.SuccessDelete });
-                }
+
+                await _unitOfWork.UserNotificationService.HardDelete(id);
+                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = NotificationConstants.SuccessDelete });
             }
             catch (Exception ex)
             {
@@ -64,13 +61,11 @@ namespace Subscription_Monitoring_System.Controllers
 
                 if (validationErrors.Any())
                 {
-                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.ErrorList, Value = validationErrors });
                 }
-                else
-                {
-                    await _unitOfWork.UserNotificationService.SoftDelete(id);
-                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = NotificationConstants.SuccessDelete });
-                }
+
+                await _unitOfWork.UserNotificationService.SoftDelete(id);
+                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = NotificationConstants.SuccessDelete });
             }
             catch (Exception ex)
             {
@@ -87,14 +82,11 @@ namespace Subscription_Monitoring_System.Controllers
 
                 if (validationErrors.Any())
                 {
-                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.ErrorList, Value = validationErrors });
                 }
-                else
-                {
 
-                    await _unitOfWork.UserNotificationService.SoftDelete(records);
-                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = NotificationConstants.SuccessDelete });
-                }
+                await _unitOfWork.UserNotificationService.SoftDelete(records);
+                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = NotificationConstants.SuccessDelete });
             }
             catch (Exception ex)
             {
@@ -111,14 +103,11 @@ namespace Subscription_Monitoring_System.Controllers
 
                 if (validationErrors.Any())
                 {
-                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.ErrorList, Value = validationErrors });
                 }
-                else
-                {
 
-                    await _unitOfWork.UserNotificationService.HardDelete(records);
-                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = NotificationConstants.SuccessDelete });
-                }
+                await _unitOfWork.UserNotificationService.HardDelete(records);
+                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = NotificationConstants.SuccessDelete });
             }
             catch (Exception ex)
             {
@@ -136,13 +125,11 @@ namespace Subscription_Monitoring_System.Controllers
 
                 if (validationErrors.Any())
                 {
-                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.ErrorList, Value = validationErrors });
                 }
-                else
-                {
-                    await _unitOfWork.UserNotificationService.Restore(id);
-                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = NotificationConstants.SuccessRestore });
-                }
+
+                await _unitOfWork.UserNotificationService.Restore(id);
+                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = NotificationConstants.SuccessRestore });
             }
             catch (Exception ex)
             {
@@ -159,14 +146,11 @@ namespace Subscription_Monitoring_System.Controllers
 
                 if (validationErrors.Any())
                 {
-                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.errorList, Value = validationErrors });
+                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.ErrorList, Value = validationErrors });
                 }
-                else
-                {
 
-                    await _unitOfWork.UserNotificationService.Restore(records);
-                    return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = NotificationConstants.SuccessRestore });
-                }
+                await _unitOfWork.UserNotificationService.Restore(records);
+                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = NotificationConstants.SuccessRestore });
             }
             catch (Exception ex)
             {

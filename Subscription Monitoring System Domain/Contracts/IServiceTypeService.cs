@@ -14,5 +14,6 @@ namespace Subscription_Monitoring_System_Domain.Contracts
         Task<ServiceTypeViewModel> Get(int id);
         Task<ServiceTypeViewModel> Get(string name);
         Task<List<ServiceTypeViewModel>> GetList();
+        Task<bool> ServiceTypeExists(string name);
     }
 }

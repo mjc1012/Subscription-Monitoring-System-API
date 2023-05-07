@@ -22,7 +22,7 @@ namespace Subscription_Monitoring_System.Controllers
             try
             {
                 List<ServiceTypeViewModel> responseData = await _unitOfWork.ServiceTypeService.GetList();
-                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = BaseConstants.retrievedData, Value = responseData });
+                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = BaseConstants.RetrievedData, Value = responseData });
             }
             catch (Exception ex)
             {

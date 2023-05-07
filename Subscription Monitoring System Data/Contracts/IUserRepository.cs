@@ -11,15 +11,13 @@ namespace Subscription_Monitoring_System_Data.Contracts
     public interface IUserRepository
     {
         Task<List<User>> GetActiveList();
-        Task<User> GetActive(int id);
-        Task<User> GetInactive(int id);
-        Task<User> GetActive(string code);
-        List<User> SortAscending(string sortBy, List<User> users);
-        List<User> SortDescending(string sortBy, List<User> users);
-        Task<List<User>> GetList(UserFilterViewModel filter);
+        Task<User?> GetActive(int id);
+        Task<User?> GetInactive(int id);
+        Task<User?> GetActive(string code);
+        Task<List<User>> GetList();
         Task<List<User>> GetList(List<int> ids);
         Task Create(User user);
-        Task Update(User user);
+        Task Update(User newUser, User oldUser);
         Task ChangePassword(User user);
         Task SoftDelete(int id);
         Task HardDelete(int id);
@@ -29,7 +27,7 @@ namespace Subscription_Monitoring_System_Data.Contracts
         Task Restore(List<int> ids);
         Task<bool> UserExists(User user);
         Task<bool> RefreshTokenExists(string refreshToken);
-        Task<User> GetActiveByEmail(string emailAddress);
+        Task<User?> GetActiveByEmail(string emailAddress);
         Task SaveTokens(User user);
     }
 }
