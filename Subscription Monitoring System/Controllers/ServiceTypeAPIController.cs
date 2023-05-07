@@ -2,6 +2,7 @@
 using static Subscription_Monitoring_System_Data.Constants;
 using Subscription_Monitoring_System_Domain.Contracts;
 using Subscription_Monitoring_System_Data.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Subscription_Monitoring_System.Controllers
 {
@@ -16,6 +17,7 @@ namespace Subscription_Monitoring_System.Controllers
             _unitOfWork = unitOfWork;
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetList()
         {

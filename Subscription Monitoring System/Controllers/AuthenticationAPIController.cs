@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Subscription_Monitoring_System_Data;
 using Subscription_Monitoring_System_Data.Models;
 using Subscription_Monitoring_System_Data.ViewModels;
@@ -50,6 +51,7 @@ namespace Subscription_Monitoring_System.Controllers
             }
         }
 
+        [Authorize]
         [HttpPut("change-password")]
         public async Task<IActionResult> ChangePassword([FromBody] UpdatePasswordViewModel user)
         {

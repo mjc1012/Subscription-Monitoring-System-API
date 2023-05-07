@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Any;
+using Microsoft.OpenApi.Models;
 using Subscription_Monitoring_System_Data;
 using Subscription_Monitoring_System_Data.Contracts;
 using Subscription_Monitoring_System_Data.Models;
@@ -51,7 +53,31 @@ builder.Services.AddAutoMapper(typeof(MappingProfiles));
 builder.Services.AddControllers().AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.AddSecurityDefinition(SwaggerGenConstants.Bearer, new OpenApiSecurityScheme
+    {
+        Name = SwaggerGenConstants.Authorization,
+        Type = SecuritySchemeType.Http,
+        Scheme = SwaggerGenConstants.Bearer,
+        BearerFormat = SwaggerGenConstants.JWT,
+        In = ParameterLocation.Header
+    });
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = SwaggerGenConstants.Bearer
+                }
+            },
+            new string[]{}
+        }
+    });
+});
 
 builder.Services.AddDbContext<DataContext>(options =>
 {
@@ -105,7 +131,7 @@ app.UseCors(options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader(
 app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(PathConstants.ProfilePicturesPath),
-    RequestPath = "/ProfilePictures"
+    RequestPath = PathConstants.ProfilePicturesRequestPath
 });
 
 app.UseHttpsRedirection();
@@ -116,7 +142,7 @@ app.UseAuthorization();
 
 app.UseHangfireDashboard();
 
-RecurringJob.AddOrUpdate<ISubscriptionService>("check-expiration", service => service.SendExpiringSubscriptionNotification(), Cron.Daily);
+RecurringJob.AddOrUpdate<ISubscriptionService>(BaseConstants.CheckExpiration, service => service.SendExpiringSubscriptionNotification(), Cron.Daily);
 
 app.MapControllers();
 

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Subscription_Monitoring_System_Data.ViewModels;
 using Subscription_Monitoring_System_Domain.Contracts;
 using static Subscription_Monitoring_System_Data.Constants;
@@ -16,6 +17,7 @@ namespace Subscription_Monitoring_System.Controllers
             _unitOfWork = unitOfWork;
         }
 
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> HardDelete(int id)
         {
@@ -38,6 +40,7 @@ namespace Subscription_Monitoring_System.Controllers
             }
         }
 
+        [Authorize]
         [HttpPut("delete-notifications")]
         public async Task<IActionResult> HardDelete([FromBody] RecordIdsViewModel records)
         {

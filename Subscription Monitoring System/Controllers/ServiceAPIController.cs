@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Subscription_Monitoring_System_Data.ViewModels;
 using Subscription_Monitoring_System_Domain.Contracts;
 using static Subscription_Monitoring_System_Data.Constants;
@@ -16,6 +17,7 @@ namespace Subscription_Monitoring_System.Controllers
             _unitOfWork = unitOfWork;
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetActiveList()
         {
@@ -30,6 +32,7 @@ namespace Subscription_Monitoring_System.Controllers
             }
         }
 
+        [Authorize]
         [HttpPost("services")]
         public async Task<IActionResult> GetList(ServiceFilterViewModel filter)
         {
@@ -51,6 +54,7 @@ namespace Subscription_Monitoring_System.Controllers
             }
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] ServiceViewModel service)
         {
@@ -73,6 +77,7 @@ namespace Subscription_Monitoring_System.Controllers
             }
         }
 
+        [Authorize]
         [HttpPut]
         public async Task<IActionResult> Put([FromBody] ServiceViewModel service)
         {
@@ -95,6 +100,7 @@ namespace Subscription_Monitoring_System.Controllers
             }
         }
 
+        [Authorize]
         [HttpDelete("hard-delete/{id}")]
         public async Task<IActionResult> HardDelete(int id)
         {
@@ -117,6 +123,7 @@ namespace Subscription_Monitoring_System.Controllers
             }
         }
 
+        [Authorize]
         [HttpDelete("soft-delete/{id}")]
         public async Task<IActionResult> SoftDelete(int id)
         {
@@ -138,6 +145,7 @@ namespace Subscription_Monitoring_System.Controllers
             }
         }
 
+        [Authorize]
         [HttpPut("soft-delete-services")]
         public async Task<IActionResult> SoftDelete([FromBody] RecordIdsViewModel records)
         {
@@ -159,6 +167,7 @@ namespace Subscription_Monitoring_System.Controllers
             }
         }
 
+        [Authorize]
         [HttpPut("hard-delete-services")]
         public async Task<IActionResult> HardDelete([FromBody] RecordIdsViewModel records)
         {
@@ -180,6 +189,7 @@ namespace Subscription_Monitoring_System.Controllers
             }
         }
 
+        [Authorize]
         [HttpPut("restore/{id}")]
         public async Task<IActionResult> Restore(int id)
         {
@@ -202,6 +212,7 @@ namespace Subscription_Monitoring_System.Controllers
             }
         }
 
+        [Authorize]
         [HttpPut("restore-services")]
         public async Task<IActionResult> Restore([FromBody] RecordIdsViewModel records)
         {

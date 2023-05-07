@@ -19,6 +19,7 @@ namespace Subscription_Monitoring_System.Controllers
             _unitOfWork = unitOfWork;
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetActiveList()
         {
@@ -33,6 +34,7 @@ namespace Subscription_Monitoring_System.Controllers
             }
         }
 
+        [Authorize]
         [HttpPost("clients")]
         public async Task<IActionResult> GetList(ClientFilterViewModel filter)
         {
@@ -54,6 +56,7 @@ namespace Subscription_Monitoring_System.Controllers
             }
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] ClientViewModel client)
         {
@@ -75,6 +78,7 @@ namespace Subscription_Monitoring_System.Controllers
             }
         }
 
+        [Authorize]
         [HttpPut]
         public async Task<IActionResult> Put([FromBody] ClientViewModel client)
         {
@@ -96,6 +100,7 @@ namespace Subscription_Monitoring_System.Controllers
             }
         }
 
+        [Authorize]
         [HttpDelete("hard-delete/{id}")]
         public async Task<IActionResult> HardDelete(int id)
         {
@@ -118,6 +123,7 @@ namespace Subscription_Monitoring_System.Controllers
             }
         }
 
+        [Authorize]
         [HttpDelete("soft-delete/{id}")]
         public async Task<IActionResult> SoftDelete(int id)
         {
@@ -139,6 +145,7 @@ namespace Subscription_Monitoring_System.Controllers
             }
         }
 
+        [Authorize]
         [HttpPut("soft-delete-clients")]
         public async Task<IActionResult> SoftDelete([FromBody] RecordIdsViewModel records)
         {
@@ -160,6 +167,7 @@ namespace Subscription_Monitoring_System.Controllers
             }
         }
 
+        [Authorize]
         [HttpPut("hard-delete-clients")]
         public async Task<IActionResult> HardDelete([FromBody] RecordIdsViewModel records)
         {
@@ -181,6 +189,7 @@ namespace Subscription_Monitoring_System.Controllers
             }
         }
 
+        [Authorize]
         [HttpPut("restore/{id}")]
         public async Task<IActionResult> Restore(int id)
         {
@@ -203,6 +212,7 @@ namespace Subscription_Monitoring_System.Controllers
             }
         }
 
+        [Authorize]
         [HttpPut("restore-clients")]
         public async Task<IActionResult> Restore([FromBody] RecordIdsViewModel records)
         {

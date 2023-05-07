@@ -3,6 +3,7 @@ using static Subscription_Monitoring_System_Data.Constants;
 using Subscription_Monitoring_System_Domain.Contracts;
 using Subscription_Monitoring_System_Data;
 using Subscription_Monitoring_System_Data.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Subscription_Monitoring_System.Controllers
 {
@@ -17,6 +18,7 @@ namespace Subscription_Monitoring_System.Controllers
             _unitOfWork = unitOfWork;
         }
 
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetActive(int id)
         {
@@ -31,6 +33,7 @@ namespace Subscription_Monitoring_System.Controllers
             }
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetActiveList()
         {
@@ -45,6 +48,7 @@ namespace Subscription_Monitoring_System.Controllers
             }
         }
 
+        [Authorize]
         [HttpPost("users")]
         public async Task<IActionResult> GetList(UserFilterViewModel filter)
         {
@@ -66,6 +70,7 @@ namespace Subscription_Monitoring_System.Controllers
             }
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Post([FromForm] UserViewModel user)
         {
@@ -90,6 +95,7 @@ namespace Subscription_Monitoring_System.Controllers
             }
         }
 
+        [Authorize]
         [HttpPut]
         public async Task<IActionResult> Put([FromForm] UserViewModel newUser)
         {
@@ -122,6 +128,7 @@ namespace Subscription_Monitoring_System.Controllers
             }
         }
 
+        [Authorize]
         [HttpDelete("hard-delete/{id}")]
         public async Task<IActionResult> HardDelete(int id)
         {
@@ -146,6 +153,7 @@ namespace Subscription_Monitoring_System.Controllers
             }
         }
 
+        [Authorize]
         [HttpDelete("soft-delete/{id}")]
         public async Task<IActionResult> SoftDelete(int id)
         {
@@ -167,6 +175,7 @@ namespace Subscription_Monitoring_System.Controllers
             }
         }
 
+        [Authorize]
         [HttpPut("soft-delete-users")]
         public async Task<IActionResult> SoftDelete([FromBody] RecordIdsViewModel records)
         {
@@ -188,6 +197,7 @@ namespace Subscription_Monitoring_System.Controllers
             }
         }
 
+        [Authorize]
         [HttpPut("hard-delete-users")]
         public async Task<IActionResult> HardDelete([FromBody] RecordIdsViewModel records)
         {
@@ -214,6 +224,7 @@ namespace Subscription_Monitoring_System.Controllers
             }
         }
 
+        [Authorize]
         [HttpPut("restore/{id}")]
         public async Task<IActionResult> Restore(int id)
         {
@@ -235,6 +246,7 @@ namespace Subscription_Monitoring_System.Controllers
             }
         }
 
+        [Authorize]
         [HttpPut("restore-users")]
         public async Task<IActionResult> Restore([FromBody] RecordIdsViewModel records)
         {

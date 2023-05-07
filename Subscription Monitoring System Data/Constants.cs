@@ -9,6 +9,13 @@ namespace Subscription_Monitoring_System_Data
 {
     public static class Constants
     {
+        public class SwaggerGenConstants
+        {
+            public const string Bearer = "Bearer";
+            public const string Authorization = "Authorization";
+            public const string JWT = "JWT";
+        }
+
         public class DateConstants
         {
             public const string DateTimeFormat = "yyyy-MM-dd HH:mm:ss";
@@ -19,6 +26,7 @@ namespace Subscription_Monitoring_System_Data
 
         public class BaseConstants
         {
+            public const string CheckExpiration = "check-expiration";
             public const string RetrievedData = "Retrieved Data";
             public const string ErrorList = "Error List";
             public const int PageSize = 15;
@@ -233,6 +241,7 @@ namespace Subscription_Monitoring_System_Data
         public class PathConstants
         {
             public const string ProfilePicturesPath = "D:\\Subscription Monitoring API\\Subscription Monitoring System Data\\Profile Pictures";
+            public const string ProfilePicturesRequestPath = "/profilepictures";
             public const string SubscriptionExcelTemplatePath = "D:\\Subscription Monitoring API\\Subscription Monitoring System\\ExcelTemplate\\Subscriptions.html";
             public const string ExcelFilesPath = "D:\\Subscription Monitoring API\\Subscription Monitoring System\\ExcelFiles";
         }
