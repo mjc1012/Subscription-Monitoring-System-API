@@ -34,6 +34,21 @@ namespace Subscription_Monitoring_System.Controllers
         }
 
         [Authorize]
+        [HttpGet("user/{code}")]
+        public async Task<IActionResult> GetActive(string code)
+        {
+            try
+            {
+                UserViewModel responseData = await _unitOfWork.UserService.GetActive(code);
+                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = BaseConstants.RetrievedData, Value = responseData });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseViewModel() { Status = false, Message = ex.Message });
+            }
+        }
+
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetActiveList()
         {
