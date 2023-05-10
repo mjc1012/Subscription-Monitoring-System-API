@@ -1,13 +1,7 @@
 ﻿using MailKit.Net.Smtp;
-using Microsoft.Extensions.Configuration;
 using MimeKit;
 using Subscription_Monitoring_System_Data.ViewModels;
 using Subscription_Monitoring_System_Domain.Contracts;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static Subscription_Monitoring_System_Data.Constants;
 
 namespace Subscription_Monitoring_System_Domain.Services
@@ -18,7 +12,7 @@ namespace Subscription_Monitoring_System_Domain.Services
 
         public void SendEmail(EmailViewModel email)
         {
-            var emailMessage = new MimeMessage();
+            MimeMessage emailMessage = new();
             emailMessage.From.Add(new MailboxAddress(EmailConstants.Username, EmailConstants.From));
             emailMessage.To.Add(new MailboxAddress(email.To, email.To));
             emailMessage.Subject = email.Subject;
@@ -27,7 +21,7 @@ namespace Subscription_Monitoring_System_Domain.Services
                 Text = string.Format(email.Content)
             };
 
-            using var client = new SmtpClient();
+            using SmtpClient client = new();
             try
             {
                 client.Connect(EmailConstants.SmtpServer, EmailConstants.Port, EmailConstants.UseSsl);

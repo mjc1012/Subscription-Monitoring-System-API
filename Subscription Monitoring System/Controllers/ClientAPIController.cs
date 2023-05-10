@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.VisualBasic;
-using Subscription_Monitoring_System_Data.Models;
 using Subscription_Monitoring_System_Data.ViewModels;
 using Subscription_Monitoring_System_Domain.Contracts;
 using static Subscription_Monitoring_System_Data.Constants;
@@ -17,6 +15,21 @@ namespace Subscription_Monitoring_System.Controllers
         public ClientAPIController(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
+        }
+
+        [Authorize]
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetActive(int id)
+        {
+            try
+            {
+                ClientViewModel responseData = await _unitOfWork.ClientService.GetActive(id);
+                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = BaseConstants.RetrievedData, Value = responseData });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseViewModel() { Status = false, Message = ex.Message });
+            }
         }
 
         [Authorize]

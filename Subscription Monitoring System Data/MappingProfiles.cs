@@ -1,12 +1,7 @@
 ﻿using AutoMapper;
 using Subscription_Monitoring_System_Data.Models;
 using Subscription_Monitoring_System_Data.ViewModels;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static Subscription_Monitoring_System_Data.Constants;
 
 namespace Subscription_Monitoring_System_Data
@@ -29,8 +24,8 @@ namespace Subscription_Monitoring_System_Data
                 opt => opt.MapFrom(origin => origin.Name)
                 );
 
-            CreateMap<ServiceTypeViewModel, ServiceType>();
-            CreateMap<ServiceType, ServiceTypeViewModel>()
+            CreateMap<ServiceDurationViewModel, ServiceDuration>();
+            CreateMap<ServiceDuration, ServiceDurationViewModel>()
                 .ForMember(
                 destiny => destiny.Name,
                 opt => opt.MapFrom(origin => origin.Name)
@@ -44,8 +39,8 @@ namespace Subscription_Monitoring_System_Data
 
             CreateMap<Service, ServiceViewModel>()
                 .ForMember(
-                destiny => destiny.ServiceTypeName,
-                opt => opt.MapFrom(origin => origin.ServiceType.Name)
+                destiny => destiny.ServiceDurationName,
+                opt => opt.MapFrom(origin => origin.ServiceDuration.Name)
                 );
 
             CreateMap<User, UserViewModel>()
@@ -75,6 +70,10 @@ namespace Subscription_Monitoring_System_Data
             CreateMap<AuthenticationViewModel, User>();
 
             CreateMap<Notification, NotificationViewModel>()
+                .ForMember(
+                destiny => destiny.Users,
+                opt => opt.MapFrom(origin => origin.UserNotifications.Select(p => p.User).ToList())
+                )
                 .ForMember(
                 destiny => destiny.Date,
                 opt => opt.MapFrom(origin => origin.Date.ToString(DateConstants.DateTimeFormat))
@@ -152,6 +151,10 @@ namespace Subscription_Monitoring_System_Data
                 .ForMember(
                 destiny => destiny.RemainingDays,
                 opt => opt.MapFrom(origin => (origin.EndDate.Date - DateTime.Now.Date).Days)
+                )
+                .ForMember(
+                destiny => destiny.TotalPrice,
+                opt => opt.MapFrom(origin => Math.Ceiling((double)(origin.EndDate.Date - origin.StartDate.Date).Days / origin.Service.ServiceDuration.Days) * origin.Service.Price)
                 );
 
             CreateMap<SubscriptionViewModel, Subscription>()

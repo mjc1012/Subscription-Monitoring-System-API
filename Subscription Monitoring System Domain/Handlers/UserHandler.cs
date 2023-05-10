@@ -2,13 +2,7 @@
 using Subscription_Monitoring_System_Data.Models;
 using Subscription_Monitoring_System_Data.ViewModels;
 using Subscription_Monitoring_System_Domain.Contracts;
-using Subscription_Monitoring_System_Domain.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using static Subscription_Monitoring_System_Data.Constants;
 
 namespace Subscription_Monitoring_System_Domain.Handlers
@@ -27,7 +21,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
 
         public List<string> CanFilter(UserFilterViewModel filter)
         {
-            var validationErrors = new List<string>();
+            List<string> validationErrors = new();
 
             if (!string.IsNullOrEmpty(filter.SortOrder) && (filter.SortOrder is not SortDirectionConstants.Ascending and not SortDirectionConstants.Descending))
             {
@@ -45,7 +39,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
 
         public async Task<List<string>> CanEmail(string email)
         {
-            var validationErrors = new List<string>();
+            List<string> validationErrors = new();
 
             if (await _userService.GetByEmail(email) == null)
             {
@@ -57,7 +51,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
 
         public async Task<List<string>> CanAdd(UserViewModel user)
         {
-            var validationErrors = new List<string>();
+            List<string> validationErrors = new();
 
             if (user != null)
             {
@@ -67,7 +61,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
                     validationErrors.Add(UserConstants.Exists);
                 }
 
-                if (!await _departmentService.DepartmentExists(user.DepartmentName))
+                if (!await _departmentService.DepartmentExists(new DepartmentViewModel { Name = user.DepartmentName }))
                 {
                     validationErrors.Add(DepartmentConstants.DoesNotExist);
                 }
@@ -112,7 +106,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
 
         public async Task<List<string>> CanUpdate(UserViewModel user)
         {
-            var validationErrors = new List<string>();
+            List<string> validationErrors = new();
 
             UserViewModel userFound = await _userService.GetActive(user.Id);
             if (user != null && userFound != null)
@@ -129,7 +123,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
                         validationErrors.Add(UserConstants.Exists);
                     }
 
-                    if (!await _departmentService.DepartmentExists(user.DepartmentName))
+                    if (!await _departmentService.DepartmentExists(new DepartmentViewModel { Name = user.DepartmentName }))
                     {
                         validationErrors.Add(DepartmentConstants.DoesNotExist);
                     }
@@ -175,7 +169,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
 
         public async Task<List<string>> CanDeleteActive(int id)
         {
-            var validationErrors = new List<string>();
+            List<string> validationErrors = new();
 
             UserViewModel client = await _userService.GetActive(id);
             if (client == null)
@@ -188,7 +182,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
 
         public async Task<List<string>> CanDeleteInactive(int id)
         {
-            var validationErrors = new List<string>();
+            List<string> validationErrors = new();
 
             UserViewModel client = await _userService.GetInactive(id);
             if (client == null)
@@ -201,7 +195,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
 
         public async Task<List<string>> CanDelete(RecordIdsViewModel records)
         {
-            var validationErrors = new List<string>();
+            List<string> validationErrors = new();
 
             List<UserViewModel> clients = await _userService.GetList(records.Ids);
             if (clients == null)
@@ -214,7 +208,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
 
         public async Task<List<string>> CanRestore(int id)
         {
-            var validationErrors = new List<string>();
+            List<string> validationErrors = new();
 
             UserViewModel client = await _userService.GetInactive(id);
             if (client == null)
@@ -227,7 +221,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
 
         public async Task<List<string>> CanRestore(RecordIdsViewModel records)
         {
-            var validationErrors = new List<string>();
+            List<string> validationErrors = new();
 
             List<UserViewModel> clients = await _userService.GetList(records.Ids);
             if (clients == null)

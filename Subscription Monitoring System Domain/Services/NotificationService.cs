@@ -1,14 +1,9 @@
 ﻿using AutoMapper;
 using Subscription_Monitoring_System_Data.Contracts;
 using Subscription_Monitoring_System_Data.Models;
+using Subscription_Monitoring_System_Data.Repositories;
 using Subscription_Monitoring_System_Data.ViewModels;
 using Subscription_Monitoring_System_Domain.Contracts;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static Subscription_Monitoring_System_Data.Constants;
 
 namespace Subscription_Monitoring_System_Domain.Services
 {
@@ -21,6 +16,18 @@ namespace Subscription_Monitoring_System_Domain.Services
         {
             _mapper = mapper;
             _notificationRepository = notificationRepository;
+        }
+
+        public async Task<List<NotificationViewModel>> GetList()
+        {
+            try
+            {
+                return _mapper.Map<List<NotificationViewModel>>(await _notificationRepository.GetList());
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         public async Task<NotificationViewModel> Get(int id)
@@ -47,11 +54,23 @@ namespace Subscription_Monitoring_System_Domain.Services
             }
         }
 
-        public async Task Create(NotificationViewModel notification, List<int> userIds)
+        public async Task Create(NotificationViewModel notification)
         {
             try
             {
-                await _notificationRepository.Create(_mapper.Map<Notification>(notification), userIds);
+                await _notificationRepository.Create(_mapper.Map<Notification>(notification), notification.UserIds);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task Update(NotificationViewModel notification)
+        {
+            try
+            {
+                await _notificationRepository.Update(_mapper.Map<Notification>(notification), notification.UserIds);
             }
             catch (Exception)
             {
@@ -76,6 +95,18 @@ namespace Subscription_Monitoring_System_Domain.Services
             try
             {
                 await _notificationRepository.HardDelete(records.Ids);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<bool> NotificationExists(NotificationViewModel notification)
+        {
+            try
+            {
+                return await _notificationRepository.NotificationExists(_mapper.Map<Notification>(notification));
             }
             catch (Exception)
             {

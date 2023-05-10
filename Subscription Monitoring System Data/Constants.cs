@@ -1,9 +1,4 @@
 ﻿using Subscription_Monitoring_System_Data.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Subscription_Monitoring_System_Data
 {
@@ -59,22 +54,38 @@ namespace Subscription_Monitoring_System_Data
 
         public class ServiceTypeConstants
         {
-            public const string DAILY = "DAILY";
-            public const string WEEKLY = "WEEKLY";
-            public const string MONTHLY = "MONTHLY";
-            public const string YEARLY = "YEARLY";
             public const string DoesNotExist = "Service Type does not exist.";
+            public const string SuccessAdd = "Service Type added successfully.";
+            public const string SuccessEdit = "Service Type updated successfully.";
+            public const string SuccessDelete = "Service Type deleted successfully.";
+            public const string EntryInvalid = "Service Type entry is not valid.";
+            public const string Exists = "Service Type name already exists";
+            public const string NoChanges = "Service Type has no changes.";
+            public const string NameInvalid = "Service Type name should be uppercased and not contain numbers and/or special characters";
         }
 
+        public class UserNotificationConstants
+        {
+            public const string SuccessDelete = "User notification deleted successfully.";
+            public const string SuccessRestore = "User notification deleted successfully.";
+        }
         public class NotificationConstants
         {
+            public const string SuccessCreate = "Notification added successfully.";
+            public const string SuccessUpdate = "Notification updated successfully.";
             public const string DoesNotExist = "Notification does not exist.";
             public const string SuccessDelete = "Notification deleted successfully.";
-            public const string SuccessRestore = "Notification restored successfully.";
             public const string CreateSubject = "Subscription Created";
             public const string UpdateSubject = "Subscription Updated";
             public const string ExpiringSubject = "Subscription Expiring";
             public const string ExpiredSubject = "Subscription Expired";
+            public const string RestoredSubject = "Subscription Restored";
+            public const string TemporaryDeleteSubject = "Subscription Temporarily Deleted";
+            public const string PermanentDeleteSubject = "Subscription Permanently Deleted";
+            public const string EntryInvalid = "Notification entry is not valid.";
+            public const string Exists = "Notification description already exists";
+            public const string InvalidDate = "Notification date is invalid";
+            public const string NoChanges = "Notification has no changes.";
 
             public static string SuccessAdd(int subscriptionId)
             {
@@ -104,6 +115,11 @@ namespace Subscription_Monitoring_System_Data
             public static string SuccessPermanentDelete(int subscriptionId)
             {
                 return "Subscription #" + subscriptionId + " deleted permanently";
+            }
+
+            public static string SuccessRestore(int subscriptionId)
+            {
+                return "Subscription #" + subscriptionId + " restored";
             }
         }
 
@@ -152,7 +168,7 @@ namespace Subscription_Monitoring_System_Data
         {
             public const string From = "jd2925084@gmail.com";
             public const string SmtpServer = "smtp.gmail.com";
-            public const string Password = "pmgpwlxwrihgpxcx";
+            public const string Password = "agyipwwhukvfotyz";
             public const int Port = 465;
             public const bool UseSsl = true;
             public const bool Quit = true;
@@ -167,7 +183,7 @@ namespace Subscription_Monitoring_System_Data
             public const string HeaderName = "NAME";
             public const string HeaderDescription = "DESCRIPTION";
             public const string HeaderPrice = "PRICE";
-            public const string HeaderServiceTypeName = "SERVICETYPENAME";
+            public const string HeaderServiceDurationName = "SERVICEDURATIONNAME";
             public const string SortByInvalid = "Sort by is invalid.";
 
             public const string EntryInvalid = "Service entry is not valid.";
@@ -185,6 +201,13 @@ namespace Subscription_Monitoring_System_Data
         public class DepartmentConstants
         {
             public const string DoesNotExist = "Department does not exist.";
+            public const string SuccessAdd = "Department added successfully.";
+            public const string SuccessEdit = "Department updated successfully.";
+            public const string SuccessDelete = "Department deleted successfully.";
+            public const string EntryInvalid = "Department entry is not valid.";
+            public const string Exists = "Department name already exists";
+            public const string NoChanges = "Department has no changes.";
+            public const string NameInvalid = "Department name should be uppercased and not contain numbers and/or special characters";
         }
 
         public class ExcelConstants

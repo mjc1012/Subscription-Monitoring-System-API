@@ -1,14 +1,8 @@
 ﻿using AutoMapper;
 using Subscription_Monitoring_System_Data.Contracts;
 using Subscription_Monitoring_System_Data.Models;
-using Subscription_Monitoring_System_Data.Repositories;
 using Subscription_Monitoring_System_Data.ViewModels;
 using Subscription_Monitoring_System_Domain.Contracts;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static Subscription_Monitoring_System_Data.Constants;
 
 namespace Subscription_Monitoring_System_Domain.Services
@@ -82,7 +76,7 @@ namespace Subscription_Monitoring_System_Domain.Services
 
                 services = services.Where(p => (filter.Id == 0 || p.Id == filter.Id) && (string.IsNullOrEmpty(filter.Name) || p.Name == filter.Name) &&
                 (string.IsNullOrEmpty(filter.Description) || p.Description == filter.Description) && (filter.Price == 0 || p.Price == filter.Price) &&
-                (string.IsNullOrEmpty(filter.ServiceTypeName) || p.ServiceTypeName == filter.ServiceTypeName) && p.IsActive == filter.IsActive).ToList();
+                (string.IsNullOrEmpty(filter.ServiceDurationName) || p.ServiceDurationName == filter.ServiceDurationName) && p.IsActive == filter.IsActive).ToList();
 
                 services = (!string.IsNullOrEmpty(filter.SortOrder) && filter.SortOrder.Equals(SortDirectionConstants.Descending)) ? SortDescending(filter.SortBy, services) : SortAscending(filter.SortBy, services);
 
@@ -112,7 +106,7 @@ namespace Subscription_Monitoring_System_Domain.Services
                 ServiceConstants.HeaderName => services.OrderBy(p => p.Name).ToList(),
                 ServiceConstants.HeaderDescription => services.OrderBy(p => p.Description).ToList(),
                 ServiceConstants.HeaderPrice => services.OrderBy(p => p.Price).ToList(),
-                ServiceConstants.HeaderServiceTypeName => services.OrderBy(p => p.ServiceTypeName).ToList(),
+                ServiceConstants.HeaderServiceDurationName => services.OrderBy(p => p.ServiceDurationName).ToList(),
                 _ => services.OrderBy(p => p.Id).ToList(),
             };
         }
@@ -125,7 +119,7 @@ namespace Subscription_Monitoring_System_Domain.Services
                 ServiceConstants.HeaderName => services.OrderByDescending(p => p.Name).ToList(),
                 ServiceConstants.HeaderDescription => services.OrderByDescending(p => p.Description).ToList(),
                 ServiceConstants.HeaderPrice => services.OrderByDescending(p => p.Price).ToList(),
-                ServiceConstants.HeaderServiceTypeName => services.OrderByDescending(p => p.ServiceTypeName).ToList(),
+                ServiceConstants.HeaderServiceDurationName => services.OrderByDescending(p => p.ServiceDurationName).ToList(),
                 _ => services.OrderByDescending(p => p.Id).ToList(),
             };
         }
@@ -142,12 +136,12 @@ namespace Subscription_Monitoring_System_Domain.Services
             }
         }
 
-        public async Task Create(ServiceViewModel service, ServiceTypeViewModel serviceType)
+        public async Task Create(ServiceViewModel service, ServiceDurationViewModel serviceDuration)
         {
             try
             {
                 Service serviceMapped = _mapper.Map<Service>(service);
-                serviceMapped.ServiceTypeId = serviceType.Id;
+                serviceMapped.ServiceDurationId = serviceDuration.Id;
                 await _serviceRepository.Create(serviceMapped);
             }
             catch (Exception)
@@ -156,12 +150,12 @@ namespace Subscription_Monitoring_System_Domain.Services
             }
         }
 
-        public async Task Update(ServiceViewModel service, ServiceTypeViewModel serviceType)
+        public async Task Update(ServiceViewModel service, ServiceDurationViewModel serviceDuration)
         {
             try
             {
                 Service serviceMapped = _mapper.Map<Service>(service);
-                serviceMapped.ServiceTypeId = serviceType.Id;
+                serviceMapped.ServiceDurationId = serviceDuration.Id;
                 await _serviceRepository.Update(serviceMapped);
             }
             catch (Exception)

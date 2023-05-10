@@ -1,13 +1,6 @@
-﻿using Subscription_Monitoring_System_Data.Models;
-using Subscription_Monitoring_System_Data.ViewModels;
+﻿using Subscription_Monitoring_System_Data.ViewModels;
 using Subscription_Monitoring_System_Domain.Contracts;
-using Subscription_Monitoring_System_Domain.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using static Subscription_Monitoring_System_Data.Constants;
 
 namespace Subscription_Monitoring_System_Domain.Handlers
@@ -15,16 +8,16 @@ namespace Subscription_Monitoring_System_Domain.Handlers
     public class ServiceHandler : IServiceHandler
     {
         private readonly IServiceService _serviceService;
-        private readonly IServiceTypeService _serviceTypeService;
-        public ServiceHandler(IServiceService serviceService, IServiceTypeService serviceTypeService)
+        private readonly IServiceDurationService _serviceDurationService;
+        public ServiceHandler(IServiceService serviceService, IServiceDurationService serviceDurationService)
         {
             _serviceService = serviceService;
-            _serviceTypeService = serviceTypeService;
+            _serviceDurationService = serviceDurationService;
         }
 
         public List<string> CanFilter(ServiceFilterViewModel filter)
         {
-            var validationErrors = new List<string>();
+            List<string> validationErrors = new();
 
             if (!string.IsNullOrEmpty(filter.SortOrder) && (filter.SortOrder is not SortDirectionConstants.Ascending and not SortDirectionConstants.Descending))
             {
@@ -32,7 +25,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
             }
 
             if (!string.IsNullOrEmpty(filter.SortBy) && (filter.SortBy is not ServiceConstants.HeaderId and not ServiceConstants.NameInvalid and not ServiceConstants.HeaderDescription and not ServiceConstants.HeaderPrice 
-                and not ServiceConstants.HeaderServiceTypeName))
+                and not ServiceConstants.HeaderServiceDurationName))
             {
                 validationErrors.Add(ServiceConstants.SortByInvalid);
             }
@@ -42,7 +35,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
 
         public async Task<List<string>> CanAdd(ServiceViewModel service)
         {
-            var validationErrors = new List<string>();
+            List<string> validationErrors = new();
 
             if (service != null)
             {
@@ -58,7 +51,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
                     validationErrors.Add(ServiceConstants.NameInvalid);
                 }
 
-                if (!await _serviceTypeService.ServiceTypeExists(service.ServiceTypeName))
+                if (!await _serviceDurationService.ServiceDurationExists(new ServiceDurationViewModel { Name = service.ServiceDurationName }))
                 {
                     validationErrors.Add(ServiceTypeConstants.DoesNotExist);
                 }
@@ -73,12 +66,12 @@ namespace Subscription_Monitoring_System_Domain.Handlers
 
         public async Task<List<string>> CanUpdate(ServiceViewModel service)
         {
-            var validationErrors = new List<string>();
+            List<string> validationErrors = new();
 
             ServiceViewModel serviceFound = await _serviceService.GetActive(service.Id);
             if (service != null && serviceFound != null)
             {
-                if (service.Name == serviceFound.Name && service.Price == serviceFound.Price && service.ServiceTypeName == serviceFound.ServiceTypeName && service.Description == serviceFound.Description)
+                if (service.Name == serviceFound.Name && service.Price == serviceFound.Price && service.ServiceDurationName == serviceFound.ServiceDurationName && service.Description == serviceFound.Description)
                 {
                     validationErrors.Add(ServiceConstants.NoChanges);
                 }
@@ -95,7 +88,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
                         validationErrors.Add(ServiceConstants.NameInvalid);
                     }
 
-                    if (!await _serviceTypeService.ServiceTypeExists(service.ServiceTypeName))
+                    if (!await _serviceDurationService.ServiceDurationExists(new ServiceDurationViewModel { Name = service.ServiceDurationName }))
                     {
                         validationErrors.Add(ServiceTypeConstants.DoesNotExist);
                     }
@@ -111,7 +104,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
 
         public async Task<List<string>> CanDeleteActive(int id)
         {
-            var validationErrors = new List<string>();
+            List<string> validationErrors = new();
 
             ServiceViewModel service = await _serviceService.GetActive(id);
             if (service == null)
@@ -124,7 +117,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
 
         public async Task<List<string>> CanDeleteInactive(int id)
         {
-            var validationErrors = new List<string>();
+            List<string> validationErrors = new();
 
             ServiceViewModel service = await _serviceService.GetInactive(id);
             if (service == null)
@@ -137,7 +130,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
 
         public async Task<List<string>> CanDelete(RecordIdsViewModel records)
         {
-            var validationErrors = new List<string>();
+            List<string> validationErrors = new();
 
             List<ServiceViewModel> services = await _serviceService.GetList(records.Ids);
             if (services == null)
@@ -150,7 +143,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
 
         public async Task<List<string>> CanRestore(int id)
         {
-            var validationErrors = new List<string>();
+            List<string> validationErrors = new();
 
             ServiceViewModel service = await _serviceService.GetInactive(id);
             if (service == null)
@@ -163,7 +156,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
 
         public async Task<List<string>> CanRestore(RecordIdsViewModel records)
         {
-            var validationErrors = new List<string>();
+            List<string> validationErrors = new();
 
             List<ServiceViewModel> services = await _serviceService.GetList(records.Ids);
             if (services == null)

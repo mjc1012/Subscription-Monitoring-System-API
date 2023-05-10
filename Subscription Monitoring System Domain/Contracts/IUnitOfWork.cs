@@ -1,21 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Subscription_Monitoring_System_Domain.Contracts
+﻿namespace Subscription_Monitoring_System_Domain.Contracts
 {
     public interface IUnitOfWork
     {
         IClientService ClientService { get; }
         IClientHandler ClientHandler { get; }
-        IServiceTypeService ServiceTypeService { get; }
+        IServiceDurationService ServiceTypeService { get; }
+        IServiceDurationHandler ServiceTypeHandler { get; }
 
         IServiceService ServiceService { get; }
         IServiceHandler ServiceHandler { get; }
 
         IDepartmentService DepartmentService { get; }
+        IDepartmentHandler DepartmentHandler { get; }
 
         IUserService UserService { get; }
         IUserHandler UserHandler { get; }

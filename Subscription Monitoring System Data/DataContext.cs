@@ -1,13 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Subscription_Monitoring_System_Data.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 using static Subscription_Monitoring_System_Data.Constants;
 
 namespace Subscription_Monitoring_System_Data
@@ -19,7 +11,7 @@ namespace Subscription_Monitoring_System_Data
         public virtual DbSet<Department>? Departments { get; set; }
         public virtual DbSet<User>? Users { get; set; }
         public virtual DbSet<Client>? Clients { get; set; }
-        public virtual DbSet<ServiceType>? ServiceTypes { get; set; }
+        public virtual DbSet<ServiceDuration>? ServiceDurations { get; set; }
         public virtual DbSet<Service>? Services { get; set; }
         public virtual DbSet<Subscription>? Subscriptions { get; set; }
         public virtual DbSet<Notification>? Notifications { get; set; }
@@ -90,6 +82,12 @@ namespace Subscription_Monitoring_System_Data
                 .HasForeignKey(p => p.UpdatedById)
                 .OnDelete(DeleteBehavior.ClientSetNull);
 
+            modelBuilder.Entity<Notification>()
+                .HasOne(p => p.Subscription)
+                .WithMany(p => p.Notifications)
+                .HasForeignKey(p => p.SubscriptionId)
+                .OnDelete(DeleteBehavior.ClientSetNull);
+
             modelBuilder.Entity<User>().HasData(
                 new User
                 {
@@ -101,26 +99,30 @@ namespace Subscription_Monitoring_System_Data
                     IsActive = true
                 });
 
-            modelBuilder.Entity<ServiceType>().HasData(
-                new ServiceType
+            modelBuilder.Entity<ServiceDuration>().HasData(
+                new ServiceDuration
                 {
                     Id = 1,
-                    Name = "DAILY"
+                    Name = "DAILY",
+                    Days= 1
                 },
-                new ServiceType
+                new ServiceDuration
                 {
                     Id = 2,
-                    Name = "WEEKLY"
+                    Name = "WEEKLY",
+                    Days = 7
                 },
-                new ServiceType
+                new ServiceDuration
                 {
                     Id = 3,
-                    Name = "MONTHLY"
+                    Name = "MONTHLY",
+                    Days = 30
                 },
-                new ServiceType
+                new ServiceDuration
                 {
                     Id = 4,
-                    Name = "YEARLY"
+                    Name = "YEARLY",
+                    Days = 365
                 });
 
             modelBuilder.Entity<Department>().HasData(

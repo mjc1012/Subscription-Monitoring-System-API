@@ -1,14 +1,8 @@
 ﻿using AutoMapper;
 using Subscription_Monitoring_System_Data.Contracts;
 using Subscription_Monitoring_System_Data.Models;
-using Subscription_Monitoring_System_Data.Repositories;
 using Subscription_Monitoring_System_Data.ViewModels;
 using Subscription_Monitoring_System_Domain.Contracts;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static Subscription_Monitoring_System_Data.Constants;
 
 namespace Subscription_Monitoring_System_Domain.Services

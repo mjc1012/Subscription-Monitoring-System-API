@@ -5,14 +5,10 @@ using Subscription_Monitoring_System_Data.Contracts;
 using Subscription_Monitoring_System_Data.Models;
 using Subscription_Monitoring_System_Data.ViewModels;
 using Subscription_Monitoring_System_Domain.Contracts;
-using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 using static Subscription_Monitoring_System_Data.Constants;
 
 namespace Subscription_Monitoring_System_Domain.Services
@@ -42,10 +38,10 @@ namespace Subscription_Monitoring_System_Domain.Services
         public async Task<bool> VerifyPassword(AuthenticationViewModel loginUser)
         {
             User dbUser = await _userRepository.GetActive(loginUser.Code);
-            var hashBytes = Convert.FromBase64String(dbUser.Password);
-            var salt = new byte[PasswordConstants.SaltSize];
+            byte[] hashBytes = Convert.FromBase64String(dbUser.Password);
+            byte[] salt = new byte[PasswordConstants.SaltSize];
             Array.Copy(hashBytes, 0, salt, 0, PasswordConstants.SaltSize);
-            var key = new Rfc2898DeriveBytes(loginUser.Password, salt, PasswordConstants.Iterations);
+            Rfc2898DeriveBytes key = new(loginUser.Password, salt, PasswordConstants.Iterations);
             byte[] hash = key.GetBytes(PasswordConstants.HashSize);
 
             for (int i = 0; i < PasswordConstants.HashSize; i++)
@@ -60,29 +56,29 @@ namespace Subscription_Monitoring_System_Domain.Services
 
         public string CreateJwt(string code)
         {
-            var jwtTokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(AuthenticationConstants.SecretKey);
-            var identity = new ClaimsIdentity(new Claim[]
+            JwtSecurityTokenHandler jwtTokenHandler = new();
+            byte[] key = Encoding.ASCII.GetBytes(AuthenticationConstants.SecretKey);
+            ClaimsIdentity identity = new(new Claim[]
             {
                 new Claim(ClaimTypes.Name, code)
             });
 
-            var credentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256);
+            SigningCredentials credentials = new(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256);
 
-            var tokenDescriptor = new SecurityTokenDescriptor
+            SecurityTokenDescriptor tokenDescriptor = new()
             {
                 Subject = identity,
                 Expires = DateTime.Now.AddMinutes(10),
                 SigningCredentials = credentials,
             };
-            var token = jwtTokenHandler.CreateToken(tokenDescriptor);
+            SecurityToken token = jwtTokenHandler.CreateToken(tokenDescriptor);
             return jwtTokenHandler.WriteToken(token);
         }
 
         public ClaimsPrincipal GetPrincipalFromExpiredToken(string expiredToken)
         {
-            var key = Encoding.ASCII.GetBytes(AuthenticationConstants.SecretKey);
-            var tokenValidationParameters = new TokenValidationParameters
+            byte[] key = Encoding.ASCII.GetBytes(AuthenticationConstants.SecretKey);
+            TokenValidationParameters tokenValidationParameters = new()
             {
                 ValidateAudience = false,
                 ValidateIssuer = false,
@@ -90,8 +86,8 @@ namespace Subscription_Monitoring_System_Domain.Services
                 IssuerSigningKey = new SymmetricSecurityKey(key),
                 ValidateLifetime = false
             };
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var principal = tokenHandler.ValidateToken(expiredToken, tokenValidationParameters, out SecurityToken securityToken);
+            JwtSecurityTokenHandler tokenHandler = new();
+            ClaimsPrincipal principal = tokenHandler.ValidateToken(expiredToken, tokenValidationParameters, out SecurityToken securityToken);
             if (securityToken is not JwtSecurityToken jwtSecurityToken || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
             {
                 throw new SecurityTokenException("This is an invalid token");
@@ -106,8 +102,8 @@ namespace Subscription_Monitoring_System_Domain.Services
 
         public async Task<string> CreateRefreshToken()
         {
-            var tokenBytes = RandomNumberGenerator.GetBytes(64);
-            var refreshToken = Convert.ToBase64String(tokenBytes).Replace("/", "!").Replace("\\", "!");
+            byte[] tokenBytes = RandomNumberGenerator.GetBytes(64);
+            string refreshToken = Convert.ToBase64String(tokenBytes).Replace("/", "!").Replace("\\", "!");
 
             if (await _userRepository.RefreshTokenExists(refreshToken))
             {

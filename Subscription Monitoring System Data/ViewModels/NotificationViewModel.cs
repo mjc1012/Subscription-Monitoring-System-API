@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Subscription_Monitoring_System_Data.Models;
 
 namespace Subscription_Monitoring_System_Data.ViewModels
 {
@@ -13,6 +9,8 @@ namespace Subscription_Monitoring_System_Data.ViewModels
         public string Date { get; set; } = string.Empty;
         public bool IsSeen { get; set; }
         public bool IsActive { get; set; }
-        public int SubscriptionId { get; set; }
+        public int? SubscriptionId { get; set; }
+        public List<int> UserIds { get; set; } = new List<int>();
+        public List<User> Users { get; set; } = new List<User>();
     }
 }

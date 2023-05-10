@@ -1,18 +1,18 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Subscription_Monitoring_System_Data.ViewModels;
-using Subscription_Monitoring_System_Domain.Contracts;
+﻿using Microsoft.AspNetCore.Mvc;
 using static Subscription_Monitoring_System_Data.Constants;
+using Subscription_Monitoring_System_Domain.Contracts;
+using Subscription_Monitoring_System_Data.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Subscription_Monitoring_System.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class NotificationAPIController : Controller
+    public class ServiceDurationAPIController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
 
-        public NotificationAPIController(IUnitOfWork unitOfWork)
+        public ServiceDurationAPIController(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }
@@ -23,7 +23,7 @@ namespace Subscription_Monitoring_System.Controllers
         {
             try
             {
-                List<NotificationViewModel> responseData = await _unitOfWork.NotificationService.GetList();
+                List<ServiceDurationViewModel> responseData = await _unitOfWork.ServiceTypeService.GetList();
                 return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = BaseConstants.RetrievedData, Value = responseData });
             }
             catch (Exception ex)
@@ -38,7 +38,7 @@ namespace Subscription_Monitoring_System.Controllers
         {
             try
             {
-                NotificationViewModel responseData = await _unitOfWork.NotificationService.Get(id);
+                ServiceDurationViewModel responseData = await _unitOfWork.ServiceTypeService.Get(id);
                 return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = BaseConstants.RetrievedData, Value = responseData });
             }
             catch (Exception ex)
@@ -49,19 +49,20 @@ namespace Subscription_Monitoring_System.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] NotificationViewModel notification)
+        public async Task<IActionResult> Post([FromBody] ServiceDurationViewModel serviceType)
         {
             try
             {
-                List<string> validationErrors = await _unitOfWork.NotificationHandler.CanAdd(notification);
+                List<string> validationErrors = await _unitOfWork.ServiceTypeHandler.CanAdd(serviceType);
 
                 if (validationErrors.Any())
                 {
                     return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.ErrorList, Value = validationErrors });
                 }
 
-                await _unitOfWork.NotificationService.Create(notification);
-                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = NotificationConstants.SuccessCreate });
+
+                await _unitOfWork.ServiceTypeService.Create(serviceType);
+                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = ServiceTypeConstants.SuccessAdd });
             }
             catch (Exception ex)
             {
@@ -71,19 +72,20 @@ namespace Subscription_Monitoring_System.Controllers
 
         [Authorize]
         [HttpPut]
-        public async Task<IActionResult> Put([FromBody] NotificationViewModel notification)
+        public async Task<IActionResult> Put([FromBody] ServiceDurationViewModel serviceType)
         {
             try
             {
-                List<string> validationErrors = await _unitOfWork.NotificationHandler.CanUpdate(notification);
+                List<string> validationErrors = await _unitOfWork.ServiceTypeHandler.CanUpdate(serviceType);
 
                 if (validationErrors.Any())
                 {
                     return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.ErrorList, Value = validationErrors });
                 }
 
-                await _unitOfWork.NotificationService.Update(notification);
-                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = NotificationConstants.SuccessUpdate });
+
+                await _unitOfWork.ServiceTypeService.Update(serviceType);
+                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = ServiceTypeConstants.SuccessAdd });
             }
             catch (Exception ex)
             {
@@ -97,7 +99,7 @@ namespace Subscription_Monitoring_System.Controllers
         {
             try
             {
-                List<string> validationErrors = await _unitOfWork.NotificationHandler.CanDelete(id);
+                List<string> validationErrors = await _unitOfWork.ServiceTypeHandler.CanDelete(id);
 
 
                 if (validationErrors.Any())
@@ -105,8 +107,8 @@ namespace Subscription_Monitoring_System.Controllers
                     return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.ErrorList, Value = validationErrors });
                 }
 
-                await _unitOfWork.NotificationService.HardDelete(id);
-                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = NotificationConstants.SuccessDelete });
+                await _unitOfWork.ServiceTypeService.HardDelete(id);
+                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = ServiceTypeConstants.SuccessDelete });
             }
             catch (Exception ex)
             {
@@ -115,20 +117,20 @@ namespace Subscription_Monitoring_System.Controllers
         }
 
         [Authorize]
-        [HttpPut("delete-notifications")]
+        [HttpPut("hard-delete-departments")]
         public async Task<IActionResult> HardDelete([FromBody] RecordIdsViewModel records)
         {
             try
             {
-                List<string> validationErrors = await _unitOfWork.NotificationHandler.CanDelete(records);
+                List<string> validationErrors = await _unitOfWork.ServiceTypeHandler.CanDelete(records);
 
                 if (validationErrors.Any())
                 {
                     return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.ErrorList, Value = validationErrors });
                 }
 
-                await _unitOfWork.NotificationService.HardDelete(records);
-                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = NotificationConstants.SuccessDelete });
+                await _unitOfWork.ServiceTypeService.HardDelete(records);
+                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = ServiceTypeConstants.SuccessDelete });
             }
             catch (Exception ex)
             {

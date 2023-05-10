@@ -1,9 +1,4 @@
 ﻿using Subscription_Monitoring_System_Data.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Subscription_Monitoring_System_Data.Contracts
 {
@@ -12,6 +7,11 @@ namespace Subscription_Monitoring_System_Data.Contracts
         Task<Department?> Get(int id);
         Task<Department?> Get(string name);
         Task<List<Department>> GetList();
-        Task<bool> DepartmentExists(string name);
+        Task<List<Department>> GetList(List<int> ids);
+        Task Create(Department department);
+        Task Update(Department department);
+        Task HardDelete(int id);
+        Task HardDelete(List<int> ids);
+        Task<bool> DepartmentExists(Department department);
     }
 }

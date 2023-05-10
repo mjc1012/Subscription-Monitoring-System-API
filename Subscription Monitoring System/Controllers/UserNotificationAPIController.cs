@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using static Subscription_Monitoring_System_Data.Constants;
 using Subscription_Monitoring_System_Domain.Contracts;
-using Subscription_Monitoring_System_Data.Models;
 using Subscription_Monitoring_System_Data.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 
@@ -47,7 +46,7 @@ namespace Subscription_Monitoring_System.Controllers
                 }
 
                 await _unitOfWork.UserNotificationService.HardDelete(id);
-                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = NotificationConstants.SuccessDelete });
+                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = UserNotificationConstants.SuccessDelete });
             }
             catch (Exception ex)
             {
@@ -69,7 +68,7 @@ namespace Subscription_Monitoring_System.Controllers
                 }
 
                 await _unitOfWork.UserNotificationService.SoftDelete(id);
-                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = NotificationConstants.SuccessDelete });
+                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = UserNotificationConstants.SuccessDelete });
             }
             catch (Exception ex)
             {
@@ -91,7 +90,7 @@ namespace Subscription_Monitoring_System.Controllers
                 }
 
                 await _unitOfWork.UserNotificationService.SoftDelete(records);
-                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = NotificationConstants.SuccessDelete });
+                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = UserNotificationConstants.SuccessDelete });
             }
             catch (Exception ex)
             {
@@ -113,7 +112,7 @@ namespace Subscription_Monitoring_System.Controllers
                 }
 
                 await _unitOfWork.UserNotificationService.HardDelete(records);
-                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = NotificationConstants.SuccessDelete });
+                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = UserNotificationConstants.SuccessDelete });
             }
             catch (Exception ex)
             {
@@ -136,7 +135,7 @@ namespace Subscription_Monitoring_System.Controllers
                 }
 
                 await _unitOfWork.UserNotificationService.Restore(id);
-                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = NotificationConstants.SuccessRestore });
+                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = UserNotificationConstants.SuccessRestore });
             }
             catch (Exception ex)
             {
@@ -158,7 +157,7 @@ namespace Subscription_Monitoring_System.Controllers
                 }
 
                 await _unitOfWork.UserNotificationService.Restore(records);
-                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = NotificationConstants.SuccessRestore });
+                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = UserNotificationConstants.SuccessRestore });
             }
             catch (Exception ex)
             {

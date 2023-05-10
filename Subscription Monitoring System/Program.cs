@@ -4,11 +4,9 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Subscription_Monitoring_System_Data;
 using Subscription_Monitoring_System_Data.Contracts;
-using Subscription_Monitoring_System_Data.Models;
 using Subscription_Monitoring_System_Data.Repositories;
 using Subscription_Monitoring_System_Domain;
 using Subscription_Monitoring_System_Domain.Contracts;
@@ -18,14 +16,15 @@ using System.Text;
 using System.Text.Json.Serialization;
 using static Subscription_Monitoring_System_Data.Constants;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
 builder.Services.AddScoped<IEmailService, EmailService>();
-builder.Services.AddScoped<IServiceTypeRepository, ServiceTypeRepository>();
-builder.Services.AddScoped<IServiceTypeService, ServiceTypeService>();
+builder.Services.AddScoped<IServiceDurationRepository, ServiceDurationRepository>();
+builder.Services.AddScoped<IServiceDurationHandler, ServiceDurationHandler>();
+builder.Services.AddScoped<IServiceDurationService, ServiceDurationService>();
 builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
 builder.Services.AddScoped<IServiceService, ServiceService>();
 builder.Services.AddScoped<IServiceHandler, ServiceHandler>();
@@ -34,6 +33,7 @@ builder.Services.AddScoped<IClientService, ClientService>();
 builder.Services.AddScoped<IClientHandler, ClientHandler>();
 builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
 builder.Services.AddScoped<IDepartmentService, DepartmentService>();
+builder.Services.AddScoped<IDepartmentHandler, DepartmentHandler>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserHandler, UserHandler>();
@@ -74,7 +74,7 @@ builder.Services.AddSwaggerGen(c =>
                     Id = SwaggerGenConstants.Bearer
                 }
             },
-            new string[]{}
+            Array.Empty<string>()
         }
     });
 });
@@ -117,7 +117,7 @@ builder.Services.AddHangfire(configuration => configuration
 
 builder.Services.AddHangfireServer();
 
-var app = builder.Build();
+WebApplication app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

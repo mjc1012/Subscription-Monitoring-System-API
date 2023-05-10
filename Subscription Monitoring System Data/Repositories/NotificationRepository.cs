@@ -1,11 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Subscription_Monitoring_System_Data.Contracts;
 using Subscription_Monitoring_System_Data.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Subscription_Monitoring_System_Data.Repositories
 {
@@ -16,6 +11,19 @@ namespace Subscription_Monitoring_System_Data.Repositories
         {
             _context = context;
         }
+
+        public async Task<List<Notification>> GetList()
+        {
+            try
+            {
+                return await _context.Notifications!.Include(p=> p.Subscription).Include(p=> p.UserNotifications).ToListAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         public async Task<Notification?> Get(int id)
         {
             try
@@ -42,6 +50,35 @@ namespace Subscription_Monitoring_System_Data.Repositories
                     });
                 }
                 await _context.Notifications!.AddAsync(notification);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task Update(Notification notification, List<int> userIds)
+        {
+            try
+            {
+                Notification? oldNotification = await Get(notification.Id);
+                oldNotification!.Date= notification.Date;
+                oldNotification.Description = notification.Description;
+                oldNotification.SubscriptionId = notification.SubscriptionId;
+                List<UserNotification> userNotifications = new();
+                foreach (int id in userIds)
+                {
+                    userNotifications.Add(new UserNotification()
+                    {
+                        UserId = id,
+                        Notification = notification,
+                        IsActive = true
+                    });
+                }
+                oldNotification.UserNotifications = userNotifications;
+
+                _context.Notifications!.Update(oldNotification);
                 await _context.SaveChangesAsync();
             }
             catch (Exception)
@@ -83,6 +120,18 @@ namespace Subscription_Monitoring_System_Data.Repositories
                 List<Notification> notifications = await GetList(ids);
                 _context.Notifications!.RemoveRange(notifications);
                 await _context.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<bool> NotificationExists(Notification notification)
+        {
+            try
+            {
+                return await _context.Notifications!.AnyAsync(p => p.Description == notification.Description && p.Id != notification.Id);
             }
             catch (Exception)
             {

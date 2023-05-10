@@ -1,15 +1,8 @@
-﻿using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Http;
-using Subscription_Monitoring_System_Data.Models;
+﻿using Subscription_Monitoring_System_Data.Models;
 using Subscription_Monitoring_System_Data.ViewModels;
 using Subscription_Monitoring_System_Domain.Contracts;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using static Subscription_Monitoring_System_Data.Constants;
 using IAuthenticationHandler = Subscription_Monitoring_System_Domain.Contracts.IAuthenticationHandler;
 using IAuthenticationService = Subscription_Monitoring_System_Domain.Contracts.IAuthenticationService;
@@ -27,7 +20,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
         }
         public async Task<List<string>> VerifyUser(AuthenticationViewModel loginUser)
         {
-            var validationErrors = new List<string>();
+            List<string> validationErrors = new();
 
             if (loginUser != null)
             {
@@ -51,7 +44,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
 
         public async Task<List<string>> CanChangePassword(UpdatePasswordViewModel user)
         {
-            var validationErrors = new List<string>();
+            List<string> validationErrors = new();
 
             if (user == null)
             {
@@ -87,7 +80,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
 
         public async Task<List<string>> CanRefreshToken(TokenViewModel token)
         {
-            var validationErrors = new List<string>();
+            List<string> validationErrors = new();
 
             if (token != null)
             {
@@ -108,7 +101,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
 
         public async Task<List<string>> CanResetPassword(ResetPasswordViewModel resetPassword)
         {
-            var validationErrors = new List<string>();
+            List<string> validationErrors = new();
 
             if (resetPassword == null)
             {

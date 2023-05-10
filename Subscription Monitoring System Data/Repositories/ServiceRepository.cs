@@ -1,13 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Subscription_Monitoring_System_Data.Contracts;
 using Subscription_Monitoring_System_Data.Models;
-using Subscription_Monitoring_System_Data.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static Subscription_Monitoring_System_Data.Constants;
 
 namespace Subscription_Monitoring_System_Data.Repositories
 {
@@ -23,7 +16,7 @@ namespace Subscription_Monitoring_System_Data.Repositories
         {
             try
             {
-                return await _context.Services!.Where(p => p.IsActive).Include(p => p.ServiceType).Include(p => p.Subscriptions).ToListAsync();
+                return await _context.Services!.Where(p => p.IsActive).Include(p => p.ServiceDuration).Include(p => p.Subscriptions).ToListAsync();
             }
             catch (Exception)
             {
@@ -35,7 +28,7 @@ namespace Subscription_Monitoring_System_Data.Repositories
         {
             try
             {
-                return await _context.Services!.Where(p => p.Id == id && p.IsActive).Include(p => p.ServiceType).Include(p => p.Subscriptions).FirstOrDefaultAsync();
+                return await _context.Services!.Where(p => p.Id == id && p.IsActive).Include(p => p.ServiceDuration).Include(p => p.Subscriptions).FirstOrDefaultAsync();
             }
             catch (Exception)
             {
@@ -47,7 +40,7 @@ namespace Subscription_Monitoring_System_Data.Repositories
         {
             try
             {
-                return await _context.Services!.Where(p => p.Id == id && !p.IsActive).Include(p => p.ServiceType).Include(p => p.Subscriptions).FirstOrDefaultAsync();
+                return await _context.Services!.Where(p => p.Id == id && !p.IsActive).Include(p => p.ServiceDuration).Include(p => p.Subscriptions).FirstOrDefaultAsync();
             }
             catch (Exception)
             {
@@ -59,7 +52,7 @@ namespace Subscription_Monitoring_System_Data.Repositories
         {
             try
             {
-                return await _context.Services!.Where(p => p.Name == name && p.IsActive).Include(p => p.ServiceType).Include(p => p.Subscriptions).FirstOrDefaultAsync();
+                return await _context.Services!.Where(p => p.Name == name && p.IsActive).Include(p => p.ServiceDuration).Include(p => p.Subscriptions).FirstOrDefaultAsync();
             }
             catch (Exception)
             {
@@ -70,7 +63,7 @@ namespace Subscription_Monitoring_System_Data.Repositories
         {
             try
             {
-                return await _context.Services!.Where(p => ids.Contains(p.Id)).Include(p => p.ServiceType).Include(p => p.Subscriptions).ToListAsync();
+                return await _context.Services!.Where(p => ids.Contains(p.Id)).Include(p => p.ServiceDuration).Include(p => p.Subscriptions).ToListAsync();
             }
             catch (Exception)
             {
@@ -81,7 +74,7 @@ namespace Subscription_Monitoring_System_Data.Repositories
         {
             try
             {
-                return await _context.Services!.Include(p => p.ServiceType).Include(p => p.Subscriptions).ToListAsync();
+                return await _context.Services!.Include(p => p.ServiceDuration).Include(p => p.Subscriptions).ToListAsync();
             }
             catch (Exception)
             {
@@ -110,7 +103,7 @@ namespace Subscription_Monitoring_System_Data.Repositories
                 serviceUpdate!.Name = service.Name;
                 serviceUpdate.Description = service.Description;
                 serviceUpdate.Price = service.Price;
-                serviceUpdate.ServiceTypeId = service.ServiceTypeId;
+                serviceUpdate.ServiceDurationId = service.ServiceDurationId;
                 _context.Services!.Update(serviceUpdate);
                 await _context.SaveChangesAsync();
             }

@@ -1,14 +1,6 @@
-﻿using Hangfire.Logging;
-using Subscription_Monitoring_System_Data.Models;
-using Subscription_Monitoring_System_Data.ViewModels;
+﻿using Subscription_Monitoring_System_Data.ViewModels;
 using Subscription_Monitoring_System_Domain.Contracts;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static Subscription_Monitoring_System_Data.Constants;
 
 namespace Subscription_Monitoring_System_Domain.Handlers
@@ -29,7 +21,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
 
         public List<string> CanFilter(SubscriptionFilterViewModel filter)
         {
-            var validationErrors = new List<string>();
+            List<string> validationErrors = new();
 
             if (!string.IsNullOrEmpty(filter.SortOrder) && (filter.SortOrder is not SortDirectionConstants.Ascending and not SortDirectionConstants.Descending))
             {
@@ -48,7 +40,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
 
         public async Task<List<string>> CanAdd(SubscriptionViewModel subscription)
         {
-            var validationErrors = new List<string>();
+            List<string> validationErrors = new();
 
             if (subscription != null)
             {
@@ -97,7 +89,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
 
         public async Task<List<string>> CanUpdate(SubscriptionViewModel subscription)
         {
-            var validationErrors = new List<string>();
+            List<string> validationErrors = new();
 
             SubscriptionViewModel subscriptionFound = await _subscriptionService.GetActive(subscription.Id);
             if (subscription != null && subscriptionFound != null)
@@ -156,7 +148,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
 
         public async Task<List<string>> CanDeleteActive(int id)
         {
-            var validationErrors = new List<string>();
+            List<string> validationErrors = new();
 
             SubscriptionViewModel subscription = await _subscriptionService.GetActive(id);
             if (subscription == null)
@@ -169,7 +161,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
 
         public async Task<List<string>> CanDeleteInactive(int id)
         {
-            var validationErrors = new List<string>();
+            List<string> validationErrors = new();
 
             SubscriptionViewModel subscription = await _subscriptionService.GetInactive(id);
             if (subscription == null)
@@ -182,7 +174,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
 
         public async Task<List<string>> CanDelete(RecordIdsViewModel records)
         {
-            var validationErrors = new List<string>();
+            List<string> validationErrors = new();
 
             List<SubscriptionViewModel> subscriptions = await _subscriptionService.GetList(records.Ids);
             if (subscriptions == null)
@@ -195,7 +187,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
 
         public async Task<List<string>> CanRestore(int id)
         {
-            var validationErrors = new List<string>();
+            List<string> validationErrors = new();
 
             SubscriptionViewModel subscription = await _subscriptionService.GetInactive(id);
             if (subscription == null)
@@ -208,7 +200,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
 
         public async Task<List<string>> CanRestore(RecordIdsViewModel records)
         {
-            var validationErrors = new List<string>();
+            List<string> validationErrors = new();
 
             List<SubscriptionViewModel> subscriptions = await _subscriptionService.GetList(records.Ids);
             if (subscriptions == null)

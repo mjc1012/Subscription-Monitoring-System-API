@@ -1,15 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Subscription_Monitoring_System_Data.Models
 {
-    public class ServiceType
+    public class ServiceDuration
     {
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
+        public int Days { get; set; }
         public virtual ICollection<Service> Services { get; set; } = new List<Service>();
     }
 }

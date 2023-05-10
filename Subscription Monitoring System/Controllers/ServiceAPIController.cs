@@ -18,6 +18,21 @@ namespace Subscription_Monitoring_System.Controllers
         }
 
         [Authorize]
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetActive(int id)
+        {
+            try
+            {
+                ServiceViewModel responseData = await _unitOfWork.ServiceService.GetActive(id);
+                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = BaseConstants.RetrievedData, Value = responseData });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseViewModel() { Status = false, Message = ex.Message });
+            }
+        }
+
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetActiveList()
         {
@@ -67,8 +82,8 @@ namespace Subscription_Monitoring_System.Controllers
                     return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.ErrorList, Value = validationErrors });
                 }
 
-                ServiceTypeViewModel serviceType = await _unitOfWork.ServiceTypeService.Get(service.ServiceTypeName);
-                await _unitOfWork.ServiceService.Create(service, serviceType);
+                ServiceDurationViewModel serviceDuration = await _unitOfWork.ServiceTypeService.Get(service.ServiceDurationName);
+                await _unitOfWork.ServiceService.Create(service, serviceDuration);
                 return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = ServiceConstants.SuccessAdd });
             }
             catch (Exception ex)
@@ -90,8 +105,8 @@ namespace Subscription_Monitoring_System.Controllers
                     return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.ErrorList, Value = validationErrors });
                 }
 
-                ServiceTypeViewModel serviceType = await _unitOfWork.ServiceTypeService.Get(service.ServiceTypeName);
-                await _unitOfWork.ServiceService.Update(service, serviceType);
+                ServiceDurationViewModel serviceDuration = await _unitOfWork.ServiceTypeService.Get(service.ServiceDurationName);
+                await _unitOfWork.ServiceService.Update(service, serviceDuration);
                 return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = ServiceConstants.SuccessEdit });
             }
             catch (Exception ex)

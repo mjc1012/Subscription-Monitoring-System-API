@@ -1,10 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using static Subscription_Monitoring_System_Data.Constants;
 using Subscription_Monitoring_System_Domain.Contracts;
-using Subscription_Monitoring_System_Data.Models;
 using Subscription_Monitoring_System_Data;
-using System.Net.Mail;
-using System.Globalization;
 using Microsoft.AspNetCore.StaticFiles;
 using Subscription_Monitoring_System_Data.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -86,13 +83,13 @@ namespace Subscription_Monitoring_System.Controllers
                 string StoredFilePath = Path.Combine(PathConstants.ExcelFilesPath, DateTime.Now.Ticks.ToString() + ExcelConstants.FileType);
                 System.IO.File.AppendAllText(StoredFilePath, htmldata);
 
-                var provider = new FileExtensionContentTypeProvider();
-                if (!provider.TryGetContentType(StoredFilePath, out var contettype))
+                FileExtensionContentTypeProvider provider = new();
+                if (!provider.TryGetContentType(StoredFilePath, out string contettype))
                 {
                     contettype = ExcelConstants.Contettype;
                 }
 
-                var bytes = await System.IO.File.ReadAllBytesAsync(StoredFilePath);
+                byte[] bytes = await System.IO.File.ReadAllBytesAsync(StoredFilePath);
 
                 return File(bytes, contettype, Path.Combine(StoredFilePath));
             }
@@ -141,8 +138,9 @@ namespace Subscription_Monitoring_System.Controllers
                     Date = DateTime.Now.ToString(DateConstants.DateTimeFormat),
                     IsActive = true,
                     SubscriptionId = newSubscription.Id,
+                    UserIds = subscription.UserIds
                 };
-                await _unitOfWork.NotificationService.Create(notification, subscription.UserIds);
+                await _unitOfWork.NotificationService.Create(notification);
 
                 foreach(ClientViewModel clientRecipient in await _unitOfWork.ClientService.GetList(subscription.ClientIds))
                 {
@@ -184,8 +182,9 @@ namespace Subscription_Monitoring_System.Controllers
                     Date = DateTime.Now.ToString(DateConstants.DateTimeFormat),
                     IsActive = true,
                     SubscriptionId = newSubscription.Id,
+                    UserIds = subscription.UserIds.Union(oldUserIds).ToList()
                 };
-                await _unitOfWork.NotificationService.Create(notification, subscription.UserIds.Union(oldUserIds).ToList());
+                await _unitOfWork.NotificationService.Create(notification);
 
                 foreach (ClientViewModel clientRecipient in await _unitOfWork.ClientService.GetList(subscription.ClientIds.Union(oldClientIds).ToList()))
                 {
@@ -214,7 +213,22 @@ namespace Subscription_Monitoring_System.Controllers
                     return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.ErrorList, Value = validationErrors });
                 }
 
+                SubscriptionViewModel subscription = await _unitOfWork.SubscriptionService.GetInactive(id);
                 await _unitOfWork.SubscriptionService.HardDelete(id);
+                NotificationViewModel notification = new()
+                {
+                    Description = NotificationConstants.SuccessPermanentDelete(subscription.Id),
+                    Date = DateTime.Now.ToString(DateConstants.DateTimeFormat),
+                    IsActive = true,
+                    UserIds = subscription.UserRecipients.Select(p => p.Id).ToList()
+                };
+                await _unitOfWork.NotificationService.Create(notification);
+
+                foreach (ClientViewModel clientRecipient in subscription.ClientRecipients)
+                {
+                    _unitOfWork.EmailService.SendEmail(new EmailViewModel(clientRecipient.EmailAddress, NotificationConstants.PermanentDeleteSubject, EmailBody.SendSubscriptionEmail(NotificationConstants.PermanentDeleteSubject, NotificationConstants.SuccessPermanentDelete(subscription.Id))));
+                }
+
                 return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = SubscriptionConstants.SuccessDelete });
             }
             catch (Exception ex)
@@ -236,7 +250,23 @@ namespace Subscription_Monitoring_System.Controllers
                     return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.ErrorList, Value = validationErrors });
                 }
 
+                SubscriptionViewModel subscription = await _unitOfWork.SubscriptionService.GetActive(id);
                 await _unitOfWork.SubscriptionService.SoftDelete(id);
+                NotificationViewModel notification = new()
+                {
+                    Description = NotificationConstants.SuccessTemporaryDelete(subscription.Id),
+                    Date = DateTime.Now.ToString(DateConstants.DateTimeFormat),
+                    IsActive = true,
+                    SubscriptionId = subscription.Id,
+                    UserIds = subscription.UserRecipients.Select(p => p.Id).ToList()
+                };
+                await _unitOfWork.NotificationService.Create(notification);
+
+                foreach (ClientViewModel clientRecipient in subscription.ClientRecipients)
+                {
+                    _unitOfWork.EmailService.SendEmail(new EmailViewModel(clientRecipient.EmailAddress, NotificationConstants.TemporaryDeleteSubject, EmailBody.SendSubscriptionEmail(NotificationConstants.TemporaryDeleteSubject, NotificationConstants.SuccessTemporaryDelete(subscription.Id))));
+                }
+
                 return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = SubscriptionConstants.SuccessDelete });
             }
             catch (Exception ex)
@@ -259,6 +289,25 @@ namespace Subscription_Monitoring_System.Controllers
                 }
 
                 await _unitOfWork.SubscriptionService.SoftDelete(records);
+                foreach (int id in records.Ids)
+                {
+                    SubscriptionViewModel subscription = await _unitOfWork.SubscriptionService.GetInactive(id);
+                    NotificationViewModel notification = new()
+                    {
+                        Description = NotificationConstants.SuccessTemporaryDelete(subscription.Id),
+                        Date = DateTime.Now.ToString(DateConstants.DateTimeFormat),
+                        IsActive = true,
+                        SubscriptionId = subscription.Id,
+                        UserIds = subscription.UserRecipients.Select(p => p.Id).ToList()
+                    };
+                    await _unitOfWork.NotificationService.Create(notification);
+
+                    foreach (ClientViewModel clientRecipient in subscription.ClientRecipients)
+                    {
+                        _unitOfWork.EmailService.SendEmail(new EmailViewModel(clientRecipient.EmailAddress, NotificationConstants.TemporaryDeleteSubject, EmailBody.SendSubscriptionEmail(NotificationConstants.TemporaryDeleteSubject, NotificationConstants.SuccessTemporaryDelete(subscription.Id))));
+                    }
+                }
+
                 return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = SubscriptionConstants.SuccessDelete });
             }
             catch (Exception ex)
@@ -280,7 +329,26 @@ namespace Subscription_Monitoring_System.Controllers
                     return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.ErrorList, Value = validationErrors });
                 }
 
+                List<SubscriptionViewModel> subscriptions = await _unitOfWork.SubscriptionService.GetList(records.Ids);
                 await _unitOfWork.SubscriptionService.HardDelete(records);
+
+                foreach (SubscriptionViewModel subscription in subscriptions)
+                {
+                    NotificationViewModel notification = new()
+                    {
+                        Description = NotificationConstants.SuccessPermanentDelete(subscription.Id),
+                        Date = DateTime.Now.ToString(DateConstants.DateTimeFormat),
+                        IsActive = true,
+                        UserIds = subscription.UserRecipients.Select(p => p.Id).ToList()
+                    };
+                    await _unitOfWork.NotificationService.Create(notification);
+
+                    foreach (ClientViewModel clientRecipient in subscription.ClientRecipients)
+                    {
+                        _unitOfWork.EmailService.SendEmail(new EmailViewModel(clientRecipient.EmailAddress, NotificationConstants.PermanentDeleteSubject, EmailBody.SendSubscriptionEmail(NotificationConstants.PermanentDeleteSubject, NotificationConstants.SuccessPermanentDelete(subscription.Id))));
+                    }
+                }
+
                 return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = SubscriptionConstants.SuccessDelete });
             }
             catch (Exception ex)
@@ -303,7 +371,23 @@ namespace Subscription_Monitoring_System.Controllers
                     return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.ErrorList, Value = validationErrors });
                 }
 
+                SubscriptionViewModel subscription = await _unitOfWork.SubscriptionService.GetInactive(id);
+
                 await _unitOfWork.SubscriptionService.Restore(id);
+                NotificationViewModel notification = new()
+                {
+                    Description = NotificationConstants.SuccessRestore(subscription.Id),
+                    Date = DateTime.Now.ToString(DateConstants.DateTimeFormat),
+                    IsActive = true,
+                    SubscriptionId = subscription.Id,
+                    UserIds = subscription.UserRecipients.Select(p => p.Id).ToList()
+                };
+                await _unitOfWork.NotificationService.Create(notification);
+
+                foreach (ClientViewModel clientRecipient in subscription.ClientRecipients)
+                {
+                    _unitOfWork.EmailService.SendEmail(new EmailViewModel(clientRecipient.EmailAddress, NotificationConstants.RestoredSubject, EmailBody.SendSubscriptionEmail(NotificationConstants.RestoredSubject, NotificationConstants.SuccessRestore(subscription.Id))));
+                }
                 return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = SubscriptionConstants.SuccessRestore });
             }
             catch (Exception ex)
@@ -326,6 +410,25 @@ namespace Subscription_Monitoring_System.Controllers
                 }
 
                 await _unitOfWork.SubscriptionService.Restore(records);
+                foreach (int id in records.Ids)
+                {
+                    SubscriptionViewModel subscription = await _unitOfWork.SubscriptionService.GetActive(id);
+                    NotificationViewModel notification = new()
+                    {
+                        Description = NotificationConstants.SuccessRestore(subscription.Id),
+                        Date = DateTime.Now.ToString(DateConstants.DateTimeFormat),
+                        IsActive = true,
+                        SubscriptionId = subscription.Id,
+                        UserIds = subscription.UserRecipients.Select(p => p.Id).ToList()
+                    };
+                    await _unitOfWork.NotificationService.Create(notification);
+
+                    foreach (ClientViewModel clientRecipient in subscription.ClientRecipients)
+                    {
+                        _unitOfWork.EmailService.SendEmail(new EmailViewModel(clientRecipient.EmailAddress, NotificationConstants.RestoredSubject, EmailBody.SendSubscriptionEmail(NotificationConstants.RestoredSubject, NotificationConstants.SuccessRestore(subscription.Id))));
+                    }
+                }
+
                 return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = SubscriptionConstants.SuccessRestore });
             }
             catch (Exception ex)
