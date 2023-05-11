@@ -53,7 +53,8 @@ namespace Subscription_Monitoring_System_Domain.Handlers
         {
             List<string> validationErrors = new();
 
-            if (user != null)
+            if (user != null && !string.IsNullOrEmpty(user.Code) && !string.IsNullOrEmpty(user.FirstName) && !string.IsNullOrEmpty(user.MiddleName) && !string.IsNullOrEmpty(user.LastName)
+                && !string.IsNullOrEmpty(user.EmailAddress) && !string.IsNullOrEmpty(user.DepartmentName))
             {
 
                 if (await _userService.UserExists(user))
@@ -66,30 +67,27 @@ namespace Subscription_Monitoring_System_Domain.Handlers
                     validationErrors.Add(DepartmentConstants.DoesNotExist);
                 }
 
-                Match match = Regex.Match(user.FirstName, "[^A-Z]");
-                if (match.Success)
+                if (Regex.IsMatch(user.FirstName, @"[\d\W\p{Ll}]"))
                 {
                     validationErrors.Add(UserConstants.FirstNameInvalid);
                 }
 
                 if(user.MiddleName != null)
                 {
-                    match = Regex.Match(user.MiddleName, "[^A-Z]");
-                    if (match.Success)
+                    if (Regex.IsMatch(user.MiddleName, @"[\d\W\p{Ll}]"))
                     {
                         validationErrors.Add(UserConstants.MiddleNameInvalid);
                     }
                 }
 
-                match = Regex.Match(user.LastName, "[^A-Z]");
-                if (match.Success)
+                if (Regex.IsMatch(user.LastName, @"[\d\W\p{Ll}]"))
                 {
                     validationErrors.Add(UserConstants.LastNameInvalid);
                 }
 
                 try
                 {
-                    _emailService.SendEmail(new EmailViewModel(user.EmailAddress, "Checking Email", EmailBody.CheckEmailBody()));
+                    _emailService.SendEmail(new EmailViewModel(user.EmailAddress, EmailConstants.CheckingEmailSubject, EmailBody.CheckEmailBody()));
                 }
                 catch (Exception)
                 {
@@ -109,7 +107,8 @@ namespace Subscription_Monitoring_System_Domain.Handlers
             List<string> validationErrors = new();
 
             UserViewModel userFound = await _userService.GetActive(user.Id);
-            if (user != null && userFound != null)
+            if (user != null && userFound != null && !string.IsNullOrEmpty(user.Code) && !string.IsNullOrEmpty(user.FirstName) && !string.IsNullOrEmpty(user.MiddleName) && !string.IsNullOrEmpty(user.LastName)
+                && !string.IsNullOrEmpty(user.EmailAddress) && !string.IsNullOrEmpty(user.DepartmentName) && user.Id > 0)
             {
                 if (user.Code == userFound.Code && user.FirstName == userFound.FirstName && user.MiddleName == userFound.MiddleName && user.LastName == userFound.LastName &&
                     user.EmailAddress == userFound.EmailAddress && user.DepartmentName == userFound.DepartmentName)
@@ -128,30 +127,27 @@ namespace Subscription_Monitoring_System_Domain.Handlers
                         validationErrors.Add(DepartmentConstants.DoesNotExist);
                     }
 
-                    Match match = Regex.Match(user.FirstName, "[^A-Z]");
-                    if (match.Success)
+                    if (Regex.IsMatch(user.FirstName, @"[\d\W\p{Ll}]"))
                     {
                         validationErrors.Add(UserConstants.FirstNameInvalid);
                     }
 
                     if (user.MiddleName != null)
                     {
-                        match = Regex.Match(user.MiddleName, "[^A-Z]");
-                        if (match.Success)
+                        if (Regex.IsMatch(user.MiddleName, @"[\d\W\p{Ll}]"))
                         {
                             validationErrors.Add(UserConstants.MiddleNameInvalid);
                         }
                     }
 
-                    match = Regex.Match(user.LastName, "[^A-Z]");
-                    if (match.Success)
+                    if (Regex.IsMatch(user.LastName, @"[\d\W\p{Ll}]"))
                     {
                         validationErrors.Add(UserConstants.LastNameInvalid);
                     }
 
                     try
                     {
-                        _emailService.SendEmail(new EmailViewModel(user.EmailAddress, "Checking Email", EmailBody.CheckEmailBody()));
+                        _emailService.SendEmail(new EmailViewModel(user.EmailAddress, EmailConstants.CheckingEmailSubject, EmailBody.CheckEmailBody()));
                     }
                     catch (Exception)
                     {

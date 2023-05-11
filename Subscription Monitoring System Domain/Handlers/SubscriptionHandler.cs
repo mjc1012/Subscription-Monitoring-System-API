@@ -1,4 +1,5 @@
-﻿using Subscription_Monitoring_System_Data.ViewModels;
+﻿using Subscription_Monitoring_System_Data.Models;
+using Subscription_Monitoring_System_Data.ViewModels;
 using Subscription_Monitoring_System_Domain.Contracts;
 using System.Globalization;
 using static Subscription_Monitoring_System_Data.Constants;
@@ -42,7 +43,8 @@ namespace Subscription_Monitoring_System_Domain.Handlers
         {
             List<string> validationErrors = new();
 
-            if (subscription != null)
+            if (subscription != null && !string.IsNullOrEmpty(subscription.StartDate) && !string.IsNullOrEmpty(subscription.EndDate) && !string.IsNullOrEmpty(subscription.ClientName)
+                && !string.IsNullOrEmpty(subscription.ServiceName) && !string.IsNullOrEmpty(subscription.CreatedByCode))
             {
                 if (!DateTime.TryParseExact(subscription.StartDate, DateConstants.DateOnlyFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime startDate))
                 {
@@ -92,7 +94,8 @@ namespace Subscription_Monitoring_System_Domain.Handlers
             List<string> validationErrors = new();
 
             SubscriptionViewModel subscriptionFound = await _subscriptionService.GetActive(subscription.Id);
-            if (subscription != null && subscriptionFound != null)
+            if (subscription != null && subscriptionFound != null && !string.IsNullOrEmpty(subscription.StartDate) && !string.IsNullOrEmpty(subscription.EndDate) && !string.IsNullOrEmpty(subscription.ClientName)
+                && !string.IsNullOrEmpty(subscription.ServiceName) && !string.IsNullOrEmpty(subscription.UpdatedByCode) && subscription.Id > 0)
             {
                 if (subscription.StartDate == subscriptionFound.StartDate && subscription.EndDate == subscriptionFound.EndDate && subscription.ClientName == subscriptionFound.ClientName &&
                     subscription.ServiceName == subscriptionFound.ServiceName && subscriptionFound.ClientRecipients.Select(p => p.Id).ToList().Except(subscription.ClientIds).ToList().Any() &&

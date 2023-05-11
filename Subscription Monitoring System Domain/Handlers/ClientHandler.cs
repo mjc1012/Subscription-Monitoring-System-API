@@ -1,4 +1,5 @@
 ﻿using Subscription_Monitoring_System_Data;
+using Subscription_Monitoring_System_Data.Models;
 using Subscription_Monitoring_System_Data.ViewModels;
 using Subscription_Monitoring_System_Domain.Contracts;
 using System.Text.RegularExpressions;
@@ -37,7 +38,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
         {
             List<string> validationErrors = new();
 
-            if (client != null)
+            if (client != null && !string.IsNullOrEmpty(client.Name) && !string.IsNullOrEmpty(client.EmailAddress))
             { 
 
                 if (await _clientService.ClientExists(client))
@@ -45,15 +46,14 @@ namespace Subscription_Monitoring_System_Domain.Handlers
                     validationErrors.Add(ClientConstants.Exists);
                 }
 
-                Match match = Regex.Match(client.Name, "[^A-Z]");
-                if (match.Success)
+                if (Regex.IsMatch(client.Name, @"[\d\W\p{Ll}]"))
                 {
                     validationErrors.Add(ClientConstants.NameInvalid);
                 }
 
                 try
                 {
-                    _emailService.SendEmail(new EmailViewModel(client.EmailAddress, "Checking Email", EmailBody.CheckEmailBody()));
+                    _emailService.SendEmail(new EmailViewModel(client.EmailAddress, EmailConstants.CheckingEmailSubject, EmailBody.CheckEmailBody()));
                 }
                 catch (Exception)
                 {
@@ -73,7 +73,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
             List<string> validationErrors = new();
 
             ClientViewModel clientFound = await _clientService.GetActive(client.Id);
-            if (client != null && clientFound != null)
+            if (client != null && clientFound != null && !string.IsNullOrEmpty(client.Name) && !string.IsNullOrEmpty(client.EmailAddress) && client.Id > 0)
             {
                 if(client.Name == clientFound.Name && client.EmailAddress == clientFound.EmailAddress)
                 {
@@ -87,15 +87,14 @@ namespace Subscription_Monitoring_System_Domain.Handlers
                         validationErrors.Add(ClientConstants.Exists);
                     }
 
-                    Match match = Regex.Match(client.Name, "[^A-Z]");
-                    if (match.Success)
+                    if (Regex.IsMatch(client.Name, @"[\d\W\p{Ll}]"))
                     {
                         validationErrors.Add(ClientConstants.NameInvalid);
                     }
 
                     try
                     {
-                        _emailService.SendEmail(new EmailViewModel(client.EmailAddress, "Checking Email", EmailBody.CheckEmailBody()));
+                        _emailService.SendEmail(new EmailViewModel(client.EmailAddress, EmailConstants.CheckingEmailSubject, EmailBody.CheckEmailBody()));
                     }
                     catch (Exception)
                     {

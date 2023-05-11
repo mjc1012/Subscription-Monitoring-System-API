@@ -1,4 +1,5 @@
-﻿using Subscription_Monitoring_System_Data.Models;
+﻿using Newtonsoft.Json.Linq;
+using Subscription_Monitoring_System_Data.Models;
 using Subscription_Monitoring_System_Data.ViewModels;
 using Subscription_Monitoring_System_Domain.Contracts;
 using System.Security.Claims;
@@ -22,7 +23,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
         {
             List<string> validationErrors = new();
 
-            if (loginUser != null)
+            if (loginUser != null && !string.IsNullOrEmpty(loginUser.Code) && !string.IsNullOrEmpty(loginUser.Password))
             {
                 if (!await _authenticationService.UserExists(loginUser))
                 {
@@ -46,11 +47,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
         {
             List<string> validationErrors = new();
 
-            if (user == null)
-            {
-                validationErrors.Add(PasswordConstants.EntryInvalid);
-            }
-            else
+            if (user != null && !string.IsNullOrEmpty(user.Code) && !string.IsNullOrEmpty(user.OldPassword) && !string.IsNullOrEmpty(user.NewPassword))
             {
                 AuthenticationViewModel authentication = new()
                 {
@@ -74,6 +71,10 @@ namespace Subscription_Monitoring_System_Domain.Handlers
                     validationErrors.Add(UserConstants.DoesNotExist);
                 }
             }
+            else
+            {
+                validationErrors.Add(PasswordConstants.EntryInvalid);
+            }
 
             return validationErrors;
         }
@@ -82,7 +83,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
         {
             List<string> validationErrors = new();
 
-            if (token != null)
+            if (token != null && !string.IsNullOrEmpty(token.AccessToken) && !string.IsNullOrEmpty(token.RefreshToken))
             {
                 ClaimsPrincipal principal = _authenticationService.GetPrincipalFromExpiredToken(token.AccessToken);
                 User user = await _userService.Get(principal.Identity.Name);
@@ -103,11 +104,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
         {
             List<string> validationErrors = new();
 
-            if (resetPassword == null)
-            {
-                validationErrors.Add(PasswordConstants.EntryInvalid);
-            }
-            else
+            if (resetPassword != null && !string.IsNullOrEmpty(resetPassword.ResetPasswordToken) && !string.IsNullOrEmpty(resetPassword.EmailAddress) && !string.IsNullOrEmpty(resetPassword.NewPassword))
             {
                 if (resetPassword.NewPassword.Length < 8)
                 {
@@ -129,6 +126,10 @@ namespace Subscription_Monitoring_System_Domain.Handlers
                 {
                     validationErrors.Add(PasswordConstants.RefreshTokenError);
                 }
+            }
+            else
+            {
+                validationErrors.Add(PasswordConstants.EntryInvalid);
             }
 
             return validationErrors;

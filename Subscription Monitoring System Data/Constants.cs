@@ -175,6 +175,7 @@ namespace Subscription_Monitoring_System_Data
             public const string Username = "ALLIANCE SOFTWARE INC.";
             public const string CannotReachEmail = "Cannot contact email address";
             public const string ResetPasswordEmailed = "Reset Password Email Sent";
+            public const string CheckingEmailSubject = "Checking Email";
         }
 
         public class ServiceConstants

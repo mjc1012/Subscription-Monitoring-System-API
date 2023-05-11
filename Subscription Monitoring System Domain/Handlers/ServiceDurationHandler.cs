@@ -1,4 +1,5 @@
-﻿using Subscription_Monitoring_System_Data.ViewModels;
+﻿using Subscription_Monitoring_System_Data.Models;
+using Subscription_Monitoring_System_Data.ViewModels;
 using Subscription_Monitoring_System_Domain.Contracts;
 using System.Text.RegularExpressions;
 using static Subscription_Monitoring_System_Data.Constants;
@@ -18,10 +19,9 @@ namespace Subscription_Monitoring_System_Domain.Handlers
         {
             List<string> validationErrors = new();
 
-            if (serviceDuration != null)
+            if (serviceDuration != null && !string.IsNullOrEmpty(serviceDuration.Name))
             {
-                Match match = Regex.Match(serviceDuration.Name, "[^A-Z]");
-                if (match.Success)
+                if (Regex.IsMatch(serviceDuration.Name, @"[\d\W\p{Ll}]"))
                 {
                     validationErrors.Add(ServiceTypeConstants.NameInvalid);
                 }
@@ -44,7 +44,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
             List<string> validationErrors = new();
 
             ServiceDurationViewModel serviceDurationFound = await _serviceDurationService.Get(serviceDuration.Id);
-            if (serviceDuration != null && serviceDurationFound != null)
+            if (serviceDuration != null && serviceDurationFound != null && !string.IsNullOrEmpty(serviceDuration.Name) && serviceDuration.Id > 0)
             {
                 if (serviceDuration.Name == serviceDurationFound.Name)
                 {
@@ -53,8 +53,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
                 else
                 {
 
-                    Match match = Regex.Match(serviceDuration.Name, "[^A-Z]");
-                    if (match.Success)
+                    if (Regex.IsMatch(serviceDuration.Name, @"[\d\W\p{Ll}]"))
                     {
                         validationErrors.Add(ServiceTypeConstants.NameInvalid);
                     }

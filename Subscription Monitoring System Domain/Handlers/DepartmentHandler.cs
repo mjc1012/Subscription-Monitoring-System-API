@@ -20,10 +20,9 @@ namespace Subscription_Monitoring_System_Domain.Handlers
         {
             List<string> validationErrors = new();
 
-            if (department != null)
+            if (department != null && !string.IsNullOrEmpty(department.Name))
             {
-                Match match = Regex.Match(department.Name, "[^A-Z]");
-                if (match.Success)
+                if (Regex.IsMatch(department.Name, @"[\d\W\p{Ll}]"))
                 {
                     validationErrors.Add(DepartmentConstants.NameInvalid);
                 }
@@ -46,7 +45,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
             List<string> validationErrors = new();
 
             DepartmentViewModel departmentFound = await _departmentService.Get(department.Id);
-            if (department != null && departmentFound != null)
+            if (department != null && departmentFound != null && !string.IsNullOrEmpty(department.Name) && department.Id > 0)
             {
                 if (department.Name == departmentFound.Name)
                 {
@@ -55,8 +54,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
                 else
                 {
 
-                    Match match = Regex.Match(department.Name, "[^A-Z]");
-                    if (match.Success)
+                    if (Regex.IsMatch(department.Name, @"[\d\W\p{Ll}]"))
                     {
                         validationErrors.Add(DepartmentConstants.NameInvalid);
                     }

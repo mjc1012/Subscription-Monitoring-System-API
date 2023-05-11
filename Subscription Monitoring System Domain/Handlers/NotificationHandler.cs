@@ -1,10 +1,6 @@
-﻿using Subscription_Monitoring_System_Data;
-using Subscription_Monitoring_System_Data.Models;
-using Subscription_Monitoring_System_Data.ViewModels;
+﻿using Subscription_Monitoring_System_Data.ViewModels;
 using Subscription_Monitoring_System_Domain.Contracts;
-using Subscription_Monitoring_System_Domain.Services;
 using System.Globalization;
-using System.Text.RegularExpressions;
 using static Subscription_Monitoring_System_Data.Constants;
 
 namespace Subscription_Monitoring_System_Domain.Handlers
@@ -21,7 +17,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
         {
             List<string> validationErrors = new();
 
-            if (notification != null)
+            if (notification != null && !string.IsNullOrEmpty(notification.Description) && !string.IsNullOrEmpty(notification.Date) && notification.SubscriptionId > 0)
             {
                 if (!DateTime.TryParseExact(notification.Date, DateConstants.DateTimeFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out _))
                 {
@@ -45,7 +41,8 @@ namespace Subscription_Monitoring_System_Domain.Handlers
         {
             List<string> validationErrors = new();
             NotificationViewModel notificationFound = await _notificationService.Get(notification.Id);
-            if (notification != null && notificationFound != null)
+            if (notification != null && notificationFound != null && !string.IsNullOrEmpty(notification.Description) && !string.IsNullOrEmpty(notification.Date) && notification.SubscriptionId > 0
+                && notification.Id > 0)
             {
                 if (notification.Description == notificationFound.Description && notification.Date == notificationFound.Date && notification.SubscriptionId == notificationFound.SubscriptionId
                     && notificationFound.Users.Select(p => p.Id).ToList().Except(notification.UserIds).ToList().Any())

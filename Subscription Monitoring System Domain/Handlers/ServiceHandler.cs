@@ -37,7 +37,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
         {
             List<string> validationErrors = new();
 
-            if (service != null)
+            if (service != null && !string.IsNullOrEmpty(service.Name) && !string.IsNullOrEmpty(service.Description) && !string.IsNullOrEmpty(service.ServiceDurationName) && service.Price > 0)
             {
 
                 if (await _serviceService.ServiceExists(service))
@@ -45,8 +45,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
                     validationErrors.Add(ServiceConstants.Exists);
                 }
 
-                Match match = Regex.Match(service.Name, "[^A-Z]");
-                if (match.Success)
+                if (Regex.IsMatch(service.Name, @"[\d\W\p{Ll}]"))
                 {
                     validationErrors.Add(ServiceConstants.NameInvalid);
                 }
@@ -69,7 +68,8 @@ namespace Subscription_Monitoring_System_Domain.Handlers
             List<string> validationErrors = new();
 
             ServiceViewModel serviceFound = await _serviceService.GetActive(service.Id);
-            if (service != null && serviceFound != null)
+
+            if (service != null && serviceFound != null && service.Id > 0 && !string.IsNullOrEmpty(service.Name) && !string.IsNullOrEmpty(service.Description) && !string.IsNullOrEmpty(service.ServiceDurationName) && service.Price > 0)
             {
                 if (service.Name == serviceFound.Name && service.Price == serviceFound.Price && service.ServiceDurationName == serviceFound.ServiceDurationName && service.Description == serviceFound.Description)
                 {
@@ -82,8 +82,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
                         validationErrors.Add(ServiceConstants.Exists);
                     }
 
-                    Match match = Regex.Match(service.Name, "[^A-Z]");
-                    if (match.Success)
+                    if (Regex.IsMatch(service.Name, @"[\d\W\p{Ll}]"))
                     {
                         validationErrors.Add(ServiceConstants.NameInvalid);
                     }
