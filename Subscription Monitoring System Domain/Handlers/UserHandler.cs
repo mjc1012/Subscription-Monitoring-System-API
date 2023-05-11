@@ -67,20 +67,20 @@ namespace Subscription_Monitoring_System_Domain.Handlers
                     validationErrors.Add(DepartmentConstants.DoesNotExist);
                 }
 
-                if (Regex.IsMatch(user.FirstName, @"[\d\W\p{Ll}]"))
+                if (Regex.IsMatch(user.FirstName, @"[\p{Ll}\d\W&&[^ ]]"))
                 {
                     validationErrors.Add(UserConstants.FirstNameInvalid);
                 }
 
                 if(user.MiddleName != null)
                 {
-                    if (Regex.IsMatch(user.MiddleName, @"[\d\W\p{Ll}]"))
+                    if (Regex.IsMatch(user.MiddleName, @"[\p{Ll}\d\W&&[^ ]]"))
                     {
                         validationErrors.Add(UserConstants.MiddleNameInvalid);
                     }
                 }
 
-                if (Regex.IsMatch(user.LastName, @"[\d\W\p{Ll}]"))
+                if (Regex.IsMatch(user.LastName, @"[\p{Ll}\d\W&&[^ ]]"))
                 {
                     validationErrors.Add(UserConstants.LastNameInvalid);
                 }
@@ -127,20 +127,20 @@ namespace Subscription_Monitoring_System_Domain.Handlers
                         validationErrors.Add(DepartmentConstants.DoesNotExist);
                     }
 
-                    if (Regex.IsMatch(user.FirstName, @"[\d\W\p{Ll}]"))
+                    if (Regex.IsMatch(user.FirstName, @"[\p{Ll}\d\W&&[^ ]]"))
                     {
                         validationErrors.Add(UserConstants.FirstNameInvalid);
                     }
 
                     if (user.MiddleName != null)
                     {
-                        if (Regex.IsMatch(user.MiddleName, @"[\d\W\p{Ll}]"))
+                        if (Regex.IsMatch(user.MiddleName, @"[\p{Ll}\d\W&&[^ ]]"))
                         {
                             validationErrors.Add(UserConstants.MiddleNameInvalid);
                         }
                     }
 
-                    if (Regex.IsMatch(user.LastName, @"[\d\W\p{Ll}]"))
+                    if (Regex.IsMatch(user.LastName, @"[\p{Ll}\d\W&&[^ ]]"))
                     {
                         validationErrors.Add(UserConstants.LastNameInvalid);
                     }

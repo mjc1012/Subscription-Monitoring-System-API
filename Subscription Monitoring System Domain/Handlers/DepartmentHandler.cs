@@ -22,7 +22,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
 
             if (department != null && !string.IsNullOrEmpty(department.Name))
             {
-                if (Regex.IsMatch(department.Name, @"[\d\W\p{Ll}]"))
+                if (Regex.IsMatch(department.Name, @"[\p{Ll}\d\W&&[^ ]]"))
                 {
                     validationErrors.Add(DepartmentConstants.NameInvalid);
                 }
@@ -54,7 +54,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
                 else
                 {
 
-                    if (Regex.IsMatch(department.Name, @"[\d\W\p{Ll}]"))
+                    if (Regex.IsMatch(department.Name, @"[\p{Ll}\d\W&&[^ ]]"))
                     {
                         validationErrors.Add(DepartmentConstants.NameInvalid);
                     }
