@@ -53,7 +53,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
         {
             List<string> validationErrors = new();
 
-            if (user != null && !string.IsNullOrEmpty(user.Code) && !string.IsNullOrEmpty(user.FirstName) && !string.IsNullOrEmpty(user.MiddleName) && !string.IsNullOrEmpty(user.LastName)
+            if (user != null && !string.IsNullOrEmpty(user.Code) && !string.IsNullOrEmpty(user.FirstName) && !string.IsNullOrEmpty(user.LastName)
                 && !string.IsNullOrEmpty(user.EmailAddress) && !string.IsNullOrEmpty(user.DepartmentName))
             {
 
@@ -107,7 +107,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
             List<string> validationErrors = new();
 
             UserViewModel userFound = await _userService.GetActive(user.Id);
-            if (user != null && userFound != null && !string.IsNullOrEmpty(user.Code) && !string.IsNullOrEmpty(user.FirstName) && !string.IsNullOrEmpty(user.MiddleName) && !string.IsNullOrEmpty(user.LastName)
+            if (user != null && userFound != null && !string.IsNullOrEmpty(user.Code) && !string.IsNullOrEmpty(user.FirstName) && !string.IsNullOrEmpty(user.LastName)
                 && !string.IsNullOrEmpty(user.EmailAddress) && !string.IsNullOrEmpty(user.DepartmentName) && user.Id > 0)
             {
                 if (user.Code == userFound.Code && user.FirstName == userFound.FirstName && user.MiddleName == userFound.MiddleName && user.LastName == userFound.LastName &&
