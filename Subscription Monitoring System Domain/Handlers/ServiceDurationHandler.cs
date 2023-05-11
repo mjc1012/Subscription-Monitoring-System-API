@@ -21,19 +21,19 @@ namespace Subscription_Monitoring_System_Domain.Handlers
 
             if (serviceDuration != null && !string.IsNullOrEmpty(serviceDuration.Name))
             {
-                if (Regex.IsMatch(serviceDuration.Name, "[a-z0-9,~,',!,@,#,$,%,^,&,*,(,),-,_,+,=,{,},\\[,\\],|,/,\\,:,;,\",`,<,>,,,.,?]"))
+                if (Regex.IsMatch(serviceDuration.Name, "[a-z,~,',!,@,#,$,%,^,&,*,(,),-,_,+,=,{,},\\[,\\],|,/,\\,:,;,\",`,<,>,,,.,?]"))
                 {
-                    validationErrors.Add(ServiceTypeConstants.NameInvalid);
+                    validationErrors.Add(ServiceDurationConstants.NameInvalid);
                 }
 
                 if (await _serviceDurationService.ServiceDurationExists(serviceDuration))
                 {
-                    validationErrors.Add(ServiceTypeConstants.Exists);
+                    validationErrors.Add(ServiceDurationConstants.Exists);
                 }
             }
             else
             {
-                validationErrors.Add(ServiceTypeConstants.EntryInvalid);
+                validationErrors.Add(ServiceDurationConstants.EntryInvalid);
             }
 
             return validationErrors;
@@ -48,25 +48,25 @@ namespace Subscription_Monitoring_System_Domain.Handlers
             {
                 if (serviceDuration.Name == serviceDurationFound.Name)
                 {
-                    validationErrors.Add(ServiceTypeConstants.NoChanges);
+                    validationErrors.Add(ServiceDurationConstants.NoChanges);
                 }
                 else
                 {
 
-                    if (Regex.IsMatch(serviceDuration.Name, "[a-z0-9,~,',!,@,#,$,%,^,&,*,(,),-,_,+,=,{,},\\[,\\],|,/,\\,:,;,\",`,<,>,,,.,?]"))
+                    if (Regex.IsMatch(serviceDuration.Name, "[a-z,~,',!,@,#,$,%,^,&,*,(,),-,_,+,=,{,},\\[,\\],|,/,\\,:,;,\",`,<,>,,,.,?]"))
                     {
-                        validationErrors.Add(ServiceTypeConstants.NameInvalid);
+                        validationErrors.Add(ServiceDurationConstants.NameInvalid);
                     }
 
                     if (await _serviceDurationService.ServiceDurationExists(serviceDuration))
                     {
-                        validationErrors.Add(ServiceTypeConstants.Exists);
+                        validationErrors.Add(ServiceDurationConstants.Exists);
                     }
                 }
             }
             else
             {
-                validationErrors.Add(ServiceTypeConstants.EntryInvalid);
+                validationErrors.Add(ServiceDurationConstants.EntryInvalid);
             }
 
             return validationErrors;
@@ -79,7 +79,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
             ServiceDurationViewModel service = await _serviceDurationService.Get(id);
             if (service == null)
             {
-                validationErrors.Add(ServiceTypeConstants.DoesNotExist);
+                validationErrors.Add(ServiceDurationConstants.DoesNotExist);
             }
 
             return validationErrors;
@@ -92,7 +92,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
             List<ServiceDurationViewModel> services = await _serviceDurationService.GetList(records.Ids);
             if (services == null)
             {
-                validationErrors.Add(ServiceTypeConstants.DoesNotExist);
+                validationErrors.Add(ServiceDurationConstants.DoesNotExist);
             }
 
             return validationErrors;

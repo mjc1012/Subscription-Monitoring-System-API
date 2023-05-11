@@ -167,8 +167,8 @@ namespace Subscription_Monitoring_System_Domain.Handlers
         {
             List<string> validationErrors = new();
 
-            UserViewModel client = await _userService.GetActive(id);
-            if (client == null)
+            UserViewModel user = await _userService.GetActive(id);
+            if (user == null)
             {
                 validationErrors.Add(UserConstants.DoesNotExist);
             }
@@ -180,8 +180,8 @@ namespace Subscription_Monitoring_System_Domain.Handlers
         {
             List<string> validationErrors = new();
 
-            UserViewModel client = await _userService.GetInactive(id);
-            if (client == null)
+            UserViewModel user = await _userService.GetInactive(id);
+            if (user == null)
             {
                 validationErrors.Add(UserConstants.DoesNotExist);
             }
@@ -189,14 +189,29 @@ namespace Subscription_Monitoring_System_Domain.Handlers
             return validationErrors;
         }
 
-        public async Task<List<string>> CanDelete(RecordIdsViewModel records)
+        public async Task<List<string>> CanDeleteActive(RecordIdsViewModel records)
         {
             List<string> validationErrors = new();
 
-            List<UserViewModel> clients = await _userService.GetList(records.Ids);
-            if (clients == null)
+            List<UserViewModel> users = await _userService.GetList(records.Ids);
+
+            if (users.Where(p => !p.IsActive).Any() || !users.Select(p => p.Id).ToList().OrderBy(x => x).SequenceEqual(records.Ids.OrderBy(x => x)))
             {
-                validationErrors.Add(UserConstants.DoesNotExist);
+                validationErrors.Add(UserConstants.EntryInvalid);
+            }
+
+            return validationErrors;
+        }
+
+        public async Task<List<string>> CanDeleteInactive(RecordIdsViewModel records)
+        {
+            List<string> validationErrors = new();
+
+            List<UserViewModel> users = await _userService.GetList(records.Ids);
+
+            if (users.Where(p => p.IsActive).Any() || !users.Select(p => p.Id).ToList().OrderBy(x => x).SequenceEqual(records.Ids.OrderBy(x => x)))
+            {
+                validationErrors.Add(UserConstants.EntryInvalid);
             }
 
             return validationErrors;
@@ -206,8 +221,8 @@ namespace Subscription_Monitoring_System_Domain.Handlers
         {
             List<string> validationErrors = new();
 
-            UserViewModel client = await _userService.GetInactive(id);
-            if (client == null)
+            UserViewModel user = await _userService.GetInactive(id);
+            if (user == null)
             {
                 validationErrors.Add(UserConstants.DoesNotExist);
             }
@@ -219,10 +234,10 @@ namespace Subscription_Monitoring_System_Domain.Handlers
         {
             List<string> validationErrors = new();
 
-            List<UserViewModel> clients = await _userService.GetList(records.Ids);
-            if (clients == null)
+            List<UserViewModel> users = await _userService.GetList(records.Ids);
+            if (users.Where(p => p.IsActive).Any() || !users.Select(p => p.Id).ToList().OrderBy(x => x).SequenceEqual(records.Ids.OrderBy(x => x)))
             {
-                validationErrors.Add(UserConstants.DoesNotExist);
+                validationErrors.Add(UserConstants.EntryInvalid);
             }
 
             return validationErrors;

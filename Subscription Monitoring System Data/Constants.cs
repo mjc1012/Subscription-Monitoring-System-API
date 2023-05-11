@@ -24,7 +24,7 @@ namespace Subscription_Monitoring_System_Data
             public const string CheckExpiration = "check-expiration";
             public const string RetrievedData = "Retrieved Data";
             public const string ErrorList = "Error List";
-            public const int PageSize = 15;
+            public const int PageSize = 2;
         }
         public class SortDirectionConstants
         {
@@ -52,16 +52,16 @@ namespace Subscription_Monitoring_System_Data
             public const string SuccessRestore = "Client restored successfully.";
         }
 
-        public class ServiceTypeConstants
+        public class ServiceDurationConstants
         {
-            public const string DoesNotExist = "Service Type does not exist.";
-            public const string SuccessAdd = "Service Type added successfully.";
-            public const string SuccessEdit = "Service Type updated successfully.";
-            public const string SuccessDelete = "Service Type deleted successfully.";
-            public const string EntryInvalid = "Service Type entry is not valid.";
-            public const string Exists = "Service Type name already exists";
-            public const string NoChanges = "Service Type has no changes.";
-            public const string NameInvalid = "Service Type name should be uppercased and not contain numbers and/or special characters";
+            public const string DoesNotExist = "Service duration does not exist.";
+            public const string SuccessAdd = "Service duration added successfully.";
+            public const string SuccessEdit = "Service duration updated successfully.";
+            public const string SuccessDelete = "Service duration deleted successfully.";
+            public const string EntryInvalid = "Service duration entry is not valid.";
+            public const string Exists = "Service duration name already exists";
+            public const string NoChanges = "Service duration has no changes.";
+            public const string NameInvalid = "Service duration name should be uppercased and not contain numbers and/or special characters";
         }
 
         public class UserNotificationConstants

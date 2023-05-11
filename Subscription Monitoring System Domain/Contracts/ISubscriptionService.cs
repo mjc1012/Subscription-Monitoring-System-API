@@ -12,6 +12,7 @@ namespace Subscription_Monitoring_System_Domain.Contracts
         Task<ListViewModel> GetList(SubscriptionFilterViewModel filter);
         Task<List<SubscriptionViewModel>> GetList(List<int> ids);
         Task<List<SubscriptionViewModel>> GetHistoryList(int id);
+        Task<List<SubscriptionViewModel>> GetListForExcel(SubscriptionFilterViewModel filter);
         Task SendExpiringSubscriptionNotification();
         Task<SubscriptionViewModel> Create(SubscriptionViewModel subscription, ClientViewModel client, ServiceViewModel service, UserViewModel createdBy);
         Task<SubscriptionViewModel> Update(SubscriptionViewModel subscription, ClientViewModel client, ServiceViewModel service, UserViewModel updatedBy);

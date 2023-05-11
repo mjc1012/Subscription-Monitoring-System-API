@@ -1,4 +1,5 @@
-﻿using Subscription_Monitoring_System_Data.ViewModels;
+﻿using Subscription_Monitoring_System_Data.Models;
+using Subscription_Monitoring_System_Data.ViewModels;
 using Subscription_Monitoring_System_Domain.Contracts;
 using System.Text.RegularExpressions;
 using static Subscription_Monitoring_System_Data.Constants;
@@ -24,7 +25,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
                 validationErrors.Add(SortDirectionConstants.SortDirectionInvalid);
             }
 
-            if (!string.IsNullOrEmpty(filter.SortBy) && (filter.SortBy is not ServiceConstants.HeaderId and not ServiceConstants.NameInvalid and not ServiceConstants.HeaderDescription and not ServiceConstants.HeaderPrice 
+            if (!string.IsNullOrEmpty(filter.SortBy) && (filter.SortBy is not ServiceConstants.HeaderId and not ServiceConstants.HeaderName and not ServiceConstants.HeaderDescription and not ServiceConstants.HeaderPrice 
                 and not ServiceConstants.HeaderServiceDurationName))
             {
                 validationErrors.Add(ServiceConstants.SortByInvalid);
@@ -52,7 +53,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
 
                 if (!await _serviceDurationService.ServiceDurationExists(new ServiceDurationViewModel { Name = service.ServiceDurationName }))
                 {
-                    validationErrors.Add(ServiceTypeConstants.DoesNotExist);
+                    validationErrors.Add(ServiceDurationConstants.DoesNotExist);
                 }
             }
             else
@@ -89,7 +90,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
 
                     if (!await _serviceDurationService.ServiceDurationExists(new ServiceDurationViewModel { Name = service.ServiceDurationName }))
                     {
-                        validationErrors.Add(ServiceTypeConstants.DoesNotExist);
+                        validationErrors.Add(ServiceDurationConstants.DoesNotExist);
                     }
                 }
             }
@@ -127,14 +128,29 @@ namespace Subscription_Monitoring_System_Domain.Handlers
             return validationErrors;
         }
 
-        public async Task<List<string>> CanDelete(RecordIdsViewModel records)
+        public async Task<List<string>> CanDeleteActive(RecordIdsViewModel records)
         {
             List<string> validationErrors = new();
 
             List<ServiceViewModel> services = await _serviceService.GetList(records.Ids);
-            if (services == null)
+
+            if (services.Where(p => !p.IsActive).Any() || !services.Select(p => p.Id).ToList().OrderBy(x => x).SequenceEqual(records.Ids.OrderBy(x => x)))
             {
-                validationErrors.Add(ServiceConstants.DoesNotExist);
+                validationErrors.Add(ServiceConstants.EntryInvalid);
+            }
+
+            return validationErrors;
+        }
+
+        public async Task<List<string>> CanDeleteInactive(RecordIdsViewModel records)
+        {
+            List<string> validationErrors = new();
+
+            List<ServiceViewModel> services = await _serviceService.GetList(records.Ids);
+
+            if (services.Where(p => p.IsActive).Any() || !services.Select(p => p.Id).ToList().OrderBy(x => x).SequenceEqual(records.Ids.OrderBy(x => x)))
+            {
+                validationErrors.Add(ServiceConstants.EntryInvalid);
             }
 
             return validationErrors;
@@ -158,9 +174,10 @@ namespace Subscription_Monitoring_System_Domain.Handlers
             List<string> validationErrors = new();
 
             List<ServiceViewModel> services = await _serviceService.GetList(records.Ids);
-            if (services == null)
+
+            if (services.Where(p => p.IsActive).Any() || !services.Select(p => p.Id).ToList().OrderBy(x => x).SequenceEqual(records.Ids.OrderBy(x => x)))
             {
-                validationErrors.Add(ServiceConstants.DoesNotExist);
+                validationErrors.Add(ServiceConstants.EntryInvalid);
             }
 
             return validationErrors;

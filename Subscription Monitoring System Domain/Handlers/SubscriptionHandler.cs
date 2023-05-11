@@ -175,14 +175,28 @@ namespace Subscription_Monitoring_System_Domain.Handlers
             return validationErrors;
         }
 
-        public async Task<List<string>> CanDelete(RecordIdsViewModel records)
+        public async Task<List<string>> CanDeleteActive(RecordIdsViewModel records)
         {
             List<string> validationErrors = new();
 
             List<SubscriptionViewModel> subscriptions = await _subscriptionService.GetList(records.Ids);
-            if (subscriptions == null)
+
+            if (subscriptions.Where(p => !p.IsActive).Any() || !subscriptions.Select(p => p.Id).ToList().OrderBy(x => x).SequenceEqual(records.Ids.OrderBy(x => x)))
             {
-                validationErrors.Add(SubscriptionConstants.DoesNotExist);
+                validationErrors.Add(SubscriptionConstants.EntryInvalid);
+            }
+
+            return validationErrors;
+        }
+
+        public async Task<List<string>> CanDeleteInactive(RecordIdsViewModel records)
+        {
+            List<string> validationErrors = new();
+
+            List<SubscriptionViewModel> subscriptions = await _subscriptionService.GetList(records.Ids);
+            if (subscriptions.Where(p => p.IsActive).Any() || !subscriptions.Select(p => p.Id).ToList().OrderBy(x => x).SequenceEqual(records.Ids.OrderBy(x => x)))
+            {
+                validationErrors.Add(SubscriptionConstants.EntryInvalid);
             }
 
             return validationErrors;
@@ -206,9 +220,9 @@ namespace Subscription_Monitoring_System_Domain.Handlers
             List<string> validationErrors = new();
 
             List<SubscriptionViewModel> subscriptions = await _subscriptionService.GetList(records.Ids);
-            if (subscriptions == null)
+            if (subscriptions.Where(p => p.IsActive).Any() || !subscriptions.Select(p => p.Id).ToList().OrderBy(x => x).SequenceEqual(records.Ids.OrderBy(x => x)))
             {
-                validationErrors.Add(SubscriptionConstants.DoesNotExist);
+                validationErrors.Add(SubscriptionConstants.EntryInvalid);
             }
 
             return validationErrors;

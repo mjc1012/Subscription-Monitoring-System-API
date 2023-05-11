@@ -80,7 +80,7 @@ namespace Subscription_Monitoring_System_Data.Repositories
         {
             try
             {
-                List<UserNotification> userNotifications = await _context.UserNotifications!.Where(p => p.UserId == userId && p.IsActive).Include(p => p.Notification).Include(p => p.User).ToListAsync();
+                List<UserNotification> userNotifications = await _context.UserNotifications!.Where(p => p.UserId == userId && p.IsActive).Include(p => p.Notification).OrderByDescending(p => p.Notification.Date).Include(p => p.User).ToListAsync();
                 userNotifications.ForEach(p => p.IsSeen = true);
                 _context.UserNotifications!.UpdateRange(userNotifications);
                 await _context.SaveChangesAsync();

@@ -62,7 +62,7 @@ namespace Subscription_Monitoring_System.Controllers
 
 
                 await _unitOfWork.ServiceTypeService.Create(serviceType);
-                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = ServiceTypeConstants.SuccessAdd });
+                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = ServiceDurationConstants.SuccessAdd });
             }
             catch (Exception ex)
             {
@@ -85,7 +85,7 @@ namespace Subscription_Monitoring_System.Controllers
 
 
                 await _unitOfWork.ServiceTypeService.Update(serviceType);
-                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = ServiceTypeConstants.SuccessAdd });
+                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = ServiceDurationConstants.SuccessAdd });
             }
             catch (Exception ex)
             {
@@ -108,7 +108,7 @@ namespace Subscription_Monitoring_System.Controllers
                 }
 
                 await _unitOfWork.ServiceTypeService.HardDelete(id);
-                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = ServiceTypeConstants.SuccessDelete });
+                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = ServiceDurationConstants.SuccessDelete });
             }
             catch (Exception ex)
             {
@@ -117,7 +117,7 @@ namespace Subscription_Monitoring_System.Controllers
         }
 
         [Authorize]
-        [HttpPut("hard-delete-departments")]
+        [HttpPut("hard-delete-service-durations")]
         public async Task<IActionResult> HardDelete([FromBody] RecordIdsViewModel records)
         {
             try
@@ -130,7 +130,7 @@ namespace Subscription_Monitoring_System.Controllers
                 }
 
                 await _unitOfWork.ServiceTypeService.HardDelete(records);
-                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = ServiceTypeConstants.SuccessDelete });
+                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = ServiceDurationConstants.SuccessDelete });
             }
             catch (Exception ex)
             {

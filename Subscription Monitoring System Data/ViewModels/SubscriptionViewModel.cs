@@ -15,6 +15,7 @@
         public string UpdatedOn { get; set; } = string.Empty;
         public string UpdatedByCode { get; set; } = string.Empty;
         public string UpdatedByName { get; set; } = string.Empty;
+        public int? SubscriptionHistoryId { get; set; }
         public bool IsExpired { get; set; }
         public bool IsActive { get; set; }
         public List<int> ClientIds { get; set; } = new List<int>();

@@ -69,12 +69,12 @@ namespace Subscription_Monitoring_System.Controllers
                     return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = false, Message = BaseConstants.ErrorList, Value = validationErrors });
                 }
 
-                ListViewModel responseData = await _unitOfWork.SubscriptionService.GetList(filter);
+                List<SubscriptionViewModel> subscriptions = await _unitOfWork.SubscriptionService.GetListForExcel(filter);
                 string emailtemplatepath = Path.Combine(PathConstants.SubscriptionExcelTemplatePath);
                 string htmldata = System.IO.File.ReadAllText(emailtemplatepath);
 
                 string excelstring = "";
-                foreach (SubscriptionViewModel subscription in (List<SubscriptionViewModel>)responseData.Data)
+                foreach (SubscriptionViewModel subscription in subscriptions)
                 {
                     excelstring += SubscriptionConstants.RowData(subscription);
                 }
@@ -281,7 +281,7 @@ namespace Subscription_Monitoring_System.Controllers
         {
             try
             {
-                List<string> validationErrors = await _unitOfWork.SubscriptionHandler.CanDelete(records);
+                List<string> validationErrors = await _unitOfWork.SubscriptionHandler.CanDeleteActive(records);
 
                 if (validationErrors.Any())
                 {
@@ -322,7 +322,7 @@ namespace Subscription_Monitoring_System.Controllers
         {
             try
             {
-                List<string> validationErrors = await _unitOfWork.SubscriptionHandler.CanDelete(records);
+                List<string> validationErrors = await _unitOfWork.SubscriptionHandler.CanDeleteInactive(records);
 
                 if (validationErrors.Any())
                 {

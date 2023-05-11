@@ -166,7 +166,7 @@ namespace Subscription_Monitoring_System.Controllers
         {
             try
             {
-                List<string> validationErrors = await _unitOfWork.ServiceHandler.CanDelete(records);
+                List<string> validationErrors = await _unitOfWork.ServiceHandler.CanDeleteActive(records);
 
                 if (validationErrors.Any())
                 {
@@ -188,7 +188,7 @@ namespace Subscription_Monitoring_System.Controllers
         {
             try
             {
-                List<string> validationErrors = await _unitOfWork.ServiceHandler.CanDelete(records);
+                List<string> validationErrors = await _unitOfWork.ServiceHandler.CanDeleteInactive(records);
 
                 if (validationErrors.Any())
                 {

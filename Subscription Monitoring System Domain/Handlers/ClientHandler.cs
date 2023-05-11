@@ -26,7 +26,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
                 validationErrors.Add(SortDirectionConstants.SortDirectionInvalid);
             }
 
-            if (!string.IsNullOrEmpty(filter.SortBy) && (filter.SortBy is not ClientConstants.HeaderId and not ClientConstants.NameInvalid and not ClientConstants.HeaderEmailAddress))
+            if (!string.IsNullOrEmpty(filter.SortBy) && (filter.SortBy is not ClientConstants.HeaderId and not ClientConstants.HeaderName and not ClientConstants.HeaderEmailAddress))
             {
                 validationErrors.Add(ClientConstants.SortByInvalid);
             }
@@ -46,7 +46,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
                     validationErrors.Add(ClientConstants.Exists);
                 }
 
-                if (Regex.IsMatch(client.Name, "[a-z0-9,~,',!,@,#,$,%,^,&,*,(,),-,_,+,=,{,},\\[,\\],|,/,\\,:,;,\",`,<,>,,,.,?]"))
+                if (Regex.IsMatch(client.Name, "[a-z,~,',!,@,#,$,%,^,&,*,(,),-,_,+,=,{,},\\[,\\],|,/,\\,:,;,\",`,<,>,,,.,?]"))
                 {
                     validationErrors.Add(ClientConstants.NameInvalid);
                 }
@@ -87,7 +87,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
                         validationErrors.Add(ClientConstants.Exists);
                     }
 
-                    if (Regex.IsMatch(client.Name, "[a-z0-9,~,',!,@,#,$,%,^,&,*,(,),-,_,+,=,{,},\\[,\\],|,/,\\,:,;,\",`,<,>,,,.,?]"))
+                    if (Regex.IsMatch(client.Name, "[a-z,~,',!,@,#,$,%,^,&,*,(,),-,_,+,=,{,},\\[,\\],|,/,\\,:,;,\",`,<,>,,,.,?]"))
                     {
                         validationErrors.Add(ClientConstants.NameInvalid);
                     }
@@ -136,14 +136,29 @@ namespace Subscription_Monitoring_System_Domain.Handlers
             return validationErrors;
         }
 
-        public async Task<List<string>> CanDelete(RecordIdsViewModel records)
+        public async Task<List<string>> CanDeleteActive(RecordIdsViewModel records)
         {
             List<string> validationErrors = new();
 
             List<ClientViewModel> clients = await _clientService.GetList(records.Ids);
-            if (clients == null)
+
+            if (clients.Where(p => !p.IsActive).Any() || !clients.Select(p => p.Id).ToList().OrderBy(x => x).SequenceEqual(records.Ids.OrderBy(x => x)))
             {
-                validationErrors.Add(ClientConstants.DoesNotExist);
+                validationErrors.Add(ClientConstants.EntryInvalid);
+            }
+
+            return validationErrors;
+        }
+
+        public async Task<List<string>> CanDeleteInactive(RecordIdsViewModel records)
+        {
+            List<string> validationErrors = new();
+
+            List<ClientViewModel> clients = await _clientService.GetList(records.Ids);
+
+            if (clients.Where(p => p.IsActive).Any() || !clients.Select(p => p.Id).ToList().OrderBy(x => x).SequenceEqual(records.Ids.OrderBy(x => x)))
+            {
+                validationErrors.Add(ClientConstants.EntryInvalid);
             }
 
             return validationErrors;
@@ -167,9 +182,10 @@ namespace Subscription_Monitoring_System_Domain.Handlers
             List<string> validationErrors = new();
 
             List<ClientViewModel> clients = await _clientService.GetList(records.Ids);
-            if (clients == null)
+
+            if (clients.Where(p => p.IsActive).Any() || !clients.Select(p => p.Id).ToList().OrderBy(x => x).SequenceEqual(records.Ids.OrderBy(x => x)))
             {
-                validationErrors.Add(ClientConstants.DoesNotExist);
+                validationErrors.Add(ClientConstants.EntryInvalid);
             }
 
             return validationErrors;

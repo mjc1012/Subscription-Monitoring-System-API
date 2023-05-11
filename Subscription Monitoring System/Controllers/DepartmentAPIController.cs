@@ -85,7 +85,7 @@ namespace Subscription_Monitoring_System.Controllers
 
 
                 await _unitOfWork.DepartmentService.Update(department);
-                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = DepartmentConstants.SuccessAdd });
+                return StatusCode(StatusCodes.Status200OK, new ResponseViewModel() { Status = true, Message = DepartmentConstants.SuccessEdit });
             }
             catch (Exception ex)
             {
