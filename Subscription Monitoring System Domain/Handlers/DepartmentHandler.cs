@@ -22,7 +22,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
 
             if (department != null && !string.IsNullOrEmpty(department.Name))
             {
-                if (!Regex.IsMatch(department.Name, "[a-z0-9,~,',!,@,#,$,%,^,&,*,(,),-,_,+,=,{,},\\[,\\],|,/,\\,:,;,\",`,<,>,,,.,?]"))
+                if (Regex.IsMatch(department.Name, "[a-z0-9,~,',!,@,#,$,%,^,&,*,(,),-,_,+,=,{,},\\[,\\],|,/,\\,:,;,\",`,<,>,,,.,?]"))
                 {
                     validationErrors.Add(DepartmentConstants.NameInvalid);
                 }
