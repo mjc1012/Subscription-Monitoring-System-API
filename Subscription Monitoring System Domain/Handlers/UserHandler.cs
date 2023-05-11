@@ -67,20 +67,20 @@ namespace Subscription_Monitoring_System_Domain.Handlers
                     validationErrors.Add(DepartmentConstants.DoesNotExist);
                 }
 
-                if (Regex.IsMatch(user.FirstName, @"[\p{Ll}\d\W&&[^ ]]"))
+                if (Regex.IsMatch(user.FirstName, "[a-z0-9,~,',!,@,#,$,%,^,&,*,(,),-,_,+,=,{,},\\[,\\],|,/,\\,:,;,\",`,<,>,,,.,?]"))
                 {
                     validationErrors.Add(UserConstants.FirstNameInvalid);
                 }
 
                 if(user.MiddleName != null)
                 {
-                    if (Regex.IsMatch(user.MiddleName, @"[\p{Ll}\d\W&&[^ ]]"))
+                    if (Regex.IsMatch(user.MiddleName, "[a-z0-9,~,',!,@,#,$,%,^,&,*,(,),-,_,+,=,{,},\\[,\\],|,/,\\,:,;,\",`,<,>,,,.,?]"))
                     {
                         validationErrors.Add(UserConstants.MiddleNameInvalid);
                     }
                 }
 
-                if (Regex.IsMatch(user.LastName, @"[\p{Ll}\d\W&&[^ ]]"))
+                if (Regex.IsMatch(user.LastName, "[a-z0-9,~,',!,@,#,$,%,^,&,*,(,),-,_,+,=,{,},\\[,\\],|,/,\\,:,;,\",`,<,>,,,.,?]"))
                 {
                     validationErrors.Add(UserConstants.LastNameInvalid);
                 }
@@ -127,20 +127,20 @@ namespace Subscription_Monitoring_System_Domain.Handlers
                         validationErrors.Add(DepartmentConstants.DoesNotExist);
                     }
 
-                    if (Regex.IsMatch(user.FirstName, @"[\p{Ll}\d\W&&[^ ]]"))
+                    if (Regex.IsMatch(user.FirstName, "[a-z0-9,~,',!,@,#,$,%,^,&,*,(,),-,_,+,=,{,},\\[,\\],|,/,\\,:,;,\",`,<,>,,,.,?]"))
                     {
                         validationErrors.Add(UserConstants.FirstNameInvalid);
                     }
 
                     if (user.MiddleName != null)
                     {
-                        if (Regex.IsMatch(user.MiddleName, @"[\p{Ll}\d\W&&[^ ]]"))
+                        if (Regex.IsMatch(user.MiddleName, "[a-z0-9,~,',!,@,#,$,%,^,&,*,(,),-,_,+,=,{,},\\[,\\],|,/,\\,:,;,\",`,<,>,,,.,?]"))
                         {
                             validationErrors.Add(UserConstants.MiddleNameInvalid);
                         }
                     }
 
-                    if (Regex.IsMatch(user.LastName, @"[\p{Ll}\d\W&&[^ ]]"))
+                    if (Regex.IsMatch(user.LastName, "[a-z0-9,~,',!,@,#,$,%,^,&,*,(,),-,_,+,=,{,},\\[,\\],|,/,\\,:,;,\",`,<,>,,,.,?]"))
                     {
                         validationErrors.Add(UserConstants.LastNameInvalid);
                     }

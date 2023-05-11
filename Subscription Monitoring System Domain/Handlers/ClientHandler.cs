@@ -46,7 +46,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
                     validationErrors.Add(ClientConstants.Exists);
                 }
 
-                if (Regex.IsMatch(client.Name, @"[\p{Ll}\d\W&&[^ ]]"))
+                if (Regex.IsMatch(client.Name, "[a-z0-9,~,',!,@,#,$,%,^,&,*,(,),-,_,+,=,{,},\\[,\\],|,/,\\,:,;,\",`,<,>,,,.,?]"))
                 {
                     validationErrors.Add(ClientConstants.NameInvalid);
                 }
@@ -87,7 +87,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
                         validationErrors.Add(ClientConstants.Exists);
                     }
 
-                    if (Regex.IsMatch(client.Name, @"[\p{Ll}\d\W&&[^ ]]"))
+                    if (Regex.IsMatch(client.Name, "[a-z0-9,~,',!,@,#,$,%,^,&,*,(,),-,_,+,=,{,},\\[,\\],|,/,\\,:,;,\",`,<,>,,,.,?]"))
                     {
                         validationErrors.Add(ClientConstants.NameInvalid);
                     }

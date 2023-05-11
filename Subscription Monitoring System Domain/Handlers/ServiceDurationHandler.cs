@@ -21,7 +21,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
 
             if (serviceDuration != null && !string.IsNullOrEmpty(serviceDuration.Name))
             {
-                if (Regex.IsMatch(serviceDuration.Name, @"[\p{Ll}\d\W&&[^ ]]"))
+                if (Regex.IsMatch(serviceDuration.Name, "[a-z0-9,~,',!,@,#,$,%,^,&,*,(,),-,_,+,=,{,},\\[,\\],|,/,\\,:,;,\",`,<,>,,,.,?]"))
                 {
                     validationErrors.Add(ServiceTypeConstants.NameInvalid);
                 }
@@ -53,7 +53,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
                 else
                 {
 
-                    if (Regex.IsMatch(serviceDuration.Name, @"[\p{Ll}\d\W&&[^ ]]"))
+                    if (Regex.IsMatch(serviceDuration.Name, "[a-z0-9,~,',!,@,#,$,%,^,&,*,(,),-,_,+,=,{,},\\[,\\],|,/,\\,:,;,\",`,<,>,,,.,?]"))
                     {
                         validationErrors.Add(ServiceTypeConstants.NameInvalid);
                     }
