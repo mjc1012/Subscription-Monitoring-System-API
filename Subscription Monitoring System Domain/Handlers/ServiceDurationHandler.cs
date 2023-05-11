@@ -26,9 +26,9 @@ namespace Subscription_Monitoring_System_Domain.Handlers
                     validationErrors.Add(ServiceTypeConstants.NameInvalid);
                 }
 
-                if (!await _serviceDurationService.ServiceDurationExists(serviceDuration))
+                if (await _serviceDurationService.ServiceDurationExists(serviceDuration))
                 {
-                    validationErrors.Add(ServiceTypeConstants.DoesNotExist);
+                    validationErrors.Add(ServiceTypeConstants.Exists);
                 }
             }
             else
@@ -58,9 +58,9 @@ namespace Subscription_Monitoring_System_Domain.Handlers
                         validationErrors.Add(ServiceTypeConstants.NameInvalid);
                     }
 
-                    if (!await _serviceDurationService.ServiceDurationExists(serviceDuration))
+                    if (await _serviceDurationService.ServiceDurationExists(serviceDuration))
                     {
-                        validationErrors.Add(ServiceTypeConstants.DoesNotExist);
+                        validationErrors.Add(ServiceTypeConstants.Exists);
                     }
                 }
             }

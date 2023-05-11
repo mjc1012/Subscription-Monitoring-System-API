@@ -27,9 +27,9 @@ namespace Subscription_Monitoring_System_Domain.Handlers
                     validationErrors.Add(DepartmentConstants.NameInvalid);
                 }
 
-                if (!await _departmentService.DepartmentExists(department))
+                if (await _departmentService.DepartmentExists(department))
                 {
-                    validationErrors.Add(DepartmentConstants.DoesNotExist);
+                    validationErrors.Add(DepartmentConstants.Exists);
                 }
             }
             else
@@ -59,9 +59,9 @@ namespace Subscription_Monitoring_System_Domain.Handlers
                         validationErrors.Add(DepartmentConstants.NameInvalid);
                     }
 
-                    if (!await _departmentService.DepartmentExists(department))
+                    if (await _departmentService.DepartmentExists(department))
                     {
-                        validationErrors.Add(DepartmentConstants.DoesNotExist);
+                        validationErrors.Add(DepartmentConstants.Exists);
                     }
                 }
             }
