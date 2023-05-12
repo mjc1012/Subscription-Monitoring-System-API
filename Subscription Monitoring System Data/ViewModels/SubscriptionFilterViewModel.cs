@@ -15,7 +15,6 @@
         public string CreatedByCode { get; set; } = string.Empty;
         public string UpdatedByCode { get; set; } = string.Empty;
         public bool IsActive { get; set; } 
-        public bool IsExpired { get; set; } 
-        public bool IsExpiring { get; set; }
+        public bool IsExpired { get; set; }
     }
 }

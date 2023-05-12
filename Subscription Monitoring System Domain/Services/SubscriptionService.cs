@@ -126,7 +126,7 @@ namespace Subscription_Monitoring_System_Domain.Services
                 (string.IsNullOrEmpty(filter.CreatedByCode) || p.CreatedByCode == filter.CreatedByCode) &&
                 (string.IsNullOrEmpty(filter.UpdatedByCode) || p.UpdatedByCode == filter.UpdatedByCode) &&
                 p.IsActive == filter.IsActive && p.SubscriptionHistoryId == null &&
-                p.IsExpired == filter.IsExpired && p.IsExpiring == filter.IsExpiring).ToList();
+                p.IsExpired == filter.IsExpired).ToList();
                 subscriptionsMapped = (!string.IsNullOrEmpty(filter.SortOrder) && filter.SortOrder.Equals(SortDirectionConstants.Descending)) ? SortDescending(filter.SortBy, subscriptionsMapped) : SortAscending(filter.SortBy, subscriptionsMapped);
 
                 int totalCount = subscriptionsMapped.Count;
@@ -165,7 +165,7 @@ namespace Subscription_Monitoring_System_Domain.Services
                 (string.IsNullOrEmpty(filter.CreatedByCode) || p.CreatedByCode == filter.CreatedByCode) &&
                 (string.IsNullOrEmpty(filter.UpdatedByCode) || p.UpdatedByCode == filter.UpdatedByCode) &&
                 p.IsActive == filter.IsActive && p.SubscriptionHistoryId == null &&
-                p.IsExpired == filter.IsExpired && p.IsExpiring == filter.IsExpiring).ToList();
+                p.IsExpired == filter.IsExpired).ToList();
                 subscriptionsMapped = (!string.IsNullOrEmpty(filter.SortOrder) && filter.SortOrder.Equals(SortDirectionConstants.Descending)) ? SortDescending(filter.SortBy, subscriptionsMapped) : SortAscending(filter.SortBy, subscriptionsMapped);
 
                
