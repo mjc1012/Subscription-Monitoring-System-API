@@ -142,7 +142,7 @@ app.UseAuthorization();
 
 app.UseHangfireDashboard();
 
-RecurringJob.AddOrUpdate<ISubscriptionService>(BaseConstants.CheckExpiration, service => service.SendExpiringSubscriptionNotification(), Cron.Daily);
+RecurringJob.AddOrUpdate<ISubscriptionService>(BaseConstants.CheckExpiration, service => service.SendExpiringSubscriptionNotification(), Cron.Minutely);
 
 app.MapControllers();
 
