@@ -63,11 +63,9 @@ namespace Subscription_Monitoring_System_Domain.Services
 
         public async Task SendExpiringSubscriptionNotification()
         {
-            List<SubscriptionViewModel> subscriptions = _mapper.Map<List<SubscriptionViewModel>>(await _subscriptionRepository.GetList());
-            foreach (SubscriptionViewModel subscription in subscriptions)
+           List<SubscriptionViewModel> subscriptions = _mapper.Map<List<SubscriptionViewModel>>(await _subscriptionRepository.GetList());
+            foreach (SubscriptionViewModel subscription in subscriptions.Where(p=> (p.RemainingDays == 0 || p.RemainingDays == 7) && p.IsActive && !p.IsExpired).ToList())
             {   
-                if(!subscription.IsActive) continue;
-
                 if (subscription.RemainingDays == 0)
                 {
                     await _subscriptionRepository.Expired(subscription.Id);
@@ -87,8 +85,10 @@ namespace Subscription_Monitoring_System_Domain.Services
                         _emailService.SendEmail(new EmailViewModel(clientRecipient.EmailAddress, NotificationConstants.ExpiredSubject, EmailBody.SendSubscriptionEmail(NotificationConstants.ExpiredSubject, NotificationConstants.SubscriptionExpired(subscription.Id))));
                     }
                 }
-                else if (subscription.RemainingDays == 7)
+                else if (subscription.RemainingDays == 7 && !subscription.IsExpiring)
                 {
+                    await _subscriptionRepository.Expiring(subscription.Id);
+
                     NotificationViewModel notification = new()
                     {
                         Description = NotificationConstants.SubscriptionExpiring(subscription.Id, subscription.RemainingDays),
@@ -126,7 +126,7 @@ namespace Subscription_Monitoring_System_Domain.Services
                 (string.IsNullOrEmpty(filter.CreatedByCode) || p.CreatedByCode == filter.CreatedByCode) &&
                 (string.IsNullOrEmpty(filter.UpdatedByCode) || p.UpdatedByCode == filter.UpdatedByCode) &&
                 p.IsActive == filter.IsActive && p.SubscriptionHistoryId == null &&
-                p.IsExpired == filter.IsExpired).ToList();
+                p.IsExpired == filter.IsExpired && p.IsExpiring == filter.IsExpiring).ToList();
                 subscriptionsMapped = (!string.IsNullOrEmpty(filter.SortOrder) && filter.SortOrder.Equals(SortDirectionConstants.Descending)) ? SortDescending(filter.SortBy, subscriptionsMapped) : SortAscending(filter.SortBy, subscriptionsMapped);
 
                 int totalCount = subscriptionsMapped.Count;
@@ -165,7 +165,7 @@ namespace Subscription_Monitoring_System_Domain.Services
                 (string.IsNullOrEmpty(filter.CreatedByCode) || p.CreatedByCode == filter.CreatedByCode) &&
                 (string.IsNullOrEmpty(filter.UpdatedByCode) || p.UpdatedByCode == filter.UpdatedByCode) &&
                 p.IsActive == filter.IsActive && p.SubscriptionHistoryId == null &&
-                p.IsExpired == filter.IsExpired).ToList();
+                p.IsExpired == filter.IsExpired && p.IsExpiring == filter.IsExpiring).ToList();
                 subscriptionsMapped = (!string.IsNullOrEmpty(filter.SortOrder) && filter.SortOrder.Equals(SortDirectionConstants.Descending)) ? SortDescending(filter.SortBy, subscriptionsMapped) : SortAscending(filter.SortBy, subscriptionsMapped);
 
                

@@ -232,6 +232,22 @@ namespace Subscription_Monitoring_System_Data.Repositories
             {
                 Subscription? subscription = await GetActive(id);
                 subscription!.IsExpired = true;
+                subscription!.IsActive = false;
+                _context.Subscriptions!.Update(subscription);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task Expiring(int id)
+        {
+            try
+            {
+                Subscription? subscription = await GetActive(id);
+                subscription!.IsExpiring = true;
                 _context.Subscriptions!.Update(subscription);
                 await _context.SaveChangesAsync();
             }

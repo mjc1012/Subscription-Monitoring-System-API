@@ -14,7 +14,8 @@
         public string ServiceName { get; set; } = string.Empty;
         public string CreatedByCode { get; set; } = string.Empty;
         public string UpdatedByCode { get; set; } = string.Empty;
-        public bool IsActive { get; set; } = true;
-        public bool IsExpired { get; set; } = false;
+        public bool IsActive { get; set; } 
+        public bool IsExpired { get; set; } 
+        public bool IsExpiring { get; set; }
     }
 }

@@ -7,6 +7,7 @@
         public DateTime EndDate { get; set; }
         public bool IsActive { get; set; }
         public bool IsExpired { get; set; }
+        public bool IsExpiring { get; set; }
         public DateTime CreatedOn { get; set; }
         public DateTime UpdatedOn { get; set; }
         public int? CreatedById { get; set; }

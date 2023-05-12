@@ -10,6 +10,7 @@ namespace Subscription_Monitoring_System_Data.Contracts
         Task<List<Subscription>> GetHistoryList(int id);
         Task<List<Subscription>> GetList();
         Task Expired(int id);
+        Task Expiring(int id);
         Task<Subscription> Create(Subscription subscription, List<int> clientIds, List<int> userIds);
         Task<Subscription> CreateHistory(int id);
         Task<Subscription> Update(Subscription subscriptionn, List<int> clientIds, List<int> userIds);

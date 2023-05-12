@@ -18,6 +18,7 @@
         public int? SubscriptionHistoryId { get; set; }
         public bool IsExpired { get; set; }
         public bool IsActive { get; set; }
+        public bool IsExpiring { get; set; }
         public List<int> ClientIds { get; set; } = new List<int>();
         public List<int> UserIds { get; set; } = new List<int>();
         public List<UserViewModel> UserRecipients { get; set; } = new List<UserViewModel>();

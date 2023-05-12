@@ -158,6 +158,10 @@ namespace Subscription_Monitoring_System_Domain.Handlers
             {
                 validationErrors.Add(SubscriptionConstants.DoesNotExist);
             }
+            else if (subscription.SubscriptionHistoryId != null)
+            {
+                validationErrors.Add(SubscriptionConstants.EntryInvalid);
+            }
 
             return validationErrors;
         }
@@ -171,6 +175,10 @@ namespace Subscription_Monitoring_System_Domain.Handlers
             {
                 validationErrors.Add(SubscriptionConstants.DoesNotExist);
             }
+            else if (subscription.SubscriptionHistoryId != null)
+            {
+                validationErrors.Add(SubscriptionConstants.EntryInvalid);
+            }
 
             return validationErrors;
         }
@@ -181,7 +189,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
 
             List<SubscriptionViewModel> subscriptions = await _subscriptionService.GetList(records.Ids);
 
-            if (subscriptions.Where(p => !p.IsActive).Any() || !subscriptions.Select(p => p.Id).ToList().OrderBy(x => x).SequenceEqual(records.Ids.OrderBy(x => x)))
+            if (subscriptions.Where(p => !p.IsActive).Any() || !subscriptions.Where(p => p.SubscriptionHistoryId == null).Select(p => p.Id).ToList().OrderBy(x => x).SequenceEqual(records.Ids.OrderBy(x => x)))
             {
                 validationErrors.Add(SubscriptionConstants.EntryInvalid);
             }
@@ -194,7 +202,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
             List<string> validationErrors = new();
 
             List<SubscriptionViewModel> subscriptions = await _subscriptionService.GetList(records.Ids);
-            if (subscriptions.Where(p => p.IsActive).Any() || !subscriptions.Select(p => p.Id).ToList().OrderBy(x => x).SequenceEqual(records.Ids.OrderBy(x => x)))
+            if (subscriptions.Where(p => p.IsActive).Any() || !subscriptions.Where(p => p.SubscriptionHistoryId == null).Select(p => p.Id).ToList().OrderBy(x => x).SequenceEqual(records.Ids.OrderBy(x => x)))
             {
                 validationErrors.Add(SubscriptionConstants.EntryInvalid);
             }
@@ -211,6 +219,10 @@ namespace Subscription_Monitoring_System_Domain.Handlers
             {
                 validationErrors.Add(SubscriptionConstants.DoesNotExist);
             }
+            else if (subscription.SubscriptionHistoryId != null)
+            {
+                validationErrors.Add(SubscriptionConstants.EntryInvalid);
+            }
 
             return validationErrors;
         }
@@ -220,7 +232,7 @@ namespace Subscription_Monitoring_System_Domain.Handlers
             List<string> validationErrors = new();
 
             List<SubscriptionViewModel> subscriptions = await _subscriptionService.GetList(records.Ids);
-            if (subscriptions.Where(p => p.IsActive).Any() || !subscriptions.Select(p => p.Id).ToList().OrderBy(x => x).SequenceEqual(records.Ids.OrderBy(x => x)))
+            if (subscriptions.Where(p => p.IsActive).Any() || !subscriptions.Where(p => p.SubscriptionHistoryId == null).Select(p => p.Id).ToList().OrderBy(x => x).SequenceEqual(records.Ids.OrderBy(x => x)))
             {
                 validationErrors.Add(SubscriptionConstants.EntryInvalid);
             }
